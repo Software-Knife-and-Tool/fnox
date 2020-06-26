@@ -1,3 +1,3 @@
 fn main() {
-    println!("Hello, Opensource world!");
+    println!("lispox 0.0.1");
 }
