@@ -7,9 +7,3 @@ edition = "2018"
 [[bin]]
 name = "lispox"
 path = "src/shell/main.rs"
-
-[lib]
-name = "system"
-crate-type = ["cdylib"]
-bench = false
-path = "src/system/lib.rs"
