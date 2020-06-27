@@ -5,5 +5,11 @@ authors = ["putnamjm <putnamjm.design@gmail.edu>"]
 edition = "2018"
 
 [[bin]]
-name = "shell"
-path = "src/main.rs"
+name = "lispox"
+path = "src/shell/main.rs"
+
+[lib]
+name = "system"
+crate-type = ["cdylib"]
+bench = false
+path = "src/system/lib.rs"
