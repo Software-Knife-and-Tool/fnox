@@ -7,3 +7,7 @@ edition = "2018"
 [[bin]]
 name = "lispox"
 path = "src/main.rs"
+
+[lib]
+name = "mu"
+path = "src/lib.rs"

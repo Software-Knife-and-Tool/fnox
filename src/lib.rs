@@ -5,3 +5,10 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 }
+
+/* mu lib.rs */
+pub mod mu {
+    pub mod env {
+        pub fn env_() { }
+    }
+}
