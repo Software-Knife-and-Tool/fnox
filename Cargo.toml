@@ -6,4 +6,4 @@ edition = "2018"
 
 [[bin]]
 name = "lispox"
-path = "src/shell/main.rs"
+path = "src/main.rs"
