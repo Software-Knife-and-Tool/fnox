@@ -1,3 +1,5 @@
-pub fn env_() {
-    return "lispox 0.0.1";
+pub mod env {
+    pub fn env() {
+        println!("env, damnit");
+    }
 }
