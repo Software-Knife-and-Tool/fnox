@@ -1,3 +1,7 @@
+/* mu lib.rs */
+
+mod mu;
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -6,9 +10,4 @@ mod tests {
     }
 }
 
-/* mu lib.rs */
-pub mod mu {
-    pub mod env {
-        pub fn env() { println!("env!"); }
-    }
-}
+pub use crate::mu::env;
