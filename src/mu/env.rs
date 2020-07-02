@@ -11,11 +11,6 @@ pub fn make() -> Env {
 }
 
 impl Env {
-    pub fn make1() -> Env {
-        println!("making env, damnit");
-        Env {
-            stuff: 0
-        }
-    }
+
 }
 
