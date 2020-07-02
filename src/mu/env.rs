@@ -1,18 +1,21 @@
 /* mu/env.rs */
-
-struct Env {
+pub struct Env {
     stuff: i64
 }
 
-pub fn env() {
-    println!("env, damnit");
+pub fn make() -> Env {
+    println!("making env, damnit");
+    Env {
+        stuff: 0
+    }
 }
 
 impl Env {
-    pub fn make() -> Env {
+    pub fn make1() -> Env {
         println!("making env, damnit");
         Env {
             stuff: 0
         }
     }
 }
+
