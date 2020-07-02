@@ -4,14 +4,14 @@ pub struct Type {
 }
 
 enum Tag {
-    ADDRESS = 0,   /* machine address */
-    EFIXNUM = 1,   /* even fixnum (62 bits) */
-    SYMBOL = 2,    /* symbol/keyword */
-    FUNCTION = 3,  /* function */
-    CONS = 4,      /* cons */
-    OFIXNUM = 5,   /* odd fixnum (62 bits) */
-    IMMEDIATE = 6, /* immediate */
-    EXTEND = 7     /* extended */
+    Address = 0,   /* machine address */
+    Efixnum = 1,   /* even fixnum (62 bits) */
+    Symbol = 2,    /* symbol/keyword */
+    Function = 3,  /* function */
+    Cons = 4,      /* cons */
+    Ofixnum = 5,   /* odd fixnum (62 bits) */
+    Immediate = 6, /* immediate */
+    Extend = 7     /* extended */
 }
 
 enum SysClass {
