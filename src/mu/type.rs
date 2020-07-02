@@ -3,14 +3,16 @@ pub struct Type {
     bits: u64
 }
 
-    const ADDRESS: u64 = 0;   /* machine address */
-    const EFIXNUM: u64 = 1;   /* even fixnum (62 bits) */
-    const SYMBOL: u64 = 2;    /* symbol/keyword */
-    const FUNCTION: u64 = 3;  /* function */
-    const CONS: u64 = 4;      /* cons */
-    const OFIXNUM: u64 = 5;   /* odd fixnum (62 bits) */
-    const IMMEDIATE: u64 = 6; /* immediate */
-    const EXTEND : u64 = 7;    /* extended */
+enum Tag {
+    ADDRESS = 0,   /* machine address */
+    EFIXNUM = 1,   /* even fixnum (62 bits) */
+    SYMBOL = 2,    /* symbol/keyword */
+    FUNCTION = 3,  /* function */
+    CONS = 4,      /* cons */
+    OFIXNUM = 5,   /* odd fixnum (62 bits) */
+    IMMEDIATE = 6, /* immediate */
+    EXTEND = 7     /* extended */
+}
 
 enum SysClass {
     BYTE,
