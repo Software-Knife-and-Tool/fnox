@@ -10,9 +10,9 @@ pub fn env() {
 
 impl Env {
     pub fn make() -> Env {
-       println!("making env, damnit");
-       Env {
-           stuff: 0
-       }
+        println!("making env, damnit");
+        Env {
+            stuff: 0
+        }
     }
 }
