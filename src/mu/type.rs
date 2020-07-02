@@ -36,10 +36,12 @@ enum SysClass {
     VIEW
 }
 
-const CHAR: u32 = 0;
-const STRING: u32 = 1;
-const KEYWORD: u32 = 2;
-const FLOAT: u32 = 3;
+enum ImmediateClass {
+    CHAR = 0,
+    STRING = 1,
+    KEYWORD = 2,
+    FLOAT = 3
+}
 
 const IMMEDIATE_STR_MAX: u32 = 7;
 
