@@ -15,34 +15,34 @@ enum Tag {
 }
 
 enum SysClass {
-    BYTE,
-    CHAR,
-    CODE,
-    CONS,
-    ENVIRONMENT,
-    EXCEPTION,
-    FFI,
-    FIXNUM,
-    FLOAT,
-    FUNCTION,
-    MACRO,
-    NAMESPACE,
-    NULLT,
-    STREAM,
-    STRING,
-    STRUCT,
-    SYMBOL,
+    Byte,
+    Char,
+    Code,
+    Cons,
+    Environment,
+    Exception,
+    Ffi,
+    Fixnum,
+    Float,
+    Function,
+    Macro,
+    Namespace,
+    Null,
+    Stream,
+    String,
+    Struct,
+    Symbol,
     T,
-    THREAD,
-    VECTOR,
-    VIEW
+    Thread,
+    Vector,
+    View
 }
 
 enum ImmediateClass {
-    CHAR = 0,
-    STRING = 1,
-    KEYWORD = 2,
-    FLOAT = 3
+    Char = 0,
+    String = 1,
+    Keyword = 2,
+    Float = 3
 }
 
 const IMMEDIATE_STR_MAX: u32 = 7;
