@@ -3,7 +3,8 @@ pub struct Type {
     bits: u64
 }
 
-enum Tag {
+#[derive(FromPrimitive)]
+pub enum Tag {
     Address = 0,   /* machine address */
     Efixnum = 1,   /* even fixnum (62 bits) */
     Symbol = 2,    /* symbol/keyword */
@@ -47,6 +48,14 @@ enum ImmediateClass {
 
 const IMMEDIATE_STR_MAX: u32 = 7;
 
+pub fn tag_of(ptr: Type) -> Tag {
+    let element: std::option::Option<Tag> = num::FromPrimitive::from_u64(ptr.bits & 0x7);
+    match element {
+        Some(_) => element.unwrap(),
+        None => panic!("Unknown tag")
+    }
+}
+
 impl Type {
 /***
     pub fn make1() -> Env {
@@ -62,10 +71,6 @@ impl Type {
 template <typename T>
 static T* Untag(TagPtr ptr) {
     return reinterpret_cast<T*>(to_underlying(ptr) & ~0x7);
-}
-
-static constexpr TAG TagOf(TagPtr ptr) {
-    return static_cast<TAG>(to_underlying(ptr) & 0x7);
 }
 
 static constexpr TagPtr Entag(TagPtr ptr, TAG tag) {

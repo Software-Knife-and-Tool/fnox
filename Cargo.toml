@@ -11,3 +11,8 @@ path = "src/main.rs"
 [lib]
 name = "mu"
 path = "src/lib.rs"
+
+[dependencies]
+num = "0.2"
+num-derive = "0.3"
+num-traits = "0.2"
