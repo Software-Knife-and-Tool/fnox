@@ -1,4 +1,5 @@
 /* mu/type.rs */
+#[derive(Debug)]
 pub struct Type {
     bits: u64
 }
@@ -49,7 +50,8 @@ enum ImmediateClass {
 const IMMEDIATE_STR_MAX: u32 = 7;
 
 pub fn tag_of(ptr: Type) -> Tag {
-    let element: std::option::Option<Tag> = num::FromPrimitive::from_u64(ptr.bits & 0x7);
+    let element: std::option::Option<Tag> =
+        num::FromPrimitive::from_u64(ptr.bits & 0x7);
     match element {
         Some(_) => element.unwrap(),
         None => panic!("Unknown tag")
@@ -57,7 +59,16 @@ pub fn tag_of(ptr: Type) -> Tag {
 }
 
 impl Type {
-/***
+    pub fn tag_of(&self) -> Tag {
+        let element: std::option::Option<Tag> =
+            num::FromPrimitive::from_u64(self.bits & 0x7);
+        match element {
+            Some(_) => element.unwrap(),
+            None => panic!("Unknown tag")
+        }
+    }
+
+    /***
     pub fn make1() -> Env {
         println!("making env, damnit");
         Env {
