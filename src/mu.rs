@@ -1,4 +1,4 @@
 /* mu.rs */
-pub mod env;
 pub mod r#type;
-
+pub mod env;
+pub mod fixnum;
