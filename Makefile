@@ -2,7 +2,7 @@
 #
 #
 
-all: clean build run
+all: build run
 
 build:
 	@cargo build
