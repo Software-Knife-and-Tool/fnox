@@ -51,6 +51,22 @@ pub enum ImmediateClass {
 
 const IMMEDIATE_STR_MAX: u64 = 7;
 
+const T: Type = Type {
+    bits: (('t' as u64) << 8)
+          | (1 << 5)
+          | ((ImmediateClass::Keyword as u64) << 3)
+          | (Tag::Immediate as u64)
+};
+
+const NIL: Type = Type {
+    bits: (((('l' as u64) << 16)
+           | (('i' as u64) << 8)
+           | (('n' as u64))) << 8)
+           | (3 << 5)
+           | ((ImmediateClass::Keyword as u64) << 3)
+           | (Tag::Immediate as u64)
+};
+
 impl Type {
     pub fn tag(&self) -> Tag {
         let tag: std::option::Option<Tag> =
