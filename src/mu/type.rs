@@ -67,6 +67,21 @@ const NIL: Type = Type {
         | (Tag::Immediate as u64)
 };
 
+pub fn entag(base: u64, tag: Tag) -> Type {
+    Type {
+        bits: base | tag as u64
+    }
+}
+
+pub fn immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
+    Type {
+        bits: (data << 8)
+            | ((len as u64) << 5)
+            | ((tag as u64) << 3)
+            | ((Tag::Immediate as u64))
+    }
+}
+
 impl Type {
     pub fn tag(&self) -> Tag {
         let tag: std::option::Option<Tag> =
@@ -77,20 +92,6 @@ impl Type {
         }
     }
 
-    pub fn entag(base: u64, tag: Tag) -> Type {
-        Type {
-            bits: base | tag as u64
-        }
-    }
-
-    pub fn immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
-        Type {
-            bits: (data << 8)
-                | ((len as u64) << 5)
-                | ((tag as u64) << 3)
-                | ((Tag::Immediate as u64))
-        }
-    }
 
     pub fn immediate_data(&self) -> u64 {
         return self.bits >> 8;
