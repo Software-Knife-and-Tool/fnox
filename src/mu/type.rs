@@ -6,10 +6,9 @@ pub struct Type {
 
 bitfield!{
     struct Date(MSB0 [u8]);
-    u32;
-    get_day, set_day: 4, 0;
-    get_month, set_month: 8, 5;
-    get_year, set_year: 23, 9;
+    u64;
+    get_tag, set_tag: 2, 0;
+    get_offset, set_offset: 63, 3;
 }
 
 #[derive(FromPrimitive)]
