@@ -4,6 +4,14 @@ pub struct Type {
     bits: u64
 }
 
+bitfield!{
+    struct Date(MSB0 [u8]);
+    u32;
+    get_day, set_day: 4, 0;
+    get_month, set_month: 8, 5;
+    get_year, set_year: 23, 9;
+}
+
 #[derive(FromPrimitive)]
 pub enum Tag {
     Address = 0,   /* machine address */
