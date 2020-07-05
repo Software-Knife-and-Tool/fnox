@@ -4,6 +4,13 @@ pub struct Type {
     bits: u64
 }
 
+bitfield!{
+    struct Date(MSB0 [u8]);
+    u64;
+    get_tag, set_tag: 2, 0;
+    get_offset, set_offset: 63, 3;
+}
+
 #[derive(FromPrimitive)]
 pub enum Tag {
     Address = 0,   /* machine address */
