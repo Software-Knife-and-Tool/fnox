@@ -130,3 +130,12 @@ impl Type {
         return self.eq(NIL);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn immed() {
+        let im: Type = immediate(0, 0, ImmediateClass::Keyword);
+        assert!(is_immediate(im), true);
+    }
+}

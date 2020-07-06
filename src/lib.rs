@@ -16,10 +16,5 @@ mod tests {
     fn eq_t() {
         assert!(true, true);
     }
-    #[test]
-    fn immed() {
-        let im: Type = immediate(0, 0, ImmediateClass::Keyword);
-        assert!(is_immediate(im), true);
-    }
 }
 
