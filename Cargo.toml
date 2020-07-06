@@ -13,7 +13,6 @@ name = "mu"
 path = "src/lib.rs"
 
 [dependencies]
-bitfield = "0.13.2"
 num = "0.2"
 num-derive = "0.3"
 num-traits = "0.2"

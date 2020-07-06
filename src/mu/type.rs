@@ -1,18 +1,7 @@
-/* mu/type.rs */
+/* mu/r#type.rs */
 #[derive(Debug)]
 pub struct Type {
-    bits: u64
-}
-
-/** * immediate pointer layout: [d*].lllccTTT **/
-bitfield!{
-    struct Pointer(MSB0 [u8]);
-    u64;
-    get_tag, set_tag: 2, 0;
-    get_offset, set_offset: 63, 3;
-    get_immediate_data, set_immediate_data: 63, 8;
-    get_immediate_length, set_immediate_length: 7, 5;
-    get_immediate_class, set_immediate_type: 4, 3;
+    pub bits: u64
 }
 
 #[derive(FromPrimitive)]
@@ -101,7 +90,6 @@ impl Type {
             None => panic!("Unknown tag")
         }
     }
-
 
     pub fn immediate_data(&self) -> u64 {
         return self.bits >> 8;
