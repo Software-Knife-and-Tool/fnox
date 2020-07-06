@@ -1,14 +1,7 @@
-/* mu/type.rs */
+/* mu/r#type.rs */
 #[derive(Debug)]
 pub struct Type {
-    bits: u64
-}
-
-bitfield!{
-    struct Date(MSB0 [u8]);
-    u64;
-    get_tag, set_tag: 2, 0;
-    get_offset, set_offset: 63, 3;
+    pub bits: u64
 }
 
 #[derive(FromPrimitive)]
@@ -47,7 +40,6 @@ pub enum SysClass {
     View
 }
 
-/** * immediate pointer layout: [d*].lllttTTT **/
 #[derive(FromPrimitive)]
 pub enum ImmediateClass {
     Char = 0,
@@ -98,7 +90,6 @@ impl Type {
             None => panic!("Unknown tag")
         }
     }
-
 
     pub fn immediate_data(&self) -> u64 {
         return self.bits >> 8;
