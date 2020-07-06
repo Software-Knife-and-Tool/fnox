@@ -7,8 +7,6 @@ extern crate num_derive;
 mod mu;
 
 pub use crate::mu::env;
-pub use crate::mu::fixnum;
-pub use crate::mu::r#type;
 
 #[cfg(test)]
 mod tests {
