@@ -50,14 +50,14 @@ pub enum ImmediateClass {
 
 const IMMEDIATE_STR_MAX: u64 = 7;
 
-const T: Type = Type {
+pub const T: Type = Type {
     bits: (('t' as u64) << 8)
         | (1 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
         | (Tag::Immediate as u64)
 };
 
-const NIL: Type = Type {
+pub const NIL: Type = Type {
     bits: (((('l' as u64) << 16)
             | (('i' as u64) << 8)
             | (('n' as u64))) << 8)
@@ -92,11 +92,11 @@ impl Type {
     }
 
     pub fn immediate_data(&self) -> u64 {
-        return self.bits >> 8;
+        self.bits >> 8
     }
 
     pub fn immediate_size(&self) -> u64 {
-        return self.bits >> 5;
+        self.bits >> 5
     }
     
     pub fn immediate_class(&self) -> ImmediateClass {
@@ -123,10 +123,19 @@ impl Type {
     }
 
     pub fn eq(&self, ptr: Type) -> bool {
-        return self.bits == ptr.bits;
+        self.bits == ptr.bits
     }
 
     pub fn is_null(&self) -> bool {
-        return self.eq(NIL);
+        self.eq(NIL)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::mu::r#type;
+    #[test]
+    fn immed() {
+        assert!(T.eq(T));
     }
 }
