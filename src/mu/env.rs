@@ -1,12 +1,15 @@
 /* mu/env.rs */
+use crate::mu::heap::heap;
+use crate::mu::heap::Heap;
+
 pub struct Env {
-    stuff: i64
+    heap: Heap
 }
 
-pub fn make() -> Env {
+pub fn env() -> Env {
     println!("making env, damnit");
     Env {
-        stuff: 0
+        heap: heap(1024 * 1024)
     }
 }
 

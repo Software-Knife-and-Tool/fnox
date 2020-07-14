@@ -1,6 +1,6 @@
-use mu::env::make;
+use mu::env::env;
 
 fn main() {
     println!("lispox 0.0.1");
-    make();
+    env();
 }
