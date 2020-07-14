@@ -21,7 +21,7 @@ pub fn env() -> Env {
 
 impl Env {
     pub fn eval(ptr: Type) -> Type {
-        NIL
+        ptr
     }
 }
 
