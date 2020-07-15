@@ -1,5 +1,5 @@
 /* mu/env.rs */
-
+use crate::mu::r#type::SysClass;
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
@@ -21,7 +21,11 @@ pub fn env() -> Env {
 
 impl Env {
     pub fn eval(ptr: Type) -> Type {
-        ptr
+        match ptr.type_of() {
+            SysClass::Cons => ptr,
+            SysClass::Symbol => ptr,
+            _ => ptr
+        }
     }
 }
 

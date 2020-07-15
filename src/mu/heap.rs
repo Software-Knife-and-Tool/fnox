@@ -4,12 +4,12 @@
 // use crate::mu::r#type::entag;
 
 pub struct Heap {
-    size: u64,
-    fname: &'static str,
-    mmap: memmap::MmapMut
+    nwords: u32,          // number of u64 words
+    fname: &'static str,  // mapped file name
+    mmap: memmap::MmapMut // mapped file segment
 }
 
-use memmap; // 0.7.0
+use memmap;
 use std::{
     fs::OpenOptions,
     io::{Seek, SeekFrom, Write},
@@ -23,7 +23,6 @@ fn mmap(size: u64, fname: &str) -> memmap::MmapMut {
         .open(fname)
         .expect("Unable to open file");
 
-    // Allocate space in the file first
     f.seek(SeekFrom::Start(size)).unwrap();
     f.write_all(&[0]).unwrap();
     f.seek(SeekFrom::Start(0)).unwrap();
@@ -45,18 +44,21 @@ fn mmap(size: u64, fname: &str) -> memmap::MmapMut {
     }
 }
 
-pub fn heap(words: u64) -> Heap {
+pub fn heap(nwords: u32) -> Heap {
     println!("making heap, damnit");
     Heap {
-        size: words,
-        fname: "hoopty",
-        mmap: mmap(1024 * 1024, "hoopty")
+        nwords,
+        fname: "/tmp/lispox",
+        mmap: mmap((nwords * 8).into(), "/tmp/lispox")
     }
 }
 
 impl Heap {
     pub fn size(&self) -> u64 {
-        return self.size;
+        (self.nwords * 8).into()
+    }
+    pub fn file_name(&self) -> &str {
+        self.fname
     }
 }
 
