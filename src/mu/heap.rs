@@ -4,9 +4,10 @@
 // use crate::mu::r#type::entag;
 
 pub struct Heap {
-    nwords: u32,          // number of u64 words
-    fname: &'static str,  // mapped file name
-    mmap: memmap::MmapMut // mapped file segment
+    nwords: u32,           // number of u64 words
+    fname: &'static str,   // mapped file name
+    mmap: memmap::MmapMut, // mapped file segment
+    fence: u32             // allocation fence
 }
 
 use memmap;
@@ -49,7 +50,8 @@ pub fn heap(nwords: u32) -> Heap {
     Heap {
         nwords,
         fname: "/tmp/lispox",
-        mmap: mmap((nwords * 8).into(), "/tmp/lispox")
+        mmap: mmap((nwords * 8).into(), "/tmp/lispox"),
+        fence: 0
     }
 }
 
@@ -59,6 +61,9 @@ impl Heap {
     }
     pub fn file_name(&self) -> &str {
         self.fname
+    }
+    pub fn fence(&self) -> u32 {
+        self.fence
     }
 }
 
