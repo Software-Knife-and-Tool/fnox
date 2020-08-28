@@ -138,7 +138,7 @@ impl Type {
         self.bits == ptr.bits
     }
 
-    pub fn is_null(&self) -> bool {
+    pub fn null(&self) -> bool {
         self.eq(NIL)
     }
 }
