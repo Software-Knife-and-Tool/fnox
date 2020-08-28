@@ -72,6 +72,10 @@ pub fn entag(base: u64, tag: Tag) -> Type {
     }
 }
 
+pub fn detag(_type: Type) -> u64 {
+    _type.bits >> 3
+}
+
 pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
     Type {
         bits: (data << 8)
