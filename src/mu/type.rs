@@ -48,9 +48,9 @@ pub enum ImmediateClass {
     Float = 3
 }
 
-const IMMEDIATE_STR_MAX: u64 = 7;
+const _IMMEDIATE_STR_MAX: u64 = 7;
 
-pub const T: Type = Type {
+pub const _T: Type = Type {
     bits: (('t' as u64) << 8)
         | (1 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
@@ -66,13 +66,13 @@ pub const NIL: Type = Type {
         | (Tag::Immediate as u64)
 };
 
-pub fn entag(base: u64, tag: Tag) -> Type {
+pub fn _entag(base: u64, tag: Tag) -> Type {
     Type {
         bits: base | tag as u64
     }
 }
 
-pub fn immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
+pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
     Type {
         bits: (data << 8)
             | ((len as u64) << 5)
@@ -145,9 +145,11 @@ impl Type {
 
 #[cfg(test)]
 mod tests {
-    use crate::mu::r#type;
+    // use crate::mu::r#type;
+    use crate::mu::r#type::_T;
+    
     #[test]
     fn immed() {
-        assert!(T.eq(T));
+        assert!(_T.eq(_T));
     }
 }
