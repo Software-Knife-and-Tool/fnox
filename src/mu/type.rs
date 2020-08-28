@@ -66,7 +66,7 @@ pub const NIL: Type = Type {
         | (Tag::Immediate as u64)
 };
 
-pub fn _entag(base: u64, tag: Tag) -> Type {
+pub fn entag(base: u64, tag: Tag) -> Type {
     Type {
         bits: base | tag as u64
     }

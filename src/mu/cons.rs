@@ -1,10 +1,10 @@
 /* mu/cons.rs */
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
-use crate::mu::r#type::_entag;
+use crate::mu::r#type::entag;
 
 pub fn _cons(_car: Type, _cdr: Type) -> Type {
-    return _entag(1 << 2, Tag::Efixnum); 
+    return entag(1 << 2, Tag::Efixnum); 
 }
 
 impl Type {
