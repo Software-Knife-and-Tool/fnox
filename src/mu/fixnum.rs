@@ -1,10 +1,10 @@
 /* mu/fixnum.rs */
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
-use crate::mu::r#type::_entag;
+use crate::mu::r#type::entag;
 
-pub fn _fixnum(src: u64) -> Type {
-    return _entag(src << 2, Tag::Efixnum); 
+pub fn fixnum(src: u64) -> Type {
+    return entag(src << 2, Tag::Efixnum); 
 }
 
 impl Type {
@@ -20,7 +20,7 @@ impl Type {
     }
 
     pub fn add(&self, fx: Type) -> Type {
-        _fixnum(self.u64_of() + fx.u64_of())
+        fixnum(self.u64_of() + fx.u64_of())
     }
 }
 
@@ -30,22 +30,22 @@ mod tests {
 
     #[test]
     fn test_type() {
-        assert!(_fixnum(0).type_());
+        assert!(fixnum(0).type_());
     }
 
     #[test]
     fn test_u64() {
-        assert!(_fixnum(0).u64_of() == 0);
-        assert!(_fixnum(1).u64_of() == 1);
+        assert!(fixnum(0).u64_of() == 0);
+        assert!(fixnum(1).u64_of() == 1);
     }
 
     #[test]
     fn test_eq() {
-        assert!(_fixnum(0).eq(_fixnum(0)));
+        assert!(fixnum(0).eq(fixnum(0)));
     }
     
     #[test]
     fn test_add() {
-        assert!(_fixnum(1).add(_fixnum(2)).eq(_fixnum(3)));
+        assert!(fixnum(1).add(fixnum(2)).eq(fixnum(3)));
     }
 }
