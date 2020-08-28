@@ -1,21 +1,18 @@
-/* mu/fixnum.rs */
+/* mu/cons.rs */
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::entag;
 
-pub fn fixnum(src: u64) -> Type {
-    return entag(src << 2, Tag::Efixnum); 
+pub fn cons(car: Type, cdr: Type) -> Type {
+    return entag(1 << 2, Tag::Efixnum); 
 }
 
 impl Type {
-    pub fn fixnum_type(&self) -> bool {
+    pub fn cons_type(&self) -> bool {
         match self.tag() {
             Tag::Efixnum => true,
             Tag::Ofixnum => true,
             _ => false
         }
-    }
-    pub fn u64_of_fixnum(&self) -> u64 {
-        return self.bits >> 3;
     }
 }

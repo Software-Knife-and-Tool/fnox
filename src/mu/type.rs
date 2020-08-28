@@ -91,6 +91,18 @@ impl Type {
         }
     }
 
+    pub fn type_of(&self) -> SysClass {
+        match self.tag() {
+            Tag::Address => SysClass::T, 
+            Tag::Cons => SysClass::Cons,
+            Tag::Efixnum | Tag::Ofixnum => SysClass::Fixnum,
+            Tag::Extend => SysClass::T,
+            Tag::Function => SysClass::Function,
+            Tag::Immediate => SysClass::T,
+            Tag::Symbol => SysClass::Symbol
+        }
+    }
+    
     pub fn immediate_data(&self) -> u64 {
         self.bits >> 8
     }
