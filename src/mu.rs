@@ -2,6 +2,7 @@
 pub mod cons;
 pub mod env;
 pub mod fixnum;
+pub mod function;
 pub mod print;
 pub mod read;
 // pub mod heap;

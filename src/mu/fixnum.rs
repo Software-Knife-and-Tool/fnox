@@ -12,11 +12,11 @@ pub fn _fixnum(src: i64) -> Type {
     entag((src as u64) << 2, Tag::Efixnum)
 }
 
-pub fn _fixnum_add(fx0: Type, fx1: Type) -> Type {
-    match _Fixnum::_from_type(fx0) {
+pub fn _fixnum_add(args: Vec<Type>) -> Type {
+    match _Fixnum::_from_type(&args[0]) {
         Some(fx) =>
-            match fx._add(fx1) {
-                Some(_sum) =>  _sum,
+            match fx._add(&args[1]) {
+                Some(s) => s,
                 None => NIL
             },
         None => NIL
@@ -32,16 +32,16 @@ impl _Fixnum {
         _Fixnum { integer: _integer as i64 }
     }
 
-    pub fn _from_type(_type: Type) -> Option<_Fixnum> {
-        if Type::type_fixnum(&_type) {
+    pub fn _from_type(_type: &Type) -> Option<_Fixnum> {
+        if Type::type_fixnum(_type) {
             Some(_Fixnum { integer: (_type.bits >> 2) as i64 })
         } else {
             None
         }
     }
 
-    pub fn _add(&self, fx: Type) -> Option<Type> {
-        if Type::type_fixnum(&fx) {
+    pub fn _add(&self, fx: &Type) -> Option<Type> {
+        if Type::type_fixnum(fx) {
             Some(_fixnum(self.integer + (fx.bits >> 2) as i64))
         } else {
             None
@@ -100,9 +100,9 @@ mod tests {
     #[test]
     fn test_add() {
         assert!(
-            match _Fixnum::_from_type(_fixnum(1)) {
+            match _Fixnum::_from_type(&_fixnum(1)) {
                 Some(fx) =>
-                    match fx._add(_fixnum(2)) {
+                    match fx._add(&_fixnum(2)) {
                         Some(sum) =>
                             match sum.i64_from_fixnum() {
                                 Some(v) => v == 3,
@@ -112,6 +112,5 @@ mod tests {
                     },
                 None => false
             });
-        assert!(_fixnum_add(_fixnum(1), _fixnum(2)).eq(_fixnum(3)));
     }
 }
