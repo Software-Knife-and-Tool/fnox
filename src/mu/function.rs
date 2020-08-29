@@ -1,7 +1,7 @@
 /* mu/function.rs */
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
-// use crate::mu::r#type::NIL;
+use crate::mu::r#type::NIL;
 use crate::mu::r#type::entag;
 use crate::mu::r#type::detag;
 
@@ -15,6 +15,12 @@ pub fn _function(_name: Type, _func: fn(Vec<Type>) -> Type, _nargs: i16) -> Type
     let fun = _Function { _name, _func, _nargs };
     
     Type::from_function(&fun)
+}
+
+impl _Function {
+    pub fn funcall(&self, _args: Vec<Type>) -> Type {
+        NIL
+    }
 }
 
 impl Type {
