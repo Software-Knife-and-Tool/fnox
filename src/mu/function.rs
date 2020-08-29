@@ -39,8 +39,8 @@ impl Type {
     }
     
     pub fn function_from_type(self) -> &'static _Function {
-        let cons: &_Function = unsafe { std::mem::transmute(detag(self)) };
-        cons
+        let _fn: &_Function = unsafe { std::mem::transmute(detag(self)) };
+        _fn
     }
 }
 
