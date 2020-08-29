@@ -3,8 +3,18 @@ use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::entag;
 
+struct _Fixnum {
+    integer: i64
+}
+
 pub fn fixnum(src: u64) -> Type {
     return entag(src << 2, Tag::Efixnum); 
+}
+
+impl _Fixnum {
+    pub fn _print(_type: Type) {
+        println!("{}", Type::u64_from_fixnum(&_type));
+    }
 }
 
 impl Type {
@@ -15,6 +25,7 @@ impl Type {
             _ => false
         }
     }
+
     pub fn u64_from_fixnum(&self) -> u64 {
         self.bits >> 2
     }
