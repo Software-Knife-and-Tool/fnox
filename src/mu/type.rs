@@ -149,11 +149,10 @@ impl Type {
 
 #[cfg(test)]
 mod tests {
-    // use crate::mu::r#type;
-    use crate::mu::r#type::_T;
+    use super::*;
     
     #[test]
-    fn immed() {
+    fn test_immed() {
         assert!(_T.eq(_T));
     }
 }
