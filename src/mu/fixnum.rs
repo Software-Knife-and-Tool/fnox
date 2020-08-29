@@ -12,19 +12,6 @@ pub fn _fixnum(src: i64) -> Type {
     entag((src as u64) << 2, Tag::Efixnum)
 }
 
-/*
-pub fn _fixnum_add(fx0: Type, fx1: Type) -> Type {
-    match _Fixnum::_from_type(&fx0) {
-        Some(fx) =>
-            match fx._add(&fx1) {
-                Some(s) => s,
-                None => NIL
-            },
-        None => NIL
-    }
-}
- */
-
 pub fn _fixnum_add(args: Vec<Type>) -> Type {
     match _Fixnum::_from_type(&args[0]) {
         Some(fx) =>

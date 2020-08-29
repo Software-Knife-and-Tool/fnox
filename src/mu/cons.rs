@@ -25,7 +25,7 @@ impl Type {
     pub fn from_cons(_cons: &Cons) -> Type {
         unsafe {
             let cons_addr: u64 = std::mem::transmute(_cons);
-            entag(cons_addr, Tag::Cons)
+            entag(cons_addr << 3, Tag::Cons)
         }        
     }
     

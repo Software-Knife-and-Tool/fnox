@@ -2,13 +2,19 @@
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 // use crate::mu::r#type::NIL;
-// use crate::mu::r#type::entag;
-// use crate::mu::r#type::detag;
+use crate::mu::r#type::entag;
+use crate::mu::r#type::detag;
 
 pub struct _Function {
-    name: Type,
-    func: fn(Vec<Type>) -> Type,
-    nargs: i32
+    _name: Type,
+    _func: fn(Vec<Type>) -> Type,
+    _nargs: i16
+}
+
+pub fn _function(_name: Type, _func: fn(Vec<Type>) -> Type, _nargs: i16) -> Type {
+    let fun = _Function { _name, _func, _nargs };
+    
+    Type::from_function(&fun)
 }
 
 impl Type {
@@ -17,6 +23,18 @@ impl Type {
             Tag::Function => true,
             _ => false
         }
+    }
+    
+    pub fn from_function(_fn: &_Function) -> Type {
+        unsafe {
+            let fn_addr: u64 = std::mem::transmute(_fn);
+            entag(fn_addr << 3, Tag::Function)
+        }        
+    }
+    
+    pub fn function_from_type(self) -> &'static _Function {
+        let cons: &_Function = unsafe { std::mem::transmute(detag(self)) };
+        cons
     }
 }
 
@@ -27,26 +45,7 @@ mod tests {
 
     #[test]
     fn test_type() {
-        assert!(NIL.cons(NIL).type_cons());
-    }
-
-    #[test]
-    fn test_list() {
-        assert!(NIL.type_list());
-        assert!(NIL.cons(NIL).type_list());
-    }
-
-    #[test]
-    fn test_cxr() {
-        assert!(NIL.cons(NIL).cons_from_type()._car.eq(NIL));
-    }
-
-    #[test]
-    fn test_cons() {
-        let _cons = NIL.cons(NIL).type_cons();
-        
-        assert!(fixnum(0).u64_of() == 0);
-        assert!(fixnum(1).u64_of() == 1);
+        assert!(NIL.cons(NIL).type_function());
     }
      */
 }
