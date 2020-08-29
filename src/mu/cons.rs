@@ -32,11 +32,9 @@ impl Type {
     pub fn cons(self, cdr: Type) -> Type {
         Type::from_cons(&Cons {_car: self, _cdr: cdr })
     }
-}
 
-impl Cons {
-    pub fn from_type(_type: Type) -> &'static Cons {
-        let cons: &Cons = unsafe { std::mem::transmute(detag(_type)) };
+    pub fn cons_from_type(self) -> &'static Cons {
+        let cons: &Cons = unsafe { std::mem::transmute(detag(self)) };
         cons
     }
 }
@@ -56,7 +54,12 @@ mod tests {
         assert!(NIL.cons(NIL).type_list());
     }
 
-/*
+    /*
+    #[test]
+    fn test_cxr() {
+        assert!(NIL.cons(NIL).cons_from_type()._car.eq(NIL));
+    }
+
     #[test]
     fn test_cons() {
         let _cons = NIL.cons(NIL).type_cons();
@@ -64,5 +67,5 @@ mod tests {
         assert!(fixnum(0).u64_of() == 0);
         assert!(fixnum(1).u64_of() == 1);
     }
-*/
+     */
 }
