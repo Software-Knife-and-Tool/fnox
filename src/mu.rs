@@ -5,5 +5,6 @@ pub mod fixnum;
 pub mod function;
 pub mod print;
 pub mod read;
+pub mod symbol;
 // pub mod heap;
 pub mod r#type;
