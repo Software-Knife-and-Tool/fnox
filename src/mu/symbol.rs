@@ -57,16 +57,24 @@ impl Type {
         sym
     }
 
-    pub fn _symbol_name(self) -> &'static Type {
-        let _sym = self.symbol_from_type();
+    pub fn _symbol_name(self) -> Option<&'static Type> {
+        if Type::type_symbol(&self) {
+            let _sym = self.symbol_from_type();
 
-        &_sym._name
+            Some(&_sym._name)
+        } else {
+            None
+        }
     }
     
-    pub fn _symbol_value(self) -> &'static Type {
-        let _sym = self.symbol_from_type();
+    pub fn _symbol_value(self) -> Option<&'static Type> {
+        if Type::type_symbol(&self) {
+            let _sym = self.symbol_from_type();
 
-        &_sym._value
+            Some(&_sym._value)
+        } else {
+            None
+        }
     }
 }
 

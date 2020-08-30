@@ -35,9 +35,13 @@ impl Type {
         }
     }
 
-    pub fn string_from_type(self) -> &'static _String {
-        let str: &'static _String = unsafe { std::mem::transmute(detag(self)) };
-        str
+    pub fn string_from_type(self) -> Option<&'static _String> {
+        if Type::type_string(&self) {
+            let str: &'static _String = unsafe { std::mem::transmute(detag(self)) };
+            Some(str)
+        } else {
+            None
+        }
     }
 }
 
@@ -48,5 +52,10 @@ mod tests {
     #[test]
     fn test_string() {
         assert!(_string(&"yep").type_string());
+        assert!(
+            match Type::string_from_type(_string(&"astring")) {
+                Some(_) => true,
+                None => false
+            });
     }
 }
