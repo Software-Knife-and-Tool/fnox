@@ -22,13 +22,14 @@ pub fn _symbol(_name: Type, _value: Type) -> Type {
     Type::from_symbol(&sym)
 }
 
-pub fn _symbol_value(_symbol: Type) -> Type {
+pub fn _symbol_value(_symbol: Type) -> &'static Type {
     let _sym = _symbol.symbol_from_type();
 
-    NIL
+    &_sym._value
 }
 
 impl _Symbol { }
+
 
 impl Type {
     pub fn type_symbol(&self) -> bool {
