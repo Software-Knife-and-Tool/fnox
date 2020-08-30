@@ -1,12 +1,19 @@
 /* mu/symbol.rs */
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
+use crate::mu::r#type::NIL;
 use crate::mu::r#type::entag;
 use crate::mu::r#type::detag;
+
+use crate::mu::string::_string;
 
 pub struct _Symbol {
     _name: Type,
     _value: Type,
+}
+
+pub struct _Keyword {
+    _keyword: Type
 }
 
 pub fn _symbol(_name: Type, _value: Type) -> Type {
@@ -15,9 +22,13 @@ pub fn _symbol(_name: Type, _value: Type) -> Type {
     Type::from_symbol(&sym)
 }
 
-impl _Symbol {
+pub fn _symbol_value(_symbol: Type) -> Type {
+    let _sym = _symbol.symbol_from_type();
 
+    NIL
 }
+
+impl _Symbol { }
 
 impl Type {
     pub fn type_symbol(&self) -> bool {
@@ -42,12 +53,10 @@ impl Type {
 
 #[cfg(test)]
 mod tests {
-    /*
     use super::*;
 
     #[test]
-    fn test_type() {
-        assert!(NIL.cons(NIL).type_function());
+    fn test_symbol() {
+        assert!(_symbol(_string(&"whoa"), NIL).type_symbol());
     }
-     */
 }
