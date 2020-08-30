@@ -2,19 +2,23 @@
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::entag;
-// use crate::mu::r#type::detag;
+use crate::mu::r#type::detag;
 
-pub struct _String<'s> {
-    _value: &'s str
+pub struct _String {
+    _value: &'static str
 }
 
-pub fn _string(_value: &str) -> Type {
+pub fn _string(_value: &'static str) -> Type {
     let string = _String { _value };
     
     Type::from_string(&string)
 }
 
-impl _String<'_> { }
+impl _String {
+    pub fn _string_value(self) -> &'static str {
+        self._value
+    }
+}
 
 impl Type {
     pub fn type_string(&self) -> bool {
@@ -31,12 +35,10 @@ impl Type {
         }
     }
 
-    /*
-    pub fn string_from_type(self) -> _String {
-        let str: _String = unsafe { std::mem::transmute(detag(self)) };
+    pub fn string_from_type(self) -> &'static _String {
+        let str: &'static _String = unsafe { std::mem::transmute(detag(self)) };
         str
     }
-    */
 }
 
 #[cfg(test)]

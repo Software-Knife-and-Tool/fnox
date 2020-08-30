@@ -22,11 +22,18 @@ pub fn _symbol(_name: Type, _value: Type) -> Type {
     Type::from_symbol(&sym)
 }
 
-pub fn _symbol_value(_symbol: Type) -> Type {
-    let _sym = _symbol.symbol_from_type();
+/*
+pub fn _keyword(_name: Type) -> Option<Type> {
 
-    NIL
+    if (name.type_string()) {
+        let len =  _name._str_from_string().len();
+        let immed = _immediate(data: u64, len: u8, ImmediateClass::Keyword);
+
+        Some(_Keyword { immed })
+    } else
+        None
 }
+*/
 
 impl _Symbol { }
 
@@ -48,6 +55,18 @@ impl Type {
     pub fn symbol_from_type(self) -> &'static _Symbol {
         let sym: &_Symbol = unsafe { std::mem::transmute(detag(self)) };
         sym
+    }
+
+    pub fn _symbol_name(self) -> &'static Type {
+        let _sym = self.symbol_from_type();
+
+        &_sym._name
+    }
+    
+    pub fn _symbol_value(self) -> &'static Type {
+        let _sym = self.symbol_from_type();
+
+        &_sym._value
     }
 }
 
