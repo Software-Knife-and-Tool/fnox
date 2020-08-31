@@ -6,4 +6,7 @@ extern crate num_derive;
 
 mod mu;
 
+pub use crate::mu::r#type;
+pub use crate::mu::r#type::Type;
 pub use crate::mu::env;
+

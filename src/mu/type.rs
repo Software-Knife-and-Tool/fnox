@@ -1,4 +1,10 @@
 /* mu/r#type.rs */
+use crate::mu::cons::_Cons;
+use crate::mu::extend::_Extend;
+use crate::mu::fixnum::_Fixnum;
+use crate::mu::function::_Function;
+use crate::mu::symbol::_Symbol;
+
 #[derive(Debug)]
 pub struct Type {
     pub bits: u64
@@ -16,28 +22,23 @@ pub enum Tag {
     Extend = 7     /* extended */
 }
 
+pub enum TagClass {
+    Address(i32),
+    Fixnum(_Fixnum),
+    Symbol(_Symbol),
+    Function(_Function),
+    Cons(_Cons),
+    Immediate(Type),
+    Extend(i32)
+}
+
 pub enum SysClass {
-    Byte,
-    Char,
-    Code,
     Cons,
-    Environment,
-    Exception,
-    Ffi,
     Fixnum,
-    Float,
     Function,
-    Macro,
-    Namespace,
-    Null,
-    Stream,
     String,
-    Struct,
     Symbol,
-    T,
-    Thread,
-    Vector,
-    View
+    T
 }
 
 #[derive(FromPrimitive)]
@@ -131,13 +132,6 @@ impl Type {
         }
     }
   
-    pub fn is_extended(&self) -> bool {
-        match self.tag() {
-            Tag::Extend => true,
-            _ => false
-        }
-    }
-
     pub fn eq(&self, ptr: Type) -> bool {
         self.bits == ptr.bits
     }
@@ -152,7 +146,7 @@ mod tests {
     use super::*;
     
     #[test]
-    fn test_immed() {
+    fn test_eq() {
         assert!(_T.eq(_T));
     }
 }

@@ -5,6 +5,7 @@ use crate::mu::r#type::NIL;
 use crate::mu::r#type::entag;
 use crate::mu::r#type::detag;
 
+#[derive(Debug)]
 pub struct _Function {
     _name: Type,
     _func: fn(Vec<Type>) -> Type,
