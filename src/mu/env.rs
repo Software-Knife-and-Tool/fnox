@@ -9,43 +9,49 @@ use crate::mu::r#type::NIL;
 // use crate::mu::heap::Heap;
 
 use crate::mu::fixnum::_fixnum_add;
-
-type FuncV = fn(_args: Vec<Type>) -> Type;
+use crate::mu::function::_function;
+use crate::mu::string::_string;
 
 pub struct Env<'e> {
     // heap: Heap
-    _symtab: HashMap<&'e str, FuncV>
+    symtab: HashMap<&'e str, Type>
 }
 
 // fn(args: Vec<Type>) -> Type
 pub fn env<'e>() -> Env<'e> {
-    let mut _init: HashMap<&'e str, FuncV> = HashMap::new();
+    let mut init: HashMap<&'e str, Type> = HashMap::new();
 
-    _init.insert("fixnum-add", _fixnum_add);
+    init.insert("fixnum-add",
+                 _function(_string(&"fixnum-add"),
+                           _fixnum_add,
+                           2));
 
     Env {
         // heap: heap(1024 * 1024)
-       _symtab: _init
+        symtab: init
     }
 }
 
-pub fn not_found(_args: Vec<Type>) -> Type {
-    NIL
-}
-
 impl Env<'_> {
-    pub fn eval(ptr: Type) -> Type {
+    pub fn eval(ptr: &'static Type) -> &'static Type {
         match ptr.type_of() {
             SysClass::Cons => ptr,
+            SysClass::Symbol => ptr,
+            /*
+                match ptr._symbol_value() {
+                    Some(v) => v,
+                    None => &NIL
+                },
+             */
             SysClass::Fixnum => ptr,
             _ => ptr
         }
     }
 
-    pub fn lookup(&self, name: &str) -> FuncV {
-        match self._symtab.get(name) {
-            Some(func) => *func,
-            None => not_found
+    pub fn lookup(&self, name: &str) -> &Type {
+        match self.symtab.get(name) {
+            Some(_type) => _type,
+            None => &NIL
         }
     }
 }
@@ -57,8 +63,7 @@ mod tests {
     #[test]
     fn test_symtab() {
         let env = env();
-        assert!(env.lookup(&"fixnum-add") == _fixnum_add);
-        assert!(env.lookup(&"nope") == not_found);
+        assert!(!env.lookup(&"fixnum-add").eq(NIL));
+        assert!(env.lookup(&"nope").eq(NIL));
     }
 }
-
