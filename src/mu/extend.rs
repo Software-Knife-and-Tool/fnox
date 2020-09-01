@@ -1,6 +1,7 @@
 /* mu/extend.rs */
 use crate::mu::string::_String;
 use crate::mu::r#type::Type;
+use crate::mu::r#type::SysClass;
 use crate::mu::r#type::Tag;
 use crate::mu::string::_string;
 
@@ -11,11 +12,19 @@ enum Extended {
 
 #[derive(Debug)]
 pub struct _Extend {
-    _type: u64,
+    _type: SysClass,
     _struct: Extended
 }
 
+impl _Extend {
+    
+}
+
 impl Type {
+    pub fn _extended_type(&self) -> SysClass {
+        SysClass::T
+    }
+
     pub fn is_extended(&self) -> bool {
         match self.tag() {
             Tag::Extend => true,

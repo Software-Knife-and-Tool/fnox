@@ -22,6 +22,7 @@ pub enum Tag {
     Extend = 7     /* extended */
 }
 
+#[derive(Debug)]
 pub enum TagClass {
     Address(i32),
     Fixnum(_Fixnum),
@@ -29,9 +30,10 @@ pub enum TagClass {
     Function(_Function),
     Cons(_Cons),
     Immediate(Type),
-    Extend(i32)
+    Extend(_Extend)
 }
 
+#[derive(Debug)]
 pub enum SysClass {
     Cons,
     Fixnum,
