@@ -29,7 +29,7 @@ pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
     match fixnum(input.as_bytes()) {
-        Ok((i,j)) =>
+        Ok((_,_)) =>
             {
                 // println!("{:?},{:?}", i, j);
                 _fixnum(i64::from_str(&input).unwrap())
