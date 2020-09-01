@@ -1,4 +1,5 @@
 /* mu lib.rs */
+extern crate nom;
 extern crate num;
 
 #[macro_use]

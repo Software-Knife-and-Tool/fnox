@@ -7,7 +7,7 @@ use crate::mu::string::_string;
 
 #[derive(Debug)]
 enum Extended {
-    string(_String)
+    String(_String)
 }
 
 #[derive(Debug)]

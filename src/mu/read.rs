@@ -1,12 +1,31 @@
 /* mu/read.rs */
-// use std::io;
+use std::io::{self, BufRead};
 
-// use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
-// use crate::mu::r#type::entag;
 
-pub fn _read(_src: Type) -> Type {
+use crate::mu::fixnum::_fixnum;
+
+use nom::IResult;
+use nom::number::complete::be_u32;
+use nom::number::complete::be_i64;
+use nom::bytes::complete::take;
+use nom::bytes::complete::take_while;
+
+pub fn length_value(input: &[u8]) -> IResult<&[u8],&[u8]> {
+    let (input, length) = be_u32(input)?;
+    println!("{:x?},{:x?}", input, length);
+    take(length)(input)
+}
+
+// pub fn _read(_src: Type) -> Type {
+pub fn _read() -> Type {
+    let input = io::stdin().lock().lines().next().unwrap().unwrap();
+
+    match length_value(input.as_bytes()) {
+        Ok(_) => println!("gotcha"),
+        Err(whoops) => println!("{}", whoops)
+    }
     NIL
 }
 
