@@ -4,6 +4,7 @@ use crate::mu::r#type::Type;
 use crate::mu::r#type::entag;
 use crate::mu::r#type::detag;
 
+#[derive(Debug)]
 pub struct _String {
     _value: &'static str
 }
