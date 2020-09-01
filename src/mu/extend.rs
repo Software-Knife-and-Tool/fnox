@@ -19,7 +19,7 @@ pub struct _Extend {
 impl _Extend {
     pub fn _extended_type(&self) -> &SysClass {
         &self._type
-    }    
+    }
 }
 
 impl Type {
