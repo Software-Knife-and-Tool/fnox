@@ -9,8 +9,6 @@ use crate::mu::r#type::NIL;
 use crate::mu::fixnum::_fixnum;
 
 use nom::IResult;
-use nom::number::complete::be_u32;
-use nom::number::complete::be_i64;
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_while;
 use nom::character::is_alphabetic;
@@ -20,8 +18,6 @@ use nom::character::is_digit;
 use nom::character::*;
 
 fn fixnum(input: &[u8]) -> IResult<&[u8],&[u8]> {
-    let (input, _) = be_u32(input)?;
-
     take_while(is_digit)(input)
 }
 
@@ -41,14 +37,14 @@ pub fn _read() -> Type {
                         },
                     Err(whoops) => 
                         {
-                            println!("{}", whoops);
+                            println!("{:x?}", whoops);
                             NIL
                         }
                 }
             },
         Err(whoops) =>
             {
-                println!("{}", whoops);
+                println!("{:x?}", whoops);
                 NIL
             }
     }
