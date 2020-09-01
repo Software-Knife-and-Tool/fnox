@@ -4,10 +4,15 @@
 // use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
+use crate::mu::fixnum::*;
 // use crate::mu::r#type::entag;
 
-pub fn _print(_dst: Type) -> Type {
-    NIL
+pub fn _print(_src: Type) {
+
+    match _Fixnum::_from_type(&_src) {
+        Some(fx) => fx._print(),
+        None => println!("nope")
+    }
 }
 
 #[cfg(test)]

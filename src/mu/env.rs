@@ -4,6 +4,8 @@ use crate::mu::r#type::SysClass;
 // use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
+use crate::mu::read::_read;
+use crate::mu::print::_print;
 // use crate::mu::r#type::entag;
 // use crate::mu::heap::heap;
 // use crate::mu::heap::Heap;
@@ -17,7 +19,6 @@ pub struct Env<'e> {
     symtab: HashMap<&'e str, Type>
 }
 
-// fn(args: Vec<Type>) -> Type
 pub fn env<'e>() -> Env<'e> {
     let mut init: HashMap<&'e str, Type> = HashMap::new();
 
@@ -33,6 +34,13 @@ pub fn env<'e>() -> Env<'e> {
 }
 
 impl Env<'_> {
+    pub fn read(&self) -> Type {
+        _read()
+    }
+    pub fn print(&self, src: Type) {
+        _print(src);
+    }
+
     pub fn eval(ptr: &'static Type) -> &'static Type {
         match ptr.type_of() {
             SysClass::Cons => ptr,

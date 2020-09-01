@@ -7,7 +7,7 @@ use crate::mu::string::_string;
 
 #[derive(Debug)]
 enum Extended {
-    string(_String)
+    String(_String)
 }
 
 #[derive(Debug)]
@@ -17,14 +17,22 @@ pub struct _Extend {
 }
 
 impl _Extend {
-    
+    pub fn _extended_type(&self) -> &SysClass {
+        &self._type
+    }
+
+/*
+    fn homestar(&self) -> String {
+        use PlayerClass::*;
+        match self {
+            Sol(_) => String::from("sun"),
+            ...
+        }
+    }
+*/
 }
 
 impl Type {
-    pub fn _extended_type(&self) -> SysClass {
-        SysClass::T
-    }
-
     pub fn is_extended(&self) -> bool {
         match self.tag() {
             Tag::Extend => true,
