@@ -4,7 +4,8 @@ use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
 use crate::mu::r#type::entag;
 
-struct _Fixnum {
+#[derive(Debug)]
+pub struct _Fixnum {
     integer: i64
 }
 

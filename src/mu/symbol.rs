@@ -7,6 +7,7 @@ use crate::mu::r#type::detag;
 
 use crate::mu::string::_string;
 
+#[derive(Debug)]
 pub struct _Symbol {
     _name: Type,
     _value: Type,

@@ -5,7 +5,8 @@ use crate::mu::r#type::NIL;
 use crate::mu::r#type::entag;
 use crate::mu::r#type::detag;
 
-pub struct Cons {
+#[derive(Debug)]
+pub struct _Cons {
     _car: Type,
     _cdr: Type
 }
@@ -22,7 +23,7 @@ impl Type {
         self.eq(NIL) || self.type_cons()
     }
 
-    pub fn from_cons(_cons: &Cons) -> Type {
+    pub fn from_cons(_cons: &_Cons) -> Type {
         unsafe {
             let cons_addr: u64 = std::mem::transmute(_cons);
             entag(cons_addr << 3, Tag::Cons)
@@ -30,11 +31,11 @@ impl Type {
     }
     
     pub fn cons(self, cdr: Type) -> Type {
-        Type::from_cons(&Cons {_car: self, _cdr: cdr })
+        Type::from_cons(&_Cons {_car: self, _cdr: cdr })
     }
 
-    pub fn cons_from_type(self) -> &'static Cons {
-        let cons: &Cons = unsafe { std::mem::transmute(detag(self)) };
+    pub fn cons_from_type(self) -> &'static _Cons {
+        let cons: &_Cons = unsafe { std::mem::transmute(detag(self)) };
         cons
     }
 }
