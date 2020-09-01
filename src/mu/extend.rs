@@ -17,14 +17,12 @@ pub struct _Extend {
 }
 
 impl _Extend {
-    
+    pub fn _extended_type(&self) -> &SysClass {
+        &self._type
+    }    
 }
 
 impl Type {
-    pub fn _extended_type(&self) -> SysClass {
-        SysClass::T
-    }
-
     pub fn is_extended(&self) -> bool {
         match self.tag() {
             Tag::Extend => true,
