@@ -20,6 +20,16 @@ impl _Extend {
     pub fn _extended_type(&self) -> &SysClass {
         &self._type
     }
+
+/*
+    fn homestar(&self) -> String {
+        use PlayerClass::*;
+        match self {
+            Sol(_) => String::from("sun"),
+            ...
+        }
+    }
+*/
 }
 
 impl Type {
