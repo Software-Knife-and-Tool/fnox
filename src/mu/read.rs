@@ -1,6 +1,7 @@
 /* mu/read.rs */
 use std::io::{self, BufRead};
 use std::str::FromStr;
+use std::str::from_utf8;
 
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
@@ -21,7 +22,7 @@ use nom::character::*;
 fn fixnum(input: &[u8]) -> IResult<&[u8],&[u8]> {
     let (input, _) = be_u32(input)?;
 
-    take_while(is_alphabetic)(input)
+    take_while(is_digit)(input)
 }
 
 // pub fn _read(_src: Type) -> Type {
@@ -29,10 +30,21 @@ pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
     match fixnum(input.as_bytes()) {
-        Ok((i,j)) =>
+        Ok((rest, token)) =>
             {
-                println!("{:x?},{:x?}", i, j);
-                _fixnum(i64::from_str(&input).unwrap())
+                println!("{:x?},{:x?}", rest, token);
+                match from_utf8(&token) {
+                    Ok(str) =>
+                        match i64::from_str(&str) {
+                            Ok(fix) => _fixnum(fix),
+                            Err(_) => NIL
+                        },
+                    Err(whoops) => 
+                        {
+                            println!("{}", whoops);
+                            NIL
+                        }
+                }
             },
         Err(whoops) =>
             {
