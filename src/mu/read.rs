@@ -39,9 +39,11 @@ named!(symbol<&[u8], &[u8]>,
        alt!(complete!(take_while!(is_alphanumeric)) |
             complete!(ws!(take_while!(is_alphanumeric)))));
 
+/*
 named!(types<&[u8], Type>,
        alt!(fixnum => { |retn: Result<&[u8], &[u8]>| match retn { Ok(_) => NIL, Err(_) => NIL }} |
             symbol => { |retn: Result<&[u8], &[u8]>| match retn { Ok(_) => NIL, Err(_) => NIL }}));
+*/
 
 // pub fn _read(_src: Type) -> Type {
 pub fn _read() -> Type {
