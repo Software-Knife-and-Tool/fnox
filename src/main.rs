@@ -5,5 +5,7 @@ fn main() {
 
     let e = env();
 
-    e.print(e.read());
+    loop {
+        e.print(e.read());
+    }
 }

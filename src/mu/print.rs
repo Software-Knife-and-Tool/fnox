@@ -11,7 +11,7 @@ pub fn _print(_src: Type) {
 
     match _Fixnum::_from_type(&_src) {
         Some(fx) => fx._print(),
-        None => println!("nope")
+        None => println!("isn't a fixnum")
     }
 }
 

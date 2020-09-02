@@ -1,6 +1,8 @@
 /* mu/read.rs */
 use std::io::{self, BufRead};
 
+use hex::FromHex;
+
 use std::str;
 use std::str::FromStr;
 use std::str::from_utf8;
@@ -11,8 +13,17 @@ use crate::mu::r#type::NIL;
 use crate::mu::fixnum::_fixnum;
 
 use nom::IResult;
+use nom::map_res;
+use nom::named;
+
+use nom::alt;
+use nom::complete;
+
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_while;
+use nom::ws;
+use nom::take_while;
+
 use nom::character::is_alphabetic;
 use nom::character::is_alphanumeric;
 use nom::character::is_digit;
@@ -54,16 +65,17 @@ named!(term <i64>, do_parse!(
     (res)
   )
 );
-*/
-fn fixnum(input: &[u8]) -> IResult<&[u8],&[u8]> {
-    take_while(is_digit)(input)
-}
+ */
+
+named!(fx<&[u8], &[u8]>,
+      alt!(complete!(take_while!(is_digit)) |
+           complete!(ws!(take_while!(is_digit)))));
 
 // pub fn _read(_src: Type) -> Type {
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
-    match fixnum(input.as_bytes()) {
+    match fx(input.as_bytes()) {
         Ok((rest, token)) =>
             {
                 println!("{:x?},{:x?}", rest, token);
@@ -75,7 +87,7 @@ pub fn _read() -> Type {
                         },
                     Err(whoops) => 
                         {
-                            println!("{:x?}", whoops);
+                            println!("Err{:x?}", whoops);
                             NIL
                         }
                 }
