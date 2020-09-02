@@ -13,16 +13,17 @@ use crate::mu::r#type::NIL;
 use crate::mu::fixnum::_fixnum;
 
 use nom::IResult;
-use nom::map_res;
-use nom::named;
 
 use nom::alt;
 use nom::complete;
+use nom::eof;
+use nom::map_res;
+use nom::named;
+use nom::take_while;
+use nom::ws;
 
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_while;
-use nom::ws;
-use nom::take_while;
 
 use nom::character::is_alphabetic;
 use nom::character::is_alphanumeric;
@@ -68,8 +69,8 @@ named!(term <i64>, do_parse!(
  */
 
 named!(fx<&[u8], &[u8]>,
-      alt!(complete!(take_while!(is_digit)) |
-           complete!(ws!(take_while!(is_digit)))));
+       alt!(complete!(take_while!(is_digit)) |
+            complete!(ws!(take_while!(is_digit)))));
 
 // pub fn _read(_src: Type) -> Type {
 pub fn _read() -> Type {
