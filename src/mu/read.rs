@@ -1,5 +1,9 @@
 /* mu/read.rs */
 use std::io::{self, BufRead};
+
+use hex::FromHex;
+
+use std::str;
 use std::str::FromStr;
 use std::str::from_utf8;
 
@@ -9,23 +13,69 @@ use crate::mu::r#type::NIL;
 use crate::mu::fixnum::_fixnum;
 
 use nom::IResult;
+use nom::map_res;
+use nom::named;
+
+use nom::alt;
+use nom::complete;
+
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_while;
+use nom::ws;
+use nom::take_while;
+
 use nom::character::is_alphabetic;
 use nom::character::is_alphanumeric;
 use nom::character::is_digit;
 
 use nom::character::*;
 
-fn fixnum(input: &[u8]) -> IResult<&[u8],&[u8]> {
-    take_while(is_digit)(input)
-}
+/*
+// We parse any expr surrounded by parens, ignoring all whitespaces around those
+named!(parens<i64>, ws!(delimited!( tag!("("), expr, tag!(")") )) );
+
+// We transform an integer string into a i64, ignoring surrounding whitespaces
+// We look for a digit suite, and try to convert it.
+// If either str::from_utf8 or FromStr::from_str fail,
+// we fallback to the parens parser defined above
+named!(factor<i64>, alt!(
+    map_res!(
+      map_res!(
+        ws!(digit),
+        str::from_utf8
+      ),
+      FromStr::from_str
+    )
+  | parens
+  )
+);
+
+// We read an initial factor and for each time we find
+// a * or / operator followed by another factor, we do
+// the math by folding everything
+named!(term <i64>, do_parse!(
+    init: factor >>
+    res:  fold_many0!(
+        pair!(alt!(tag!("*") | tag!("/")), factor),
+        init,
+        |acc, (op, val): (&[u8], i64)| {
+            if (op[0] as char) == '*' { acc * val } else { acc / val }
+        }
+    ) >>
+    (res)
+  )
+);
+ */
+
+named!(fx<&[u8], &[u8]>,
+      alt!(complete!(take_while!(is_digit)) |
+           complete!(ws!(take_while!(is_digit)))));
 
 // pub fn _read(_src: Type) -> Type {
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
-    match fixnum(input.as_bytes()) {
+    match fx(input.as_bytes()) {
         Ok((rest, token)) =>
             {
                 println!("{:x?},{:x?}", rest, token);
@@ -37,7 +87,7 @@ pub fn _read() -> Type {
                         },
                     Err(whoops) => 
                         {
-                            println!("{:x?}", whoops);
+                            println!("Err{:x?}", whoops);
                             NIL
                         }
                 }

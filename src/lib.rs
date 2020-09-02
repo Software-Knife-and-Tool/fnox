@@ -1,4 +1,5 @@
 /* mu lib.rs */
+extern crate hex;
 extern crate nom;
 extern crate num;
 

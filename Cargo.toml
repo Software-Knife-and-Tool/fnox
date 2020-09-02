@@ -13,6 +13,7 @@ name = "mu"
 path = "src/lib.rs"
 
 [dependencies]
+hex = "0.4.2"
 memmap = "0.7.0"
 nom = "5.1.2"
 num = "0.2"
