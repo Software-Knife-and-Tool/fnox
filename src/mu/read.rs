@@ -11,6 +11,8 @@ use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
 
 use crate::mu::fixnum::_fixnum;
+use crate::mu::string::_string;
+use crate::mu::symbol::_symbol;
 
 use nom::IResult;
 
@@ -44,57 +46,63 @@ named!(string<&[u8], &[u8]>,
        alt!(complete!(take_while!(is_alphanumeric)) |
             complete!(ws!(take_while!(is_alphanumeric)))));
 
-named!(types<Type>,
-       alt!(fixnum => { |_| NIL } |
-            symbol => { |_| NIL })
-);
-
-/*
 named!(types<Type>, alt!(
-    tag!("dragon")            => { |_| NIL } |
-    tag!("beast")             => { |_| NIL }  |
-    take_while!(is_space) => { |r: &[u8]| NIL }
-));
-*/
-
-named!(types1<Type>, alt!(
-    fixnum => { |rv: &[u8]| NIL } |
-    string => { |_| NIL } |
-    symbol => { |_| NIL }
+    /*
+    symbol => { |ss: &[u8]|
+                 match from_utf8(ss) {
+                     Ok(str) =>
+                     {
+                         let sym = _symbol(_string(str), NIL);
+                         println!("read symbol: {:?}", sym);
+                         sym
+                     },
+                     Err(_) => NIL
+                 }} |
+    
+    string => { |ss: &[u8]|
+                 match from_utf8(ss) {
+                     Ok(str) =>
+                     {
+                         let st = _string(str);
+                         println!("read string: {:?}", st);
+                         st
+                     },
+                     Err(_) => NIL
+                 }} |
+     */
+    
+    fixnum => { |fs: &[u8]|
+                 match from_utf8(fs) {
+                     Ok(str) =>
+                         match i64::from_str(&str) {
+                             Ok(fix) =>
+                             {
+                                 let fx = _fixnum(fix);
+                                 println!("read fixnum: {:?}", fx);
+                                 fx
+                             },
+                             Err(_) => NIL
+                         },
+                     Err(whoops) => 
+                     {
+                         println!("Err{:x?}", whoops);
+                         NIL
+                     }
+                 }}
 ));
 
 // pub fn _read(_src: Type) -> Type {
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
-    types(input.as_bytes());
-    types1(input.as_bytes());
-    
-    match fixnum(input.as_bytes()) {
-        Ok((rest, token)) =>
+    match types(input.as_bytes()) {
+        Ok((_, _type)) =>
         {
-            // println!("{:x?},{:x?}", rest, token);
-            match from_utf8(&token) {
-                Ok(str) =>
-                    match i64::from_str(&str) {
-                        Ok(fix) =>
-                        {
-                            let fx = _fixnum(fix);
-                            println!("read fixnum: {:?}", fx);
-                            fx
-                        },
-                        Err(_) => NIL
-                    },
-                Err(whoops) => 
-                {
-                    println!("Err{:x?}", whoops);
-                    NIL
-                }
-            }
-        },
-        Err(whoops) =>
+            _type
+        }
+        Err(_err) =>
         {
-            println!("{:x?}", whoops);
+            println!("undecoded {}", _err);
             NIL
         }
     }
