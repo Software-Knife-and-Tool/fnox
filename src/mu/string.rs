@@ -6,17 +6,17 @@ use crate::mu::r#type::detag;
 
 #[derive(Debug)]
 pub struct _String {
-    _value: &'static str
+    _value: &'static [u8]
 }
 
-pub fn _string(_value: &'static str) -> Type {
+pub fn _string(_value: &'static [u8]) -> Type {
     let string = _String { _value };
     
     Type::from_string(&string)
 }
 
 impl _String {
-    pub fn _string_value(self) -> &'static str {
+    pub fn _string_value(self) -> &'static [u8] {
         self._value
     }
 }
