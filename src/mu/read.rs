@@ -19,6 +19,7 @@ use nom::complete;
 use nom::eof;
 use nom::map_res;
 use nom::named;
+use nom::tag;
 use nom::take_while;
 use nom::ws;
 
@@ -39,16 +40,36 @@ named!(symbol<&[u8], &[u8]>,
        alt!(complete!(take_while!(is_alphanumeric)) |
             complete!(ws!(take_while!(is_alphanumeric)))));
 
+named!(string<&[u8], &[u8]>,
+       alt!(complete!(take_while!(is_alphanumeric)) |
+            complete!(ws!(take_while!(is_alphanumeric)))));
+
+named!(types<Type>,
+       alt!(fixnum => { |_| NIL } |
+            symbol => { |_| NIL })
+);
+
 /*
-named!(types<&[u8], Type>,
-       alt!(fixnum => { |retn: Result<&[u8], &[u8]>| match retn { Ok(_) => NIL, Err(_) => NIL }} |
-            symbol => { |retn: Result<&[u8], &[u8]>| match retn { Ok(_) => NIL, Err(_) => NIL }}));
+named!(types<Type>, alt!(
+    tag!("dragon")            => { |_| NIL } |
+    tag!("beast")             => { |_| NIL }  |
+    take_while!(is_space) => { |r: &[u8]| NIL }
+));
 */
+
+named!(types1<Type>, alt!(
+    fixnum => { |rv: &[u8]| NIL } |
+    string => { |_| NIL } |
+    symbol => { |_| NIL }
+));
 
 // pub fn _read(_src: Type) -> Type {
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
+    types(input.as_bytes());
+    types1(input.as_bytes());
+    
     match fixnum(input.as_bytes()) {
         Ok((rest, token)) =>
         {
