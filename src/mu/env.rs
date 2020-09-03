@@ -23,7 +23,7 @@ pub fn env<'e>() -> Env<'e> {
     let mut init: HashMap<&'e str, Type> = HashMap::new();
 
     init.insert("fixnum-add",
-                 _function(_string(&"fixnum-add"),
+                 _function(_string(b"fixnum-add"),
                            _fixnum_add,
                            2));
 
