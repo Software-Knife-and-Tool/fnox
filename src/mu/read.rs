@@ -47,6 +47,7 @@ named!(string<&[u8], &[u8]>,
             complete!(ws!(take_while!(is_alphanumeric)))));
 
 named!(types<Type>, alt!(
+
     /*
     symbol => { |ss: &[u8]|
                  match from_utf8(ss) {
