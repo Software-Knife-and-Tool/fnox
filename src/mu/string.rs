@@ -52,9 +52,9 @@ mod tests {
 
     #[test]
     fn test_string() {
-        assert!(_string(&"yep").type_string());
+        assert!(_string(b"yep").type_string());
         assert!(
-            match Type::string_from_type(_string(&"astring")) {
+            match Type::string_from_type(_string(b"astring")) {
                 Some(_) => true,
                 None => false
             });
