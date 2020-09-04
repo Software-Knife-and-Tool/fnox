@@ -128,8 +128,8 @@ mod tests {
     #[test]
     fn test_gh() {
         assert!(
-            match tpl(b" 123fg") {
-                Ok((_,(ws,mid,gh))) => true,
+            match tpl(b" 123fg ") {
+                Ok((_,(_, mid, gh))) => true,
                 Err(_) => false
             })}
 
