@@ -21,8 +21,11 @@ use nom::complete;
 use nom::eof;
 use nom::map_res;
 use nom::named;
+use nom::opt;
 use nom::tag;
+use nom::take;
 use nom::take_while;
+use nom::tuple;
 use nom::ws;
 
 use nom::bytes::complete::take;
@@ -31,12 +34,21 @@ use nom::bytes::complete::take_while;
 use nom::character::is_alphabetic;
 use nom::character::is_alphanumeric;
 use nom::character::is_digit;
+use nom::character::is_space;
 
 use nom::character::*;
 
 named!(fixnum<&[u8], &[u8]>,
        alt!(complete!(take_while!(is_digit)) |
             complete!(ws!(take_while!(is_digit)))));
+
+named!(tpl<&[u8], (Option<&[u8]>, &[u8], &[u8])>,
+  tuple!(
+      opt!(take_while!(is_space)),
+      take!(3),
+      tag!("fg")
+  )
+);
 
 named!(symbol<&[u8], &[u8]>,
        alt!(complete!(take_while!(is_alphanumeric)) |
@@ -111,14 +123,104 @@ pub fn _read() -> Type {
 
 #[cfg(test)]
 mod tests {
-    // use super::*;
+    use super::*;
 
+    #[test]
+    fn test_gh() {
+        assert!(
+            match tpl(b" 123fg") {
+                Ok((_,(ws,mid,gh))) => true,
+                Err(_) => false
+            })}
+
+    #[test]
+    fn test_fixnum() {
+        assert!(
+            match fixnum(b"1234 ") {
+                Ok((_,fx)) =>
+                    match from_utf8(fx) {
+                        Ok(str) =>
+                            match i64::from_str(&str) {
+                                Ok(fix) =>
+                                {
+                                    let fx = _fixnum(fix);
+                                    true
+                                },
+                                Err(_) => false
+                            },
+                        Err(_) => false
+                    }
+                Err(_) => false
+            })}
+
+/*
+    #[test]
+    fn test_fixnum_() {
+        assert!(
+            match fixnum_(b"1234") {
+                Ok((_,fx,_)) =>
+                    match from_utf8(fx) {
+                        Ok(str) =>
+                            match i64::from_str(&str) {
+                                Ok(fix) =>
+                                {
+                                    let fx = _fixnum(fix);
+                                    true
+                                },
+                                Err(_) => false
+                            },
+                        Err(_) => false
+                    }
+                Err(_) => false
+            })}
+
+     */
+    
     /*
     #[test]
-    fn test_type() {
-        assert!(fixnum(0).type_fixnum());
+    fn test_fixnum1() {
+        assert!(
+            match fixnum_(b" 1234") {
+                Ok((_,fx)) =>
+                    match from_utf8(fx) {
+                        Ok(str) =>
+                            match i64::from_str(&str) {
+                                Ok(fix) =>
+                                {
+                                    let fx = _fixnum(fix);
+                                    true
+                                },
+                                Err(_) => false
+                            },
+                        Err(_) => false
+                    }
+                Err(_) => false
+            })
     }
 
+    #[test]
+    fn test_fixnum2() {
+        assert!(
+            match fixnum_(b"1234") {
+                Ok((_,fx)) =>
+                    match from_utf8(fx) {
+                        Ok(str) =>
+                            match i64::from_str(&str) {
+                                Ok(fix) =>
+                                {
+                                    let fx = _fixnum(fix);
+                                    true
+                                },
+                                Err(_) => false
+                            },
+                        Err(_) => false
+                    }
+                Err(_) => false
+            })
+    }
+    */
+    
+    /*
     #[test]
     fn test_u64() {
         assert!(fixnum(0).u64_from_fixnum() == 0);
