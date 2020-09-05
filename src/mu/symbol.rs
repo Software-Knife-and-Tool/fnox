@@ -85,6 +85,6 @@ mod tests {
 
     #[test]
     fn test_symbol() {
-        assert!(_symbol(_string(&"whoa"), NIL).type_symbol());
+        assert!(_symbol(_string(b"whoa"), NIL).type_symbol());
     }
 }
