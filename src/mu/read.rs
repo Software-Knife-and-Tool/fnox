@@ -1,9 +1,9 @@
 /* mu/read.rs */
 use std::io::{self, BufRead};
 
-use hex::FromHex;
+// use hex::FromHex;
 
-use std::str;
+// use std::str;
 use std::str::FromStr;
 use std::str::from_utf8;
 
@@ -14,7 +14,7 @@ use crate::mu::fixnum::_fixnum;
 use crate::mu::string::_string;
 use crate::mu::symbol::_symbol;
 
-use nom::IResult;
+// use nom::IResult;
 
 use nom::alt;
 use nom::complete;
@@ -27,7 +27,6 @@ use nom::take;
 use nom::take_until;
 use nom::take_while;
 use nom::tuple;
-use nom::ws;
 
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_while;
@@ -168,7 +167,7 @@ mod tests {
                             match i64::from_str(&str) {
                                 Ok(fix) =>
                                 {
-                                    let fx = _fixnum(fix);
+                                    let _fx = _fixnum(fix);
                                     fix == 123
                                 },
                                 Err(_) => false
@@ -184,7 +183,7 @@ mod tests {
             match symbol_(b" abc123 ") {
                 Ok((_, (_, str))) =>
                     {
-                        let sy = _symbol(_string(str), NIL);
+                        let _sy = _symbol(_string(str), NIL);
                         true
                     },
                 Err(_) => false
@@ -196,7 +195,7 @@ mod tests {
             match string_(b"\"abc123\" ") {
                 Ok((_, (_, _, str, _))) =>
                     {
-                        let st = _string(str);
+                        let _st = _string(str);
                         true
                     },
                 Err(_) => false
