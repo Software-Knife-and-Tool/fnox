@@ -42,11 +42,20 @@ named!(fixnum<&[u8], &[u8]>,
        alt!(complete!(take_while!(is_digit)) |
             complete!(ws!(take_while!(is_digit)))));
 
+/*
 named!(tpl<&[u8], (Option<&[u8]>, &[u8], &[u8])>,
   tuple!(
       opt!(take_while!(is_space)),
       take!(3),
       tag!("fg")
+  )
+);
+*/
+
+named!(fixnum_<&[u8], (Option<&[u8]>, &[u8])>,
+  tuple!(
+      opt!(take_while!(is_space)),
+      take_while!(is_digit)
   )
 );
 
@@ -125,11 +134,45 @@ pub fn _read() -> Type {
 mod tests {
     use super::*;
 
+/*
     #[test]
     fn test_gh() {
         assert!(
             match tpl(b" 123fg ") {
                 Ok((_,(_, mid, gh))) => true,
+                Err(_) => false
+            })}
+*/
+
+    #[test]
+    fn test_fx() {
+        assert!(
+            match fixnum_(b" 123 ") {
+                Ok((_, (_, fx))) =>
+                    match from_utf8(fx) {
+                        Ok(str) =>
+                            match i64::from_str(&str) {
+                                Ok(fix) => fix == 123,
+                                Err(_) => false
+                            },
+                        Err(_) => false
+                    }
+                Err(_) => false
+            })}
+
+    #[test]
+    fn test_fx1() {
+        assert!(
+            match fixnum_(b"123 ") {
+                Ok((_, (_, fx))) =>
+                    match from_utf8(fx) {
+                        Ok(str) =>
+                            match i64::from_str(&str) {
+                                Ok(fix) => fix == 123,
+                                Err(_) => false
+                            },
+                        Err(_) => false
+                    }
                 Err(_) => false
             })}
 
