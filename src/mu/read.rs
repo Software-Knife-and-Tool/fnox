@@ -14,19 +14,8 @@ use crate::mu::fixnum::_fixnum;
 use crate::mu::string::_string;
 use crate::mu::symbol::_symbol;
 
-// use nom::IResult;
-
-use nom::alt;
-use nom::complete;
-use nom::eof;
-use nom::map_res;
-use nom::named;
-use nom::opt;
-use nom::tag;
-use nom::take;
-use nom::take_until;
-use nom::take_while;
-use nom::tuple;
+use nom::{alt, complete, eof, map_res, named, opt};
+use nom::{tag, take,take_until, take_while, tuple};
 
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_while;
@@ -71,7 +60,16 @@ named!(string_<&[u8], (Option<&[u8]>, &[u8], &[u8], &[u8])>,
   )
 );
 
-named!(types<Type>, alt!(
+named!(cons_<&[u8], (Option<&[u8]>, &[u8], Type, &[u8])>,
+  tuple!(
+      opt!(take_while!(is_space)),
+      tag!("("),
+      read_,
+      tag!(")")
+  )
+);
+
+named!(read_<Type>, alt!(
 
     /*
     symbol => { |ss: &[u8]|
@@ -124,7 +122,7 @@ named!(types<Type>, alt!(
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
-    match types(input.as_bytes()) {
+    match read_(input.as_bytes()) {
         Ok((_, _type)) =>
         {
             _type
