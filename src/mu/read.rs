@@ -27,44 +27,35 @@ use nom::character::is_space;
 
 use nom::character::*;
 
-/*
-named!(tpl<&[u8], (Option<&[u8]>, &[u8], &[u8])>,
-  tuple!(
-      opt!(take_while!(is_space)),
-      take!(3),
-      tag!("fg")
-  )
-);
-*/
-
 named!(fixnum_<&[u8], (Option<&[u8]>, &[u8])>,
-  tuple!(
-      opt!(take_while!(is_space)),
-      take_while!(is_digit)
-  )
+       tuple!(
+           opt!(take_while!(is_space)),
+           take_while!(is_digit)
+       )
 );
 
 named!(symbol_<&[u8], (Option<&[u8]>, &[u8])>,
-  tuple!(
-      opt!(take_while!(is_space)),
-      take_while!(is_alphanumeric)
-  )
+       tuple!(
+           opt!(take_while!(is_space)),
+           take_while!(is_alphanumeric)
+       )
 );
 
 named!(string_<&[u8], (Option<&[u8]>, &[u8], &[u8], &[u8])>,
-  tuple!(
-      opt!(take_while!(is_space)),
-      tag!("\""),
-      take_until!("\""),
-      tag!("\"")
-  )
+       tuple!(
+           opt!(take_while!(is_space)),
+           tag!("\""),
+           take_until!("\""),
+           tag!("\"")
+       )
 );
 
-named!(cons_<&[u8], (Option<&[u8]>, &[u8], Type, &[u8])>,
+named!(cons_<&[u8], (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8])>,
   tuple!(
       opt!(take_while!(is_space)),
       tag!("("),
       read_,
+      opt!(take_while!(is_space)),
       tag!(")")
   )
 );
@@ -196,6 +187,14 @@ mod tests {
                         let _st = _string(str);
                         true
                     },
+                Err(_) => false
+            })}
+
+    #[test]
+    fn test_cons_() {
+        assert!(
+            match cons_(b" ( 123 ) ") {
+                Ok((_, (_, _, type_, _, _))) => type_.type_fixnum(),
                 Err(_) => false
             })}
 }

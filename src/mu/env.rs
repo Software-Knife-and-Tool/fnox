@@ -7,7 +7,6 @@ use crate::mu::r#type::NIL;
 use crate::mu::read::_read;
 use crate::mu::print::_print;
 // use crate::mu::r#type::entag;
-// use crate::mu::heap::heap;
 // use crate::mu::heap::Heap;
 
 use crate::mu::fixnum::_fixnum_add;
