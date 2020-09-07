@@ -18,22 +18,21 @@ use crate::mu::string::_string;
 use crate::mu::symbol::_symbol;
 
 use nom::{alt, complete, eof, map_res, named, opt};
-use nom::{tag, take,take_until, take_while, tuple};
+use nom::{tag, take, take_until, take_while, take_while1, tuple};
 
-use nom::bytes::complete::{take, take_while};
 use nom::character::{is_alphabetic, is_alphanumeric, is_digit, is_space};
 
 named!(fixnum_<&[u8], (Option<&[u8]>, &[u8])>,
        tuple!(
            opt!(take_while!(is_space)),
-           take_while!(is_digit)
+           take_while1!(is_digit)
        )
 );
 
 named!(symbol_<&[u8], (Option<&[u8]>, &[u8])>,
        tuple!(
            opt!(take_while!(is_space)),
-           take_while!(is_alphanumeric)
+           take_while1!(is_alphanumeric)
        )
 );
 
@@ -96,16 +95,14 @@ named!(read_<Type>, alt!(
                       Err(_) => NIL
                   }
     } |
-     */
     
-    /*
     string_ => { |ss: (Option<&[u8]>, &[u8], &[u8], &[u8])|
                   match from_utf8(ss.2) {
                       Ok(str) => _string(str.as_bytes()),
                       Err(_) => NIL
                   }
     } |
-     */
+*/
 
     nil_ => { |_fs: (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])| {
         println!("nil");
