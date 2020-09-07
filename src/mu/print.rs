@@ -3,15 +3,22 @@
 
 // use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
-// use crate::mu::r#type::NIL;
+use crate::mu::r#type::SysClass;
+use crate::mu::r#type::NIL;
 use crate::mu::fixnum::*;
 // use crate::mu::r#type::entag;
 
 pub fn _print(_src: Type) {
-
-    match _Fixnum::_from_type(&_src) {
-        Some(fx) => fx._print(),
-        None => println!("isn't a fixnum")
+    match _src.type_of() {
+        SysClass::Symbol => println!("is a symbol"),
+        SysClass::Fixnum =>
+            match _Fixnum::_from_type(&_src) {
+                Some(fx) => fx._print(),
+                None => println!("print: isn't a fixnum")
+            },
+        SysClass::Function => println!("is a function"),
+        SysClass::Cons => println!("is a cons"),
+        _ => println!("undecoded")
     }
 }
 
