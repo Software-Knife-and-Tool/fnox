@@ -35,8 +35,10 @@ pub enum TagClass {
 
 #[derive(Debug)]
 pub enum SysClass {
+    Char,
     Cons,
     Fixnum,
+    Float,
     Function,
     String,
     Symbol,
@@ -99,14 +101,32 @@ impl Type {
     }
 
     pub fn type_of(&self) -> SysClass {
+        println!("type-of {:x?} tag: {}", self.bits, self.tag() as u64);
         match self.tag() {
-            Tag::Address => SysClass::T, 
+            Tag::Address => SysClass::T,
             Tag::Cons => SysClass::Cons,
             Tag::Efixnum | Tag::Ofixnum => SysClass::Fixnum,
-            Tag::Extend => SysClass::T,
+            Tag::Extend => SysClass::String,
             Tag::Function => SysClass::Function,
-            Tag::Immediate => SysClass::T,
+            Tag::Immediate =>
+                match Type::immediate_class(self) {
+                    ImmediateClass::Char => SysClass::Char,
+                    ImmediateClass::String => SysClass::String,
+                    ImmediateClass::Keyword => SysClass::Symbol,
+                    ImmediateClass::Float => SysClass::Float
+                },
             Tag::Symbol => SysClass::Symbol
+        }
+    }
+
+    pub fn type_char(&self) -> bool {
+        match self.tag() {
+            Tag::Immediate =>
+                match Type::immediate_class(self) {
+                    ImmediateClass::Char => true,
+                    _ => false
+                },
+            _ => false
         }
     }
     
@@ -115,12 +135,13 @@ impl Type {
     }
 
     pub fn immediate_size(&self) -> u64 {
-        self.bits >> 5
+        (self.bits >> 5) & 7
     }
     
     pub fn immediate_class(&self) -> ImmediateClass {
         let tag: std::option::Option<ImmediateClass> =
-            num::FromPrimitive::from_u64(self.bits >> 3);
+            num::FromPrimitive::from_u64((self.bits >> 3) & 3);
+        println!("immediate_class: {}", (self.bits >> 3) & 3);
         match tag {
             Some(_) => tag.unwrap(),
             None => panic!("Unknown tag")

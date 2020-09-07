@@ -14,10 +14,14 @@ pub fn _print(_src: Type) {
         SysClass::Fixnum =>
             match _Fixnum::_from_type(&_src) {
                 Some(fx) => fx._print(),
-                None => println!("print: isn't a fixnum")
+                None => println!("isn't a fixnum")
             },
+        SysClass::String => println!("is a string"),
+        SysClass::Char =>
+            println!("#\\{}", _src.immediate_size()),
         SysClass::Function => println!("is a function"),
         SysClass::Cons => println!("is a cons"),
+        SysClass::T => println!("is a T"),
         _ => println!("undecoded")
     }
 }
