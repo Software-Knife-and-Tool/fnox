@@ -17,15 +17,8 @@ use crate::mu::symbol::_symbol;
 use nom::{alt, complete, eof, map_res, named, opt};
 use nom::{tag, take,take_until, take_while, tuple};
 
-use nom::bytes::complete::take;
-use nom::bytes::complete::take_while;
-
-use nom::character::is_alphabetic;
-use nom::character::is_alphanumeric;
-use nom::character::is_digit;
-use nom::character::is_space;
-
-use nom::character::*;
+use nom::bytes::complete::{take, take_while};
+use nom::character::{is_alphabetic, is_alphanumeric, is_digit, is_space};
 
 named!(fixnum_<&[u8], (Option<&[u8]>, &[u8])>,
        tuple!(
@@ -51,22 +44,22 @@ named!(string_<&[u8], (Option<&[u8]>, &[u8], &[u8], &[u8])>,
 );
 
 named!(cons_<&[u8], (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8])>,
-  tuple!(
-      opt!(take_while!(is_space)),
-      tag!("("),
-      read_,
-      opt!(take_while!(is_space)),
-      tag!(")")
-  )
+       tuple!(
+           opt!(take_while!(is_space)),
+           tag!("("),
+           read_,
+           opt!(take_while!(is_space)),
+           tag!(")")
+       )
 );
 
 named!(nil_<&[u8], (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])>,
-  tuple!(
-      opt!(take_while!(is_space)),
-      tag!("("),
-      opt!(take_while!(is_space)),
-      tag!(")")
-  )
+       tuple!(
+           opt!(take_while!(is_space)),
+           tag!("("),
+           opt!(take_while!(is_space)),
+           tag!(")")
+       )
 );
 
 named!(read_<Type>, alt!(
@@ -83,27 +76,20 @@ named!(read_<Type>, alt!(
                       Err(_) => NIL
                   }
     } |
-    
+
+*/
     string_ => { |ss: (Option<&[u8]>, &[u8], &[u8], &[u8])|
                   match from_utf8(ss.2) {
-                      Ok(str) =>
-                      {
-                          let st = _string(str.as_bytes());
-                          println!("read string: {:?}", st);
-                          st
-                      },
+                      Ok(str) => _string(str.as_bytes()),
                       Err(_) => NIL
                   }
     } |
-    */
 
     nil_ => { |_fs: (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])|
-                println!("read: NIL");
                 NIL
     } |
 
     cons_ => { |cs: (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8])|
-                println!("read cons:");
                 Type::cons(cs.2, NIL)
     } |
 
@@ -117,15 +103,9 @@ named!(read_<Type>, alt!(
                                   println!("read fixnum: {:?}", fx);
                                   fx
                               },
-                              Err(_) =>
-                              {
-                                  NIL
-                              }
+                              Err(_) => NIL
                           },
-                      Err(_) =>
-                      {
-                          NIL
-                      }
+                      Err(_) => NIL
                   }
     }
 ));
