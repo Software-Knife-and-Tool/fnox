@@ -60,32 +60,53 @@ named!(cons_<&[u8], (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8])>,
   )
 );
 
+named!(nil_<&[u8], (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])>,
+  tuple!(
+      opt!(take_while!(is_space)),
+      tag!("("),
+      opt!(take_while!(is_space)),
+      tag!(")")
+  )
+);
+
 named!(read_<Type>, alt!(
 
     /*
-    symbol => { |ss: &[u8]|
-                 match from_utf8(ss) {
-                     Ok(str) =>
-                     {
-                         let sym = _symbol(_string(str), NIL);
-                         println!("read symbol: {:?}", sym);
-                         sym
-                     },
-                     Err(_) => NIL
-                 }} |
+    symbol_ => { |ss: (Option<&[u8]>, &[u8])|
+                  match from_utf8(ss.1) {
+                      Ok(str) =>
+                      {
+                          let sym = _symbol(_string(str.as_bytes()), NIL);
+                          println!("read symbol: {:?}", sym);
+                          sym
+                      },
+                      Err(_) => NIL
+                  }
+    } |
     
-    string => { |ss: &[u8]|
-                 match from_utf8(ss) {
-                     Ok(str) =>
-                     {
-                         let st = _string(str);
-                         println!("read string: {:?}", st);
-                         st
-                     },
-                     Err(_) => NIL
-                 }} |
-     */
-    
+    string_ => { |ss: (Option<&[u8]>, &[u8], &[u8], &[u8])|
+                  match from_utf8(ss.2) {
+                      Ok(str) =>
+                      {
+                          let st = _string(str.as_bytes());
+                          println!("read string: {:?}", st);
+                          st
+                      },
+                      Err(_) => NIL
+                  }
+    } |
+    */
+
+    nil_ => { |_fs: (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])|
+                println!("read: NIL");
+                NIL
+    } |
+
+    cons_ => { |cs: (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8])|
+                println!("read cons:");
+                Type::cons(cs.2, NIL)
+    } |
+
     fixnum_ => { |fs: (Option<&[u8]>, &[u8])|
                   match from_utf8(fs.1) {
                       Ok(str) =>
@@ -195,6 +216,14 @@ mod tests {
         assert!(
             match cons_(b" ( 123 ) ") {
                 Ok((_, (_, _, type_, _, _))) => type_.type_fixnum(),
+                Err(_) => false
+            })}
+
+    #[test]
+    fn test_nil_() {
+        assert!(
+            match nil_(b" ( ) ") {
+                Ok((_, (_, _, _, _))) => true,
                 Err(_) => false
             })}
 }
