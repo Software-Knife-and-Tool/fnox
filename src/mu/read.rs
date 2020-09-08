@@ -82,9 +82,8 @@ named!(read_<Type>, alt!(
     }
     } |
 
-
     /*
-    symbol_ => { |ss: (Option<&[u8]>, &[u8])|
+    symbol_ => { |ss: (Option<&[u8]>, &'static [u8])| {
                   match from_utf8(ss.1) {
                       Ok(str) =>
                       {
@@ -94,16 +93,23 @@ named!(read_<Type>, alt!(
                       },
                       Err(_) => NIL
                   }
+    }
     } |
     
-    string_ => { |ss: (Option<&[u8]>, &[u8], &[u8], &[u8])|
+    string_ => { |ss: (Option<&[u8]>, &[u8], &[u8], &[u8])| {
+    //             let sst = ss.2;
+
+  //                _string(sst)
+
                   match from_utf8(ss.2) {
                       Ok(str) => _string(str.as_bytes()),
                       Err(_) => NIL
                   }
+    }
     } |
-*/
 
+    */
+    
     nil_ => { |_fs: (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])| {
         println!("nil");
         NIL

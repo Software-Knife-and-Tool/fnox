@@ -1,6 +1,7 @@
 /* mu/print.rs */
 // use std::io;
 
+use std::char::from_u32;
 // use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::SysClass;
@@ -18,7 +19,8 @@ pub fn _print(_src: Type) {
             },
         SysClass::String => println!("is a string"),
         SysClass::Char =>
-            println!("#\\{}", _src.immediate_size()),
+            println!("#\\{}",
+                     from_u32(_src.immediate_data() as u32).unwrap()),
         SysClass::Function => println!("is a function"),
         SysClass::Cons => println!("is a cons"),
         SysClass::T => println!("is a T"),
