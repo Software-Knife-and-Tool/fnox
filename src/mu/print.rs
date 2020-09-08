@@ -18,7 +18,7 @@ pub fn _print(_src: Type) {
             },
         SysClass::String => println!("is a string"),
         SysClass::Char =>
-            println!("#\\{}", _src.immediate_size()),
+            println!("#\\{}", std::char::from_u32(_src.immediate_data() as u32).unwrap()),
         SysClass::Function => println!("is a function"),
         SysClass::Cons => println!("is a cons"),
         SysClass::T => println!("is a T"),
