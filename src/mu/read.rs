@@ -82,21 +82,9 @@ named!(read_<Type>, alt!(
     }
     } |
 
-    /*
-    symbol_ => { |ss: (Option<&[u8]>, &'static [u8])| {
-                  match from_utf8(ss.1) {
-                      Ok(str) =>
-                      {
-                          let sym = _symbol(_string(str.as_bytes()), NIL);
-                          println!("read symbol: {:?}", sym);
-                          sym
-                      },
-                      Err(_) => NIL
-                  }
-    }
+    symbol_ => { |ss: (Option<&[u8]>, &[u8])|
+                  _symbol(_string(ss.1), NIL)
     } |
-
-     */
     
     string_ => { |ss: (Option<&[u8]>, &[u8], &[u8], &[u8])| 
                   _string(ss.2)
