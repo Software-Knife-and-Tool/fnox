@@ -74,12 +74,10 @@ named!(nil_<&[u8], (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])>,
 
 named!(read_<Type>, alt!(
 
-    char_ => { |cs: (Option<&[u8]>, &[u8], &[u8])| {
-        println!("char");
-        _immediate(cs.2[0] as u64,
-                   1,
-                   ImmediateClass::Char)
-    }
+    char_ => { |cs: (Option<&[u8]>, &[u8], &[u8])|
+                _immediate(cs.2[0] as u64,
+                           1,
+                           ImmediateClass::Char)
     } |
 
     symbol_ => { |ss: (Option<&[u8]>, &[u8])|
@@ -90,34 +88,23 @@ named!(read_<Type>, alt!(
                   _string(ss.2)
     } |
     
-    nil_ => { |_fs: (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])| {
-        println!("nil");
-        NIL
-    }
+    nil_ => { |_fs: (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])|
+                NIL
     } |
 
-    cons_ => { |cs: (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8])| {
-        println!("cons");
-        cs.2.cons(NIL)
-    }
+    cons_ => { |cs: (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8])|
+                cs.2.cons(NIL)
     } |
 
-    fixnum_ => { |fs: (Option<&[u8]>, &[u8])| {
-        println!("fixnum");
-        match from_utf8(fs.1) {
-            Ok(str) =>
-                match i64::from_str(&str) {
-                    Ok(fix) =>
-                    {
-                        let fx = _fixnum(fix);
-                        println!("read fixnum: {:?}", fx);
-                        fx
-                    },
-                    Err(_) => NIL
-                },
-            Err(_) => NIL
-        }
-    }
+    fixnum_ => { |fs: (Option<&[u8]>, &[u8])|
+                  match from_utf8(fs.1) {
+                      Ok(str) =>
+                          match i64::from_str(&str) {
+                              Ok(fix) => _fixnum(fix),
+                              Err(_) => NIL
+                          },
+                      Err(_) => NIL
+                  }
     }
 
 ));
