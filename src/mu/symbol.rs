@@ -1,11 +1,11 @@
 /* mu/symbol.rs */
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
-use crate::mu::r#type::NIL;
+
 use crate::mu::r#type::entag;
 use crate::mu::r#type::detag;
 
-use crate::mu::string::_string;
+
 
 #[derive(Debug)]
 pub struct _Symbol {
@@ -81,6 +81,8 @@ impl Type {
 
 #[cfg(test)]
 mod tests {
+    use crate::mu::r#type::NIL;
+    use crate::mu::string::_string;
     use super::*;
 
     #[test]

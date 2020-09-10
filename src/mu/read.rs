@@ -1,9 +1,6 @@
 /* mu/read.rs */
 use std::io::{self, BufRead};
 
-// use hex::FromHex;
-
-// use std::str;
 use std::str::FromStr;
 use std::str::from_utf8;
 
@@ -11,16 +8,16 @@ use crate::mu::r#type::_immediate;
 use crate::mu::r#type::ImmediateClass;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
-use crate::mu::r#type::_T;
+// use crate::mu::r#type::_T;
 
 use crate::mu::fixnum::_fixnum;
 use crate::mu::string::_string;
 use crate::mu::symbol::_symbol;
 
-use nom::{alt, complete, eof, map_res, many1, named, opt};
+use nom::{alt, many1, named, opt};
 use nom::{tag, take, take_until, take_while, take_while1, tuple};
 
-use nom::character::{is_alphabetic, is_alphanumeric, is_digit, is_space};
+use nom::character::{is_alphanumeric, is_digit, is_space};
 
 named!(fixnum_<&[u8], (Option<&[u8]>, &[u8])>,
        tuple!(
@@ -240,7 +237,15 @@ mod tests {
     fn test_dotted() {
         assert!(
             match dotted_(b" ( 123 . 456 ) ") {
-                Ok((_, (_, _, car, _, _, _, cdr, _, _))) => car.type_fixnum(),
+                Ok((_, (_, _, _car, _, _, _, _cdr, _, _))) => _car.type_fixnum(),
+                Err(_) => false
+            })}
+
+    #[test]
+    fn test_list() {
+        assert!(
+            match list_(b" ( 1234 5678 ) ") {
+                Ok((_, (_, _, _vec, _, _))) => true,
                 Err(_) => false
             })}
 
