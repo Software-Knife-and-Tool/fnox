@@ -52,7 +52,18 @@ impl Type {
             _ => false
         }
     }
-    
+
+    pub fn type_keyword(&self) -> bool {
+        match self.tag() {
+            Tag::Immediate =>
+                match self.immediate_class() {
+                    ImmediateClass::Keyword => true,
+                    _ => false
+                },
+            _ => false
+        }
+    }
+
     pub fn from_symbol(_sym: &_Symbol) -> Type {
         unsafe {
             let sym_addr: u64 = std::mem::transmute(_sym);
@@ -85,17 +96,6 @@ impl Type {
         }
     }
 
-    pub fn type_keyword(self) -> bool {
-        match self.tag() {
-            Tag::Immediate =>
-                match self.immediate_class() {
-                    ImmediateClass::Keyword => true,
-                    _ => false
-                }
-            _ => false
-        }
-    }
-
 }
 
 #[cfg(test)]
@@ -112,6 +112,11 @@ mod tests {
 
     #[test]
     fn test_keyword() {
-        assert!(_keyword(_string(b"whoa")).type_keyword());
+        assert!(
+            match _keyword(_string(b"whoa")) {
+                Some(kwd) => kwd.type_keyword(),
+                None => false
+            }
+            );
     }
 }

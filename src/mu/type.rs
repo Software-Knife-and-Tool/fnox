@@ -101,7 +101,7 @@ impl Type {
     }
 
     pub fn type_of(&self) -> SysClass {
-        println!("type-of {:x?} tag: {}", self.bits, self.tag() as u64);
+        // println!("type-of {:x?} tag: {}", self.bits, self.tag() as u64);
         match self.tag() {
             Tag::Address => SysClass::T,
             Tag::Cons => SysClass::Cons,
@@ -141,7 +141,8 @@ impl Type {
     pub fn immediate_class(&self) -> ImmediateClass {
         let tag: std::option::Option<ImmediateClass> =
             num::FromPrimitive::from_u64((self.bits >> 3) & 3);
-        println!("immediate_class: {}", (self.bits >> 3) & 3);
+        // println!("immediate_class: {}", (self.bits >> 3) & 3);
+
         match tag {
             Some(_) => tag.unwrap(),
             None => panic!("Unknown tag")
