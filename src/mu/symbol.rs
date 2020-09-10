@@ -49,7 +49,7 @@ impl Type {
     pub fn type_symbol(&self) -> bool {
         match self.tag() {
             Tag::Symbol => true,
-            _ => false
+            _ => self.type_keyword()
         }
     }
 
