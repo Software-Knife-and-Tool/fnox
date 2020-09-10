@@ -1,9 +1,6 @@
 /* mu/read.rs */
 use std::io::{self, BufRead};
 
-// use hex::FromHex;
-
-// use std::str;
 use std::str::FromStr;
 use std::str::from_utf8;
 
@@ -11,16 +8,16 @@ use crate::mu::r#type::_immediate;
 use crate::mu::r#type::ImmediateClass;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
-use crate::mu::r#type::_T;
+// use crate::mu::r#type::_T;
 
 use crate::mu::fixnum::_fixnum;
 use crate::mu::string::_string;
 use crate::mu::symbol::_symbol;
 
-use nom::{alt, complete, eof, map_res, named, opt};
+use nom::{alt, many1, named, opt};
 use nom::{tag, take, take_until, take_while, take_while1, tuple};
 
-use nom::character::{is_alphabetic, is_alphanumeric, is_digit, is_space};
+use nom::character::{is_alphanumeric, is_digit, is_space};
 
 named!(fixnum_<&[u8], (Option<&[u8]>, &[u8])>,
        tuple!(
@@ -63,6 +60,30 @@ named!(cons_<&[u8], (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8])>,
        )
 );
 
+named!(dotted_<&[u8], (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])>,
+       tuple!(
+           opt!(take_while!(is_space)),
+           tag!("("),
+           read_,
+           opt!(take_while!(is_space)),
+           tag!("."),
+           opt!(take_while!(is_space)),
+           read_,
+           opt!(take_while!(is_space)),
+           tag!(")")
+       )
+);
+
+named!(list_<&[u8], (Option<&[u8]>, &[u8], Vec<Type>, Option<&[u8]>, &[u8])>,
+       tuple!(
+           opt!(take_while!(is_space)),
+           tag!("("),
+           many1!(read_),
+           opt!(take_while!(is_space)),
+           tag!(")")
+       )
+);
+
 named!(nil_<&[u8], (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])>,
        tuple!(
            opt!(take_while!(is_space)),
@@ -80,6 +101,18 @@ named!(read_<Type>, alt!(
                            ImmediateClass::Char)
     } |
 
+    /* distinguish fixnums from symbols */
+    fixnum_ => { |fs: (Option<&[u8]>, &[u8])|
+                  match from_utf8(fs.1) {
+                      Ok(str) =>
+                          match i64::from_str(&str) {
+                              Ok(fix) => _fixnum(fix),
+                              Err(_) => NIL
+                          },
+                      Err(_) => NIL
+                  }
+    } |
+    
     symbol_ => { |ss: (Option<&[u8]>, &[u8])|
                   _symbol(_string(ss.1), NIL)
     } |
@@ -96,17 +129,14 @@ named!(read_<Type>, alt!(
                 cs.2.cons(NIL)
     } |
 
-    fixnum_ => { |fs: (Option<&[u8]>, &[u8])|
-                  match from_utf8(fs.1) {
-                      Ok(str) =>
-                          match i64::from_str(&str) {
-                              Ok(fix) => _fixnum(fix),
-                              Err(_) => NIL
-                          },
-                      Err(_) => NIL
-                  }
+    dotted_ => { |ds: (Option<&[u8]>, &[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])|
+                   ds.2.cons(ds.6)
+    } |
+    
+    list_ => { |_ls: (Option<&[u8]>, &[u8], Vec<Type>, Option<&[u8]>, &[u8])|
+                NIL
     }
-
+    
 ));
 
 // pub fn _read(_src: Type) -> Type {
@@ -198,8 +228,24 @@ mod tests {
     #[test]
     fn test_cons() {
         assert!(
-            match cons_(b" ( 123 ) ") {
+            match cons_(b" ( 1234 ) ") {
                 Ok((_, (_, _, type_, _, _))) => type_.type_fixnum(),
+                Err(_) => false
+            })}
+
+    #[test]
+    fn test_dotted() {
+        assert!(
+            match dotted_(b" ( 123 . 456 ) ") {
+                Ok((_, (_, _, _car, _, _, _, _cdr, _, _))) => _car.type_fixnum(),
+                Err(_) => false
+            })}
+
+    #[test]
+    fn test_list() {
+        assert!(
+            match list_(b" ( 1234 5678 ) ") {
+                Ok((_, (_, _, _vec, _, _))) => true,
                 Err(_) => false
             })}
 

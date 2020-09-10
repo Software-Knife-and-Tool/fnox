@@ -5,7 +5,7 @@ use std::char::from_u32;
 // use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::SysClass;
-use crate::mu::r#type::NIL;
+// use crate::mu::r#type::NIL;
 use crate::mu::fixnum::*;
 // use crate::mu::r#type::entag;
 

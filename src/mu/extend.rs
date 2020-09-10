@@ -2,7 +2,7 @@
 use crate::mu::r#type::SysClass;
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
-use crate::mu::string::_string;
+// use crate::mu::string::_string;
 
 #[derive(Debug)]
 enum Extended {

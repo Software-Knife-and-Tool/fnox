@@ -1,7 +1,7 @@
 use mu::env::env;
 
 fn main() {
-    println!("lispox 0.0.2");
+    println!("lispox 0.0.3");
 
     let e = env();
 
