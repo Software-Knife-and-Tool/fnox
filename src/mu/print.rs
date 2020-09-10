@@ -11,7 +11,12 @@ use crate::mu::fixnum::*;
 
 pub fn _print(_src: Type) {
     match _src.type_of() {
-        SysClass::Symbol => println!("is a symbol"),
+        SysClass::Symbol =>
+            if _src.type_keyword() {
+                println!(":{}", "wahoo");
+            } else {
+                println!("is a symbol")
+            },
         SysClass::Fixnum =>
             match _Fixnum::_from_type(&_src) {
                 Some(fx) => fx._print(),
