@@ -5,7 +5,8 @@ use crate::mu::r#type::Type;
 use crate::mu::r#type::entag;
 use crate::mu::r#type::detag;
 
-
+use crate::mu::r#type::_immediate;
+use crate::mu::r#type::ImmediateClass;
 
 #[derive(Debug)]
 pub struct _Symbol {
@@ -23,18 +24,24 @@ pub fn _symbol(_name: Type, _value: Type) -> Type {
     Type::from_symbol(&sym)
 }
 
-/*
 pub fn _keyword(_name: Type) -> Option<Type> {
 
-    if (name.type_string()) {
-        let len =  _name._str_from_string().len();
-        let immed = _immediate(data: u64, len: u8, ImmediateClass::Keyword);
+    if _name.type_string() {
+        let str = _name._string_value();
+        let len : u8 = str.len() as u8;
+        let mut data : u64 = 0;
 
-        Some(_Keyword { immed })
-    } else
+        for ch in str.chars() {
+            data = (data << 8) + ch as u64;
+        }
+        
+        let immed = _immediate(data, len, ImmediateClass::Keyword);
+
+        Some(immed)
+    } else {
         None
+    }
 }
-*/
 
 impl _Symbol { }
 
@@ -77,16 +84,34 @@ impl Type {
             None
         }
     }
+
+    pub fn type_keyword(self) -> bool {
+        match self.tag() {
+            Tag::Immediate =>
+                match self.immediate_class() {
+                    ImmediateClass::Keyword => true,
+                    _ => false
+                }
+            _ => false
+        }
+    }
+
 }
 
 #[cfg(test)]
 mod tests {
     use crate::mu::r#type::NIL;
     use crate::mu::string::_string;
+    
     use super::*;
 
     #[test]
     fn test_symbol() {
         assert!(_symbol(_string(b"whoa"), NIL).type_symbol());
+    }
+
+    #[test]
+    fn test_keyword() {
+        assert!(_keyword(_string(b"whoa")).type_keyword());
     }
 }

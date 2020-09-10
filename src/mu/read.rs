@@ -13,6 +13,7 @@ use crate::mu::r#type::NIL;
 use crate::mu::fixnum::_fixnum;
 use crate::mu::string::_string;
 use crate::mu::symbol::_symbol;
+use crate::mu::symbol::_keyword;
 
 use nom::{alt, many1, named, opt};
 use nom::{tag, take, take_until, take_while, take_while1, tuple};
@@ -29,6 +30,14 @@ named!(fixnum_<&[u8], (Option<&[u8]>, &[u8])>,
 named!(symbol_<&[u8], (Option<&[u8]>, &[u8])>,
        tuple!(
            opt!(take_while!(is_space)),
+           take_while1!(is_alphanumeric)
+       )
+);
+
+named!(keyword_<&[u8], (Option<&[u8]>, &[u8], &[u8])>,
+       tuple!(
+           opt!(take_while!(is_space)),
+           tag!(":"),
            take_while1!(is_alphanumeric)
        )
 );
@@ -112,11 +121,18 @@ named!(read_<Type>, alt!(
                       Err(_) => NIL
                   }
     } |
-    
+
+    keyword_ => { |ks: (Option<&[u8]>, &[u8], &[u8])|
+                   match _keyword(_string(ks.2)) {
+                       Some(type_) => type_,
+                       None => NIL
+                   }
+    } |
+
     symbol_ => { |ss: (Option<&[u8]>, &[u8])|
                   _symbol(_string(ss.1), NIL)
     } |
-    
+           
     string_ => { |ss: (Option<&[u8]>, &[u8], &[u8], &[u8])| 
                   _string(ss.2)
     } |
@@ -200,6 +216,18 @@ mod tests {
                 Ok((_, (_, str))) =>
                     {
                         let _sy = _symbol(_string(str), NIL);
+                        true
+                    },
+                Err(_) => false
+            })}
+
+    #[test]
+    fn test_keyword() {
+        assert!(
+            match keyword_(b" :abc123 ") {
+                Ok((_, (_, _, str))) =>
+                    {
+                        let _kjw = _keyword(_string(str));
                         true
                     },
                 Err(_) => false

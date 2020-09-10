@@ -154,7 +154,7 @@ impl Type {
             _ => false
         }
     }
-  
+
     pub fn eq(&self, ptr: Type) -> bool {
         self.bits == ptr.bits
     }
