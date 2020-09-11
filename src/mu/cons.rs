@@ -34,7 +34,7 @@ impl Type {
         Type::from_cons(&_Cons {_car: self, _cdr: cdr })
     }
 
-    pub fn cons_from_type(self) -> &'static _Cons {
+    pub fn cons_from_type(&self) -> &'static _Cons {
         let cons: &_Cons = unsafe { std::mem::transmute(detag(self)) };
         cons
     }

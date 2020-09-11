@@ -10,8 +10,8 @@ use crate::mu::r#type::ImmediateClass;
 
 #[derive(Debug)]
 pub struct _Symbol {
-    _name: Type,
-    _value: Type,
+    pub _name: Type,
+    pub _value: Type,
 }
 
 pub struct _Keyword {
@@ -27,11 +27,12 @@ pub fn _symbol(_name: Type, _value: Type) -> Type {
 pub fn _keyword(_name: Type) -> Option<Type> {
 
     if _name.type_string() {
-        let str = _name._string_value();
-        let len : u8 = str.len() as u8;
+        let str = &Type::string_from_type(&_name);
+        let value = &str._value;
+        let len : u8 = value.len() as u8;
         let mut data : u64 = 0;
 
-        for ch in str.chars() {
+        for ch in value.chars() {
             data = (data << 8) + ch as u64;
         }
         
@@ -43,9 +44,8 @@ pub fn _keyword(_name: Type) -> Option<Type> {
     }
 }
 
-impl _Symbol { }
-
 impl Type {
+
     pub fn type_symbol(&self) -> bool {
         match self.tag() {
             Tag::Symbol => true,
@@ -71,29 +71,9 @@ impl Type {
         }        
     }
     
-    pub fn symbol_from_type(self) -> &'static _Symbol {
+    pub fn symbol_from_type(&self) -> &'static _Symbol {
         let sym: &_Symbol = unsafe { std::mem::transmute(detag(self)) };
         sym
-    }
-
-    pub fn _symbol_name(self) -> Option<&'static Type> {
-        if Type::type_symbol(&self) {
-            let _sym = self.symbol_from_type();
-
-            Some(&_sym._name)
-        } else {
-            None
-        }
-    }
-    
-    pub fn _symbol_value(self) -> Option<&'static Type> {
-        if Type::type_symbol(&self) {
-            let _sym = self.symbol_from_type();
-
-            Some(&_sym._value)
-        } else {
-            None
-        }
     }
 
 }

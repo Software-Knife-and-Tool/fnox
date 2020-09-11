@@ -7,7 +7,7 @@ use crate::mu::r#type::NIL;
 
 #[derive(Debug)]
 pub struct _String {
-    _value: &'static str
+    pub _value: str
 }
 
 pub fn _string(_value: &[u8]) -> Type {
@@ -19,16 +19,6 @@ pub fn _string(_value: &[u8]) -> Type {
 
 impl Type {
     
-    pub fn _string_value(self) -> &'static str {
-        if Type::type_string(&self) {
-            let str: &'static _String = unsafe { std::mem::transmute(detag(self)) };
-            str._value
-        } else {
-            assert!(false);
-            ""
-        }
-    }
-
     pub fn type_string(&self) -> bool {
         match self.tag() {
             Tag::Extend => true,
@@ -43,13 +33,9 @@ impl Type {
         }
     }
 
-    pub fn string_from_type(self) -> Option<&'static _String> {
-        if Type::type_string(&self) {
-            let str: &'static _String = unsafe { std::mem::transmute(detag(self)) };
-            Some(str)
-        } else {
-            None
-        }
+    pub fn string_from_type(&self) -> &'static _String {
+        let str: &_String = unsafe { std::mem::transmute(detag(self)) };
+        str
     }
 }
 

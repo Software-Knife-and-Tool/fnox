@@ -73,7 +73,7 @@ pub fn entag(base: u64, tag: Tag) -> Type {
     Type { 0: base | tag as u64 }
 }
 
-pub fn detag(_type: Type) -> u64 {
+pub fn detag(_type: &Type) -> u64 {
     (_type.0 >> 3) as u64
 }
 
