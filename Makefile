@@ -1,13 +1,19 @@
 #
 #
 #
+CMD = ./target/debug/lispox
 
 all: build run
 
 build:
 	@cargo build
-run:
+
+debug: 
 	@cargo run
+
+run:
+	@$(CMD)
+
 tests:
 	@cargo test
 
