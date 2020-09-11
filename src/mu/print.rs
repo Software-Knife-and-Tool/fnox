@@ -15,7 +15,10 @@ pub fn _print(_src: Type) {
             if _src.type_keyword() {
                 println!(":{}", "wahoo");
             } else {
-                println!("is a symbol")
+                match _src._symbol_name() {
+                    Some(str) => println!("{}", str._string_value()),
+                    None => ()
+                }
             },
         SysClass::Fixnum =>
             match _Fixnum::_from_type(&_src) {
