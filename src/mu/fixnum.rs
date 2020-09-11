@@ -33,9 +33,9 @@ impl _Fixnum {
         _Fixnum { integer: _integer as i64 }
     }
 
-    pub fn _from_type(_type: &Type) -> Option<_Fixnum> {
-        if Type::type_fixnum(_type) {
-            Some(_Fixnum { integer: (_type.bits >> 2) as i64 })
+    pub fn _from_type(fx: &Type) -> Option<_Fixnum> {
+        if Type::type_fixnum(fx) {
+            Some(_Fixnum { integer: (fx.as_u64() >> 2) as i64 })
         } else {
             None
         }
@@ -43,7 +43,7 @@ impl _Fixnum {
 
     pub fn _add(&self, fx: &Type) -> Option<Type> {
         if Type::type_fixnum(fx) {
-            Some(_fixnum(self.integer + (fx.bits >> 2) as i64))
+            Some(_fixnum(self.integer + (fx.as_u64() >> 2) as i64))
         } else {
             None
         }
@@ -61,7 +61,7 @@ impl Type {
     
     pub fn i64_from_fixnum(&self) -> Option<i64> {
         if Type::type_fixnum(self) {
-            Some((self.bits >> 2) as i64)
+            Some((self.as_u64() >> 2) as i64)
         } else {
             None
         }

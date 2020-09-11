@@ -16,7 +16,7 @@ pub fn _print(_src: Type) {
                 println!(":{}", "wahoo");
             } else {
                 match _src._symbol_name() {
-                    Some(str) => println!("{}", str._string_value()),
+                    Some(str) => println!("{}", "string!" /* str._string_value() */),
                     None => ()
                 }
             },
