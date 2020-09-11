@@ -17,13 +17,18 @@ pub fn _string(_value: &[u8]) -> Type {
     }
 }
 
-impl _String {
-    pub fn _string_value(self) -> &'static str {
-        self._value
-    }
-}
-
 impl Type {
+    
+    pub fn _string_value(self) -> &'static str {
+        if Type::type_string(&self) {
+            let str: &'static _String = unsafe { std::mem::transmute(detag(self)) };
+            str._value
+        } else {
+            assert!(false);
+            ""
+        }
+    }
+
     pub fn type_string(&self) -> bool {
         match self.tag() {
             Tag::Extend => true,
