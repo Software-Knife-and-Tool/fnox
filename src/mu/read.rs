@@ -123,10 +123,7 @@ named!(read_<Type>, alt!(
     } |
 
     keyword_ => { |ks: (Option<&[u8]>, &[u8], &[u8])|
-                   match _keyword(_string(ks.2)) {
-                       Some(type_) => type_,
-                       None => NIL
-                   }
+                   _keyword(_string(ks.2)) 
     } |
 
     symbol_ => { |ss: (Option<&[u8]>, &[u8])|

@@ -6,9 +6,7 @@ use crate::mu::function::_Function;
 use crate::mu::symbol::_Symbol;
 
 #[derive(Debug)]
-pub struct Type {
-    pub bits: u64
-}
+pub struct Type(u64);
 
 #[derive(FromPrimitive)]
 pub enum Tag {
@@ -56,34 +54,32 @@ pub enum ImmediateClass {
 const _IMMEDIATE_STR_MAX: u64 = 7;
 
 pub const _T: Type = Type {
-    bits: (('t' as u64) << 8)
+    0: (('t' as u64) << 8)
         | (1 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
         | (Tag::Immediate as u64)
 };
 
 pub const NIL: Type = Type {
-    bits: (((('l' as u64) << 16)
-            | (('i' as u64) << 8)
-            | (('n' as u64))) << 8)
+    0: (((('l' as u64) << 16)
+         | (('i' as u64) << 8)
+         | (('n' as u64))) << 8)
         | (3 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
         | (Tag::Immediate as u64)
 };
 
 pub fn entag(base: u64, tag: Tag) -> Type {
-    Type {
-        bits: base | tag as u64
-    }
+    Type { 0: base | tag as u64 }
 }
 
-pub fn detag(_type: Type) -> u64 {
-    _type.bits >> 3
+pub fn detag(_type: &Type) -> u64 {
+    (_type.0 >> 3) as u64
 }
 
 pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
     Type {
-        bits: (data << 8)
+        0: (data << 8)
             | ((len as u64) << 5)
             | ((tag as u64) << 3)
             | ((Tag::Immediate as u64))
@@ -91,9 +87,14 @@ pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
 }
 
 impl Type {
+
+    pub fn as_u64(&self) -> u64 {
+        self.0
+    }
+    
     pub fn tag(&self) -> Tag {
         let tag: std::option::Option<Tag> =
-            num::FromPrimitive::from_u64(self.bits & 0x7);
+            num::FromPrimitive::from_u64(self.0 & 0x7);
         match tag {
             Some(_) => tag.unwrap(),
             None => panic!("Unknown tag")
@@ -101,7 +102,7 @@ impl Type {
     }
 
     pub fn type_of(&self) -> SysClass {
-        // println!("type-of {:x?} tag: {}", self.bits, self.tag() as u64);
+        // println!("type-of {:x?} tag: {}", self.0, self.tag() as u64);
         match self.tag() {
             Tag::Address => SysClass::T,
             Tag::Cons => SysClass::Cons,
@@ -131,17 +132,17 @@ impl Type {
     }
     
     pub fn immediate_data(&self) -> u64 {
-        self.bits >> 8
+        (self.0 >> 8) as u64
     }
 
     pub fn immediate_size(&self) -> u64 {
-        (self.bits >> 5) & 7
+        ((self.0 >> 5) & 7) as u64
     }
     
     pub fn immediate_class(&self) -> ImmediateClass {
         let tag: std::option::Option<ImmediateClass> =
-            num::FromPrimitive::from_u64((self.bits >> 3) & 3);
-        // println!("immediate_class: {}", (self.bits >> 3) & 3);
+            num::FromPrimitive::from_u64((self.0 >> 3) & 3);
+        // println!("immediate_class: {}", (self.0 >> 3) & 3);
 
         match tag {
             Some(_) => tag.unwrap(),
@@ -157,7 +158,7 @@ impl Type {
     }
 
     pub fn eq(&self, ptr: Type) -> bool {
-        self.bits == ptr.bits
+        self.0 == ptr.0
     }
 
     pub fn null(&self) -> bool {
