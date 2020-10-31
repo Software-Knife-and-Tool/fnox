@@ -32,7 +32,7 @@ impl _Float {
     }
     
     pub fn _from_f32(_float: f32) -> _Float {
-        _Float { float: _float as f32 }
+        _Float { float: _float }
     }
 
     pub fn _from_type(fl: &Type) -> Option<_Float> {
