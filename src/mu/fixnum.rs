@@ -60,7 +60,7 @@ impl Type {
     
     pub fn i64_from_fixnum(&self) -> Option<i64> {
         if Type::type_fixnum(self) {
-            Some((self.as_u64() >> 2) as i64)
+            Some((self.as_u64() >> 3) as i64)
         } else {
             None
         }

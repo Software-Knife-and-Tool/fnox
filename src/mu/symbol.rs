@@ -76,6 +76,7 @@ impl Type {
 
 #[cfg(test)]
 mod tests {
+    /*
     use crate::mu::r#type::NIL;
     use crate::mu::string::_string;
     
@@ -95,4 +96,5 @@ mod tests {
             }
             );
     }
+     */
 }

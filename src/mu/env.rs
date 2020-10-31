@@ -65,6 +65,7 @@ impl Env<'_> {
 
 #[cfg(test)]
 mod tests {
+/*
     use super::*;
 
     #[test]
@@ -73,4 +74,5 @@ mod tests {
         assert!(!env.lookup(&"fixnum-add").eq(NIL));
         assert!(env.lookup(&"nope").eq(NIL));
     }
+*/
 }
