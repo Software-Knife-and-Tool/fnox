@@ -1,4 +1,6 @@
 /* mu/r#type.rs */
+use std::io::{self, Write};
+
 use crate::mu::cons::_Cons;
 use crate::mu::exception::_Exception;
 use crate::mu::fixnum::_Fixnum;
@@ -165,6 +167,7 @@ impl Type {
 
     pub fn eq(&self, ptr: Type) -> bool {
         println!("{:x?} v {:x?}", self.as_u64(), ptr.as_u64());
+        io::stdout().flush().unwrap();
         self.0 == ptr.0
     }
 

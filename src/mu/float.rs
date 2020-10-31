@@ -121,10 +121,11 @@ mod tests {
     #[test]
     fn test_eq() {
         assert!(_float(0.0).eq(_float(0.0)));
-        assert!(!_float(1.0).eq(_float(0.0)));
         assert!(_float(1.0).eq(_float(1.0)));
         assert!(_float(-1.0).eq(_float(-1.0)));
-        assert!(!_float(-1.0).eq(_float(0.0)));
+        assert!(!(_float(1.0).eq(_float(0.0))));
+        assert!(!(_float(-1.0).eq(_float(0.0))));
+        assert!(!(_float(-10.0).eq(_float(-200.0))));
     }
 
     #[test]
