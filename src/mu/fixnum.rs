@@ -42,10 +42,6 @@ impl _Fixnum {
         }
     }
 
-    pub fn _neg(&self) -> Type {
-        _fixnum(-self.integer)
-    }
-
     pub fn _add(&self, fx: &Type) -> Option<Type> {
         if Type::type_fixnum(fx) {
             Some(_fixnum(self.integer + (fx.as_u64() >> 3) as i64))
@@ -136,19 +132,6 @@ mod tests {
     fn test_eq() {
         assert!(_fixnum(0).eq(_fixnum(0)));
         assert!(!_fixnum(0).eq(_fixnum(1)));
-    }
-
-    #[test]
-    fn test_neg() {
-        assert!(
-            match _Fixnum::_from_type(&_fixnum(1)) {
-                Some(fx) =>
-                    match fx._neg().i64_from_fixnum() {
-                        Some(fx) => fx == -1,
-                        None => false
-                    }
-                None => false
-            });
     }
 
     #[test]
