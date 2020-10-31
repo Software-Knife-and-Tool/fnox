@@ -1,7 +1,9 @@
 /* mu/r#type.rs */
 use crate::mu::cons::_Cons;
+use crate::mu::exception::_Exception;
 use crate::mu::fixnum::_Fixnum;
 use crate::mu::function::_Function;
+use crate::mu::stream::_Stream;
 use crate::mu::symbol::_Symbol;
 use crate::mu::vector::_Vector;
 
@@ -14,8 +16,8 @@ pub enum Tag {
     Cons = 1,      /* cons */
     Symbol = 2,    /* symbol/keyword */
     Function = 3,  /* function */
-//    Exception = 4, /* exception */
-//    Stream = 5,    /* stream */
+    Exception = 4, /* exception */
+    Stream = 5,    /* stream */
     Vector = 6,    /* vector */
     Immediate = 7, /* immediate (char, keyword, small string, float) */
 }
@@ -23,11 +25,11 @@ pub enum Tag {
 #[derive(Debug)]
 pub enum TagClass {
     Cons(_Cons),
-//    Exception(_Exception),
+    Exception(_Exception),
     Fixnum(_Fixnum),
     Function(_Function),
     Immediate(Type),
-//    Stream(_Stream),
+    Stream(_Stream),
     Symbol(_Symbol),
     Vector(_Vector)
 }
@@ -109,9 +111,9 @@ impl Type {
         match self.tag() {
             Tag::Cons => SysClass::Cons,
             Tag::Fixnum => SysClass::Fixnum,
-//            Tag::Exception => SysClass::Exception,
+            Tag::Exception => SysClass::Exception,
             Tag::Function => SysClass::Function,
-//            Tag::Stream => SysClass::Stream,
+            Tag::Stream => SysClass::Stream,
             Tag::Symbol => SysClass::Symbol,
             Tag::Vector => SysClass::Vector,
             Tag::Immediate =>
