@@ -27,14 +27,15 @@ pub fn _symbol(_name: Type, _value: Type) -> Type {
 pub fn _keyword(_name: Type) -> Type {
 
     let str = &Type::string_from_type(&_name);
-    let value = &str._value;
-    let len : u8 = value.len() as u8;
-    let mut data : u64 = 0;
+    let _value = &str._value;
+//    let len : u8 = value.len() as u8;
+    let len : u8 = 0;
+    let data : u64 = 0;
 
-    for ch in value.chars() {
-        data = (data << 8) + ch as u64;
-    }
-        
+//    for ch in value.chars() {
+//        data = (data << 8) + ch as u64;
+//    }
+
     let immed = _immediate(data, len, ImmediateClass::Keyword);
     immed
 }

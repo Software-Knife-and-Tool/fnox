@@ -9,9 +9,9 @@ use crate::mu::print::_print;
 // use crate::mu::r#type::entag;
 // use crate::mu::heap::Heap;
 
-use crate::mu::fixnum::_fixnum_add;
-use crate::mu::function::_function;
-use crate::mu::string::_string;
+// use crate::mu::fixnum::_fixnum_add;
+// use crate::mu::function::_function;
+// use crate::mu::string::_string;
 
 pub struct Env<'e> {
     // heap: Heap
@@ -19,12 +19,12 @@ pub struct Env<'e> {
 }
 
 pub fn env<'e>() -> Env<'e> {
-    let mut init: HashMap<&'e str, Type> = HashMap::new();
+    let init: HashMap<&'e str, Type> = HashMap::new();
 
-    init.insert("fixnum-add",
-                 _function(_string(b"fixnum-add"),
-                           _fixnum_add,
-                           2));
+//    init.insert("fixnum-add",
+//                 _function(_string(b"fixnum-add"),
+//                           _fixnum_add,
+//                           2));
 
     Env {
         // heap: heap(1024 * 1024)

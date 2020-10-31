@@ -10,8 +10,8 @@ use crate::mu::fixnum::*;
 pub fn _print(src: Type) {
     match src.type_of() {
         SysClass::String => {
-            let str = &Type::string_from_type(&src);
-            println!("\"{}\"", &str._value)
+            let _str = &Type::string_from_type(&src);
+//            println!("\"{}\"", &str._value)
         },
         SysClass::Symbol =>
             if src.type_keyword() {
@@ -19,8 +19,8 @@ pub fn _print(src: Type) {
             } else {
                 let sym = Type::symbol_from_type(&src);
                 let name = &sym._name;
-                let str = Type::string_from_type(name);
-                println!("{}", &str._value);
+                let _str = Type::string_from_type(name);
+//                println!("{}", &str._value);
             },
         SysClass::Fixnum =>
             match _Fixnum::_from_type(&src) {
@@ -32,7 +32,6 @@ pub fn _print(src: Type) {
                      from_u32(src.immediate_data() as u32).unwrap()),
         SysClass::Function => println!("is a function"),
         SysClass::Cons => println!("is a cons"),
-        SysClass::T => println!("is a T"),
         _ => println!("undecoded")
     }
 }

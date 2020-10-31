@@ -10,7 +10,7 @@ pub struct _Fixnum {
 }
 
 pub fn _fixnum(src: i64) -> Type {
-    entag((src as u64) << 2, Tag::Efixnum)
+    entag((src as u64) << 3, Tag::Fixnum)
 }
 
 pub fn _fixnum_add(args: Vec<Type>) -> Type {
@@ -35,7 +35,7 @@ impl _Fixnum {
 
     pub fn _from_type(fx: &Type) -> Option<_Fixnum> {
         if Type::type_fixnum(fx) {
-            Some(_Fixnum { integer: (fx.as_u64() >> 2) as i64 })
+            Some(_Fixnum { integer: (fx.as_u64() >> 3) as i64 })
         } else {
             None
         }
@@ -43,7 +43,7 @@ impl _Fixnum {
 
     pub fn _add(&self, fx: &Type) -> Option<Type> {
         if Type::type_fixnum(fx) {
-            Some(_fixnum(self.integer + (fx.as_u64() >> 2) as i64))
+            Some(_fixnum(self.integer + (fx.as_u64() >> 3) as i64))
         } else {
             None
         }
@@ -53,8 +53,7 @@ impl _Fixnum {
 impl Type {
     pub fn type_fixnum(&self) -> bool {
         match self.tag() {
-            Tag::Efixnum => true,
-            Tag::Ofixnum => true,
+            Tag::Fixnum => true,
             _ => false
         }
     }
