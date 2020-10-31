@@ -2,6 +2,7 @@
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
+use crate::mu::r#type::T;
 use crate::mu::r#type::entag;
 
 #[derive(Debug)]
@@ -41,9 +42,49 @@ impl _Fixnum {
         }
     }
 
+    pub fn _neg(&self) -> Type {
+        _fixnum(-self.integer)
+    }
+
     pub fn _add(&self, fx: &Type) -> Option<Type> {
         if Type::type_fixnum(fx) {
             Some(_fixnum(self.integer + (fx.as_u64() >> 3) as i64))
+        } else {
+            None
+        }
+    }
+
+    pub fn _mul(&self, fx: &Type) -> Option<Type> {
+        if Type::type_fixnum(fx) {
+            Some(_fixnum(self.integer * (fx.as_u64() >> 3) as i64))
+        } else {
+            None
+        }
+    }
+
+    pub fn _trunc(&self, fx: &Type) -> Option<Type> {
+        if Type::type_fixnum(fx) {
+            Some(_fixnum(self.integer / (fx.as_u64() >> 3) as i64))
+        } else {
+            None
+        }
+    }
+
+    pub fn _minusp(&self) -> Type {
+        if self.integer < 0 { T } else { NIL }
+    }
+
+    pub fn _mod(&self, fx: &Type) -> Option<Type> {
+        if Type::type_fixnum(fx) {
+            Some(_fixnum(self.integer % (fx.as_u64() >> 3) as i64))
+        } else {
+            None
+        }
+    }
+
+    pub fn _logand(&self, fx: &Type) -> Option<Type> {
+        if Type::type_fixnum(fx) {
+            Some(_fixnum(self.integer & (fx.as_u64() >> 3) as i64))
         } else {
             None
         }
@@ -98,6 +139,28 @@ mod tests {
     }
 
     #[test]
+    fn test_neg() {
+        assert!(
+            match _Fixnum::_from_type(&_fixnum(1)) {
+                Some(fx) =>
+                    match fx._neg().i64_from_fixnum() {
+                        Some(fx) => fx == -1,
+                        None => false
+                    }
+                None => false
+            });
+    }
+
+    #[test]
+    fn test_minusp() {
+        assert!(
+            match _Fixnum::_from_type(&_fixnum(-1)) {
+                Some(fx) => fx._minusp().eq(T),
+                None => false
+            });
+    }
+    
+    #[test]
     fn test_add() {
         assert!(
             match _Fixnum::_from_type(&_fixnum(1)) {
@@ -106,6 +169,74 @@ mod tests {
                         Some(sum) =>
                             match sum.i64_from_fixnum() {
                                 Some(v) => v == 3,
+                                None => false
+                            },
+                        None => false
+                    },
+                None => false
+            });
+    }
+
+    #[test]
+    fn test_mul() {
+        assert!(
+            match _Fixnum::_from_type(&_fixnum(2)) {
+                Some(fx) =>
+                    match fx._mul(&_fixnum(3)) {
+                        Some(sum) =>
+                            match sum.i64_from_fixnum() {
+                                Some(v) => v == 6,
+                                None => false
+                            },
+                        None => false
+                    },
+                None => false
+            });
+    }
+
+    #[test]
+    fn test_trunc() {
+        assert!(
+            match _Fixnum::_from_type(&_fixnum(3)) {
+                Some(fx) =>
+                    match fx._trunc(&_fixnum(2)) {
+                        Some(sum) =>
+                            match sum.i64_from_fixnum() {
+                                Some(v) => v == 1,
+                                None => false
+                            },
+                        None => false
+                    },
+                None => false
+            });
+    }
+
+    #[test]
+    fn test_logand() {
+        assert!(
+            match _Fixnum::_from_type(&_fixnum(1)) {
+                Some(fx) =>
+                    match fx._logand(&_fixnum(2)) {
+                        Some(sum) =>
+                            match sum.i64_from_fixnum() {
+                                Some(v) => v == 0,
+                                None => false
+                            },
+                        None => false
+                    },
+                None => false
+            });
+    }
+
+    #[test]
+    fn test_mod() {
+        assert!(
+            match _Fixnum::_from_type(&_fixnum(5)) {
+                Some(fx) =>
+                    match fx._mod(&_fixnum(3)) {
+                        Some(sum) =>
+                            match sum.i64_from_fixnum() {
+                                Some(v) => v == 2,
                                 None => false
                             },
                         None => false

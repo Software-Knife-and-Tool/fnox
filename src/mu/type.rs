@@ -58,7 +58,7 @@ pub enum ImmediateClass {
 
 const _IMMEDIATE_STR_MAX: u64 = 7;
 
-pub const _T: Type = Type {
+pub const T: Type = Type {
     0: (('t' as u64) << 8)
         | (1 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
@@ -178,6 +178,6 @@ mod tests {
     
     #[test]
     fn test_eq() {
-        assert!(_T.eq(_T));
+        assert!(T.eq(T));
     }
 }
