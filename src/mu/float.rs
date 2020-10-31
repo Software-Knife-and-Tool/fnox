@@ -68,6 +68,7 @@ impl _Float {
     }
 
     pub fn _minusp(&self) -> Type {
+        println!("minusp: {:x?}", self.float);
         if self.float < 0.0 { T } else { NIL }
     }
 }
@@ -120,13 +121,16 @@ mod tests {
     #[test]
     fn test_eq() {
         assert!(_float(0.0).eq(_float(0.0)));
-        assert!(!_float(1.0).eq(_float(1.0)));
+        assert!(!_float(1.0).eq(_float(0.0)));
+        assert!(_float(1.0).eq(_float(1.0)));
+        assert!(_float(-1.0).eq(_float(-1.0)));
+        assert!(!_float(-1.0).eq(_float(0.0)));
     }
 
     #[test]
     fn test_minusp() {
         assert!(
-            match _Float::_from_type(&_float(1.0)) {
+            match _Float::_from_type(&_float(-1.0)) {
                 Some(fl) => fl._minusp().eq(T),
                 None => false
             });

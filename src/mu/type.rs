@@ -84,10 +84,10 @@ pub fn detag(_type: &Type) -> u64 {
 
 pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
     Type {
-        0: (data << 8)
+        0: ((data << 8)
             | ((len as u64) << 5)
             | ((tag as u64) << 3)
-            | ((Tag::Immediate as u64))
+            | ((Tag::Immediate as u64)))
     }
 }
 
@@ -164,6 +164,7 @@ impl Type {
     }
 
     pub fn eq(&self, ptr: Type) -> bool {
+        println!("{:x?} v {:x?}", self.as_u64(), ptr.as_u64());
         self.0 == ptr.0
     }
 
