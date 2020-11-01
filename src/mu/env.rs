@@ -1,20 +1,21 @@
 /* mu/env.rs */
 use std::collections::HashMap;
+
+use crate::mu::heap::Heap;
+use crate::mu::heap::_heap;
+    
 use crate::mu::r#type::SysClass;
-// use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
 use crate::mu::read::_read;
 use crate::mu::print::_print;
-// use crate::mu::r#type::entag;
-// use crate::mu::heap::Heap;
 
 // use crate::mu::fixnum::_fixnum_add;
 // use crate::mu::function::_function;
 // use crate::mu::string::_string;
 
 pub struct Env<'e> {
-    // heap: Heap
+    heap: Heap,
     symtab: HashMap<&'e str, Type>
 }
 
@@ -27,7 +28,7 @@ pub fn env<'e>() -> Env<'e> {
 //                           2));
 
     Env {
-        // heap: heap(1024 * 1024)
+        heap: _heap(1024 * 1024),
         symtab: init
     }
 }
