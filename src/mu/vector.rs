@@ -1,22 +1,22 @@
-/* mu/extend.rs */
+/* mu/vector.rs */
 use crate::mu::r#type::SysClass;
 use crate::mu::r#type::Tag;
 use crate::mu::r#type::Type;
 // use crate::mu::string::_string;
 
 #[derive(Debug)]
-enum Extended {
+enum Vector {
     _String(String)
 }
 
 #[derive(Debug)]
-pub struct _Extend {
+pub struct _Vector {
     _type: SysClass,
-    _struct: Extended
+    _vector: Vector
 }
 
-impl _Extend {
-    pub fn _extended_type(&self) -> &SysClass {
+impl _Vector {
+    pub fn _vector_type(&self) -> &SysClass {
         &self._type
     }
 
@@ -32,9 +32,9 @@ impl _Extend {
 }
 
 impl Type {
-    pub fn is_extended(&self) -> bool {
+    pub fn is_vector(&self) -> bool {
         match self.tag() {
-            Tag::Extend => true,
+            Tag::Vector => true,
             _ => false
         }
     }

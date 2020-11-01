@@ -1,46 +1,53 @@
 /* mu/r#type.rs */
+use std::io::{self, Write};
+
 use crate::mu::cons::_Cons;
-use crate::mu::extend::_Extend;
+use crate::mu::exception::_Exception;
 use crate::mu::fixnum::_Fixnum;
 use crate::mu::function::_Function;
+use crate::mu::stream::_Stream;
 use crate::mu::symbol::_Symbol;
+use crate::mu::vector::_Vector;
 
 #[derive(Debug)]
 pub struct Type(u64);
 
 #[derive(FromPrimitive)]
 pub enum Tag {
-    Address = 0,   /* machine address */
-    Efixnum = 1,   /* even fixnum (62 bits) */
+    Fixnum = 0,    /* fixnum 61 bites */
+    Cons = 1,      /* cons */
     Symbol = 2,    /* symbol/keyword */
     Function = 3,  /* function */
-    Cons = 4,      /* cons */
-    Ofixnum = 5,   /* odd fixnum (62 bits) */
-    Immediate = 6, /* immediate */
-    Extend = 7     /* extended */
+    Exception = 4, /* exception */
+    Stream = 5,    /* stream */
+    Vector = 6,    /* vector */
+    Immediate = 7, /* immediate (char, keyword, small string, float) */
 }
 
 #[derive(Debug)]
 pub enum TagClass {
-    Address(i32),
-    Fixnum(_Fixnum),
-    Symbol(_Symbol),
-    Function(_Function),
     Cons(_Cons),
+    Exception(_Exception),
+    Fixnum(_Fixnum),
+    Function(_Function),
     Immediate(Type),
-    Extend(_Extend)
+    Stream(_Stream),
+    Symbol(_Symbol),
+    Vector(_Vector)
 }
 
 #[derive(Debug)]
 pub enum SysClass {
     Char,
     Cons,
+    Exception,
     Fixnum,
     Float,
     Function,
+    Stream,
     String,
     Symbol,
-    T
+    Vector
 }
 
 #[derive(FromPrimitive)]
@@ -53,7 +60,7 @@ pub enum ImmediateClass {
 
 const _IMMEDIATE_STR_MAX: u64 = 7;
 
-pub const _T: Type = Type {
+pub const T: Type = Type {
     0: (('t' as u64) << 8)
         | (1 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
@@ -79,10 +86,10 @@ pub fn detag(_type: &Type) -> u64 {
 
 pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
     Type {
-        0: (data << 8)
+        0: ((data << 8)
             | ((len as u64) << 5)
             | ((tag as u64) << 3)
-            | ((Tag::Immediate as u64))
+            | ((Tag::Immediate as u64)))
     }
 }
 
@@ -104,19 +111,20 @@ impl Type {
     pub fn type_of(&self) -> SysClass {
         // println!("type-of {:x?} tag: {}", self.0, self.tag() as u64);
         match self.tag() {
-            Tag::Address => SysClass::T,
             Tag::Cons => SysClass::Cons,
-            Tag::Efixnum | Tag::Ofixnum => SysClass::Fixnum,
-            Tag::Extend => SysClass::String,
+            Tag::Fixnum => SysClass::Fixnum,
+            Tag::Exception => SysClass::Exception,
             Tag::Function => SysClass::Function,
+            Tag::Stream => SysClass::Stream,
+            Tag::Symbol => SysClass::Symbol,
+            Tag::Vector => SysClass::Vector,
             Tag::Immediate =>
                 match Type::immediate_class(self) {
                     ImmediateClass::Char => SysClass::Char,
-                    ImmediateClass::String => SysClass::String,
+                    ImmediateClass::String => SysClass::Vector,
                     ImmediateClass::Keyword => SysClass::Symbol,
                     ImmediateClass::Float => SysClass::Float
-                },
-            Tag::Symbol => SysClass::Symbol
+                }
         }
     }
 
@@ -158,6 +166,8 @@ impl Type {
     }
 
     pub fn eq(&self, ptr: Type) -> bool {
+        println!("{:x?} v {:x?}", self.as_u64(), ptr.as_u64());
+        io::stdout().flush().unwrap();
         self.0 == ptr.0
     }
 
@@ -172,6 +182,6 @@ mod tests {
     
     #[test]
     fn test_eq() {
-        assert!(_T.eq(_T));
+        assert!(T.eq(T));
     }
 }
