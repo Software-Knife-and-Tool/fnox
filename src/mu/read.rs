@@ -1,14 +1,10 @@
 /* mu/read.rs */
 use std::io::{self, BufRead};
+use std::str::{FromStr, from_utf8};
 
-use std::str::FromStr;
-use std::str::from_utf8;
-
-use crate::mu::r#type::_immediate;
-use crate::mu::r#type::ImmediateClass;
 use crate::mu::r#type::Type;
+use crate::mu::r#type::{ImmediateClass, _immediate};
 use crate::mu::r#type::NIL;
-// use crate::mu::r#type::_T;
 
 use crate::mu::fixnum::_fixnum;
 use crate::mu::string::_string;

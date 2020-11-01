@@ -3,8 +3,7 @@
 
 use std::char::from_u32;
 
-use crate::mu::r#type::Type;
-use crate::mu::r#type::SysClass;
+use crate::mu::r#type::{Type, SysClass};
 use crate::mu::fixnum::*;
 
 pub fn _print(src: Type) {

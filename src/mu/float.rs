@@ -1,10 +1,7 @@
 /* mu/float.rs */
-use crate::mu::r#type::Tag;
-use crate::mu::r#type::Type;
-use crate::mu::r#type::NIL;
-use crate::mu::r#type::T;
-use crate::mu::r#type::ImmediateClass;
-use crate::mu::r#type::_immediate;
+use crate::mu::r#type::{Type, Tag};
+use crate::mu::r#type::{T, NIL};
+use crate::mu::r#type::{ImmediateClass, _immediate};
 
 #[derive(Debug)]
 pub struct _Float {

@@ -1,9 +1,6 @@
 /* mu/cons.rs */
-use crate::mu::r#type::Tag;
-use crate::mu::r#type::Type;
+use crate::mu::r#type::{Tag, Type, entag, detag};
 use crate::mu::r#type::NIL;
-use crate::mu::r#type::entag;
-use crate::mu::r#type::detag;
 
 #[derive(Debug)]
 pub struct _Cons {

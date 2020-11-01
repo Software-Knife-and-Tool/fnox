@@ -1,8 +1,5 @@
 /* mu/vector.rs */
-use crate::mu::r#type::SysClass;
-use crate::mu::r#type::Tag;
-use crate::mu::r#type::Type;
-// use crate::mu::string::_string;
+use crate::mu::r#type::{Type, Tag, SysClass};
 
 #[derive(Debug)]
 enum Vector {

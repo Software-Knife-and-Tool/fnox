@@ -1,12 +1,11 @@
 /* mu/env.rs */
 use std::collections::HashMap;
 
-use crate::mu::heap::Heap;
-use crate::mu::heap::_heap;
+use crate::mu::heap::{Heap, _heap};
     
-use crate::mu::r#type::SysClass;
-use crate::mu::r#type::Type;
+use crate::mu::r#type::{Type, SysClass};
 use crate::mu::r#type::NIL;
+
 use crate::mu::read::_read;
 use crate::mu::print::_print;
 

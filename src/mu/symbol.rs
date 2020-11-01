@@ -1,12 +1,6 @@
 /* mu/symbol.rs */
-use crate::mu::r#type::Tag;
-use crate::mu::r#type::Type;
-
-use crate::mu::r#type::entag;
-use crate::mu::r#type::detag;
-
-use crate::mu::r#type::_immediate;
-use crate::mu::r#type::ImmediateClass;
+use crate::mu::r#type::{Type, Tag, entag, detag};
+use crate::mu::r#type::{ImmediateClass, _immediate};
 
 #[derive(Debug)]
 pub struct _Symbol {
