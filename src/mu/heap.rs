@@ -1,7 +1,4 @@
 /* mu/heap.rs */
-// use crate::mu::r#type::Tag;
-// use crate::mu::r#type::Type;
-// use crate::mu::r#type::entag;
 
 pub struct Heap {
     nwords: u32,           // number of u64 words
