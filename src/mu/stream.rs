@@ -1,8 +1,5 @@
 /* mu/stream.rs */
-use crate::mu::r#type::Tag;
-use crate::mu::r#type::Type;
-use crate::mu::r#type::entag;
-use crate::mu::r#type::detag;
+use crate::mu::r#type::{Type, Tag, entag, detag};
 
 #[derive(Debug)]
 pub struct _Stream {

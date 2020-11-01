@@ -1,9 +1,6 @@
 /* mu/fixnum.rs */
-use crate::mu::r#type::Tag;
-use crate::mu::r#type::Type;
-use crate::mu::r#type::NIL;
-use crate::mu::r#type::T;
-use crate::mu::r#type::entag;
+use crate::mu::r#type::{Type, Tag, entag};
+use crate::mu::r#type::{T, NIL};
 
 #[derive(Debug)]
 pub struct _Fixnum {
