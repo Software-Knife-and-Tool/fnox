@@ -1,4 +1,6 @@
 /* mu/r#type.rs */
+#![crate_name = "doc"]
+
 use std::io::{self, Write};
 
 use crate::mu::cons::_Cons;
@@ -86,10 +88,10 @@ pub fn detag(_type: &Type) -> u64 {
 
 pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
     Type {
-        0: ((data << 8)
+        0: (data << 8)
             | ((len as u64) << 5)
             | ((tag as u64) << 3)
-            | ((Tag::Immediate as u64)))
+            | ((Tag::Immediate as u64))
     }
 }
 
@@ -109,7 +111,6 @@ impl Type {
     }
 
     pub fn type_of(&self) -> SysClass {
-        // println!("type-of {:x?} tag: {}", self.0, self.tag() as u64);
         match self.tag() {
             Tag::Cons => SysClass::Cons,
             Tag::Fixnum => SysClass::Fixnum,
@@ -150,7 +151,6 @@ impl Type {
     pub fn immediate_class(&self) -> ImmediateClass {
         let tag: std::option::Option<ImmediateClass> =
             num::FromPrimitive::from_u64((self.0 >> 3) & 3);
-        // println!("immediate_class: {}", (self.0 >> 3) & 3);
 
         match tag {
             Some(_) => tag.unwrap(),
@@ -166,7 +166,7 @@ impl Type {
     }
 
     pub fn eq(&self, ptr: Type) -> bool {
-        println!("{:x?} v {:x?}", self.as_u64(), ptr.as_u64());
+        // println!("{:x?} v {:x?}", self.as_u64(), ptr.as_u64());
         io::stdout().flush().unwrap();
         self.0 == ptr.0
     }
