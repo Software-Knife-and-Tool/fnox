@@ -1,6 +1,4 @@
 /* mu/r#type.rs */
-#![crate_name = "doc"]
-
 use std::io::{self, Write};
 
 use crate::mu::cons::_Cons;
