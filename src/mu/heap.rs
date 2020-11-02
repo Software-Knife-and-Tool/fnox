@@ -1,5 +1,5 @@
 /* mu/heap.rs */
-use crate::mu::r#type::{Tag};
+use crate::mu::r#type::{Tag, ImmediateClass, _immediate_class_from_u8};
 
 pub struct Heap {
     nwords: usize,         // number of u64 words
@@ -14,12 +14,6 @@ pub struct Heap {
 //    fs::OpenOptions,
 //    io::{Seek, SeekFrom, Write},
 // };
-
-fn _alloc(heap: &Heap, _nwords: usize, _tag: Tag) -> u64 {
-    let addr: u64 = unsafe { std::mem::transmute(&heap.mmap[heap.fence]) };
-    // heap.fence += (nwords + 1) * 8;
-    addr
-}
 
 /*
 fn mmap(size: u64, fname: &str) -> memmap::MmapMut {
@@ -53,13 +47,45 @@ pub fn _heap(nwords: usize) -> Heap {
     }
 }
 
+pub fn _hinfo(reloc: u32, len: u32, refbit: u8, tag: ImmediateClass) -> u64 {
+    ((reloc as u64) << 32)
+        | ((len as u64) << 4)
+        | ((refbit as u64) << 1)
+        | ((tag as u64) << 0)
+}
+
+pub fn _hinfo_reloc(hinfo: u64) -> u32 {
+    (hinfo >> 32) as u32
+}
+
+pub fn _hinfo_len(hinfo: u64) -> u32 {
+    ((hinfo >> 60) & 0x1fffffff) as u32
+}
+
+pub fn _hinfo_refbit(hinfo: u64) -> u8 {
+    ((hinfo >> 3) & 1) as u8
+}
+
+pub fn _hinfo_tag(hinfo: u64) -> ImmediateClass {
+    _immediate_class_from_u8((hinfo & 0x7) as u8)
+}
+
 impl Heap {
+    pub fn alloc(&mut self, _nwords: usize, _tag: Tag) -> u64 {
+        let addr: u64 = unsafe { std::mem::transmute(&self.mmap[self.fence]) };
+        let hinfo: u64 = 0;
+        self.fence += (_nwords + 1) * 8;
+        addr + 8
+    }
+
     pub fn size(&self) -> usize {
         self.nwords
     }
+    
     pub fn file_name(&self) -> &str {
         self.fname
     }
+    
     pub fn next(&self) -> usize {
         self.fence
     }
