@@ -5,7 +5,7 @@ pub struct Heap {
     nwords: usize,         // number of u64 words
     fname: &'static str,   // mapped file name
     // mmap: memmap::MmapMut, // mapped file segment
-    mmap: Vec<u8>,    // on heap
+    mmap: Vec<u8>,         // on heap
     fence: usize           // allocation fence
 }
 
@@ -15,8 +15,9 @@ use std::{
     io::{Seek, SeekFrom, Write},
 };
 
-fn alloc(mut heap: &Heap, nwords: u16, tag: Tag) -> u64 {
-    let addr: u64 = unsafe { std::mem::transmute(b"1234") };
+fn alloc(heap: &Heap, nwords: usize, tag: Tag) -> u64 {
+    let addr: u64 = unsafe { std::mem::transmute(&heap.mmap[heap.fence]) };
+    // heap.fence += (nwords + 1) * 8;
     addr
 }
 
