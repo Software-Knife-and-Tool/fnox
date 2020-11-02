@@ -1,6 +1,7 @@
 /* mu/r#type.rs */
 use std::io::{self, Write};
-
+use crate::num::FromPrimitive;
+    
 use crate::mu::cons::_Cons;
 use crate::mu::exception::_Exception;
 use crate::mu::fixnum::_Fixnum;
@@ -56,6 +57,10 @@ pub enum ImmediateClass {
     String = 1,
     Keyword = 2,
     Float = 3
+}
+
+pub fn _immediate_class_from_u8(tag: u8) -> ImmediateClass {
+    ImmediateClass::from_u8((tag & 0x7) as u8).unwrap()
 }
 
 const _IMMEDIATE_STR_MAX: u64 = 7;
