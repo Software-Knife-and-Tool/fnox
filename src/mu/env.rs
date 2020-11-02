@@ -14,8 +14,8 @@ use crate::mu::print::_print;
 // use crate::mu::string::_string;
 
 pub struct Env<'e> {
-    heap: Heap,
-    symtab: HashMap<&'e str, Type>
+    pub heap: Heap,
+    pub symtab: HashMap<&'e str, Type>
 }
 
 pub fn env<'e>() -> Env<'e> {

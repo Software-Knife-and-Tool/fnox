@@ -25,6 +25,10 @@ pub enum Tag {
     Immediate = 7, /* immediate (char, keyword, small string, float) */
 }
 
+pub fn _tag_from_u8(tag: u8) -> Tag {
+    Tag::from_u8((tag & 0x7) as u8).unwrap()
+}
+
 #[derive(Debug)]
 pub enum TagClass {
     Cons(_Cons),

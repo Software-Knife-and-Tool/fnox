@@ -1,6 +1,10 @@
 /* mu/cons.rs */
+use std::mem;
+
 use crate::mu::r#type::{Tag, Type, entag, detag};
 use crate::mu::r#type::NIL;
+
+use crate::mu::env::{Env};
 
 #[derive(Debug)]
 pub struct _Cons {
@@ -8,7 +12,17 @@ pub struct _Cons {
     _cdr: Type
 }
 
+impl _Cons {
+
+    pub fn evict(&self, env: &mut Env<'_>) -> Type {
+        let _cons = env.heap.alloc(mem::size_of::<_Cons>(), Tag::Cons);
+        NIL
+    }
+
+}
+
 impl Type {
+
     pub fn type_cons(&self) -> bool {
         match self.tag() {
             Tag::Cons => true,

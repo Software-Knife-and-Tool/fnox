@@ -1,12 +1,12 @@
 /* mu/heap.rs */
-use crate::mu::r#type::{Tag, ImmediateClass, _immediate_class_from_u8};
+use crate::mu::r#type::{Tag, _tag_from_u8};
+// use crate::mu::r#type::{ImmediateClass, _immediate_class_from_u8};
 
 pub struct Heap {
     nwords: usize,         // number of u64 words
     fname: &'static str,   // mapped file name
-    // mmap: memmap::MmapMut, // mapped file segment
-    mmap: Vec<u8>,         // on heap
-    fence: usize           // allocation fence
+    mmap: Vec<u64>,        // on heap
+    fence: usize           // allocation fence, word offset
 }
 
 // use memmap;
@@ -41,13 +41,12 @@ pub fn _heap(nwords: usize) -> Heap {
     Heap {
         nwords,
         fname: "/var/tmp/lispox",
-        // mmap: mmap((nwords * 8).into(), "/var/tmp/lispox"),
         mmap: Vec::with_capacity(nwords * 8),
         fence: 0
     }
 }
 
-pub fn _hinfo(reloc: u32, len: u32, refbit: u8, tag: ImmediateClass) -> u64 {
+pub fn _hinfo(reloc: u32, len: usize, refbit: u8, tag: Tag) -> u64 {
     ((reloc as u64) << 32)
         | ((len as u64) << 4)
         | ((refbit as u64) << 1)
@@ -66,15 +65,18 @@ pub fn _hinfo_refbit(hinfo: u64) -> u8 {
     ((hinfo >> 3) & 1) as u8
 }
 
-pub fn _hinfo_tag(hinfo: u64) -> ImmediateClass {
-    _immediate_class_from_u8((hinfo & 0x7) as u8)
+pub fn _hinfo_tag(hinfo: u64) -> Tag {
+    _tag_from_u8((hinfo & 0x7) as u8)
 }
 
 impl Heap {
-    pub fn alloc(&mut self, _nwords: usize, _tag: Tag) -> u64 {
+    pub fn alloc(&mut self, _nbytes: usize, _tag: Tag) -> u64 {
         let addr: u64 = unsafe { std::mem::transmute(&self.mmap[self.fence]) };
-        let hinfo: u64 = 0;
-        self.fence += (_nwords + 1) * 8;
+        let nwords: usize = (_nbytes + 15) / 8;
+        let hinfo: u64 = _hinfo(0, nwords, 0, _tag);
+
+        self.mmap[self.fence] = _hinfo;
+        self.fence += nwords;
         addr + 8
     }
 
