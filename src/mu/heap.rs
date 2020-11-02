@@ -9,13 +9,13 @@ pub struct Heap {
     fence: usize           // allocation fence
 }
 
-use memmap;
-use std::{
-    fs::OpenOptions,
-    io::{Seek, SeekFrom, Write},
-};
+// use memmap;
+// use std::{
+//    fs::OpenOptions,
+//    io::{Seek, SeekFrom, Write},
+// };
 
-fn alloc(heap: &Heap, nwords: usize, tag: Tag) -> u64 {
+fn _alloc(heap: &Heap, _nwords: usize, _tag: Tag) -> u64 {
     let addr: u64 = unsafe { std::mem::transmute(&heap.mmap[heap.fence]) };
     // heap.fence += (nwords + 1) * 8;
     addr
