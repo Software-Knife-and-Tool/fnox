@@ -1,11 +1,11 @@
 /* mu/heap.rs */
 use crate::mu::r#type::{Tag};
 
-pub struct Heap<'a> {
+pub struct Heap {
     nwords: usize,         // number of u64 words
     fname: &'static str,   // mapped file name
     // mmap: memmap::MmapMut, // mapped file segment
-    mmap: &'a mut Vec<u8>,         // on heap
+    mmap: Vec<u8>,    // on heap
     fence: usize           // allocation fence
 }
 
@@ -63,4 +63,3 @@ impl Heap {
         self.fence
     }
 }
-
