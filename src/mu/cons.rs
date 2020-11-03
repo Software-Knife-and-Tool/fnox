@@ -18,10 +18,11 @@ impl _Cons {
         let cons = env.heap.alloc(mem::size_of::<_Cons>(), Tag::Cons);
         unsafe {
             let _dest: *mut u8 = std::mem::transmute(cons);
-            let _src: *mut u8 = std::mem::transmute(&self);
-            // std::memcpy(to_cons, self, mem::size_of::<_Cons>());
+            let _src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Cons>());
         }
-        NIL
+        assert!((cons & 0x7) == 0);
+        entag(cons, Tag::Cons)
     }
 }
 
@@ -44,11 +45,11 @@ impl Type {
             entag(cons_addr << 3, Tag::Cons)
         }        
     }
-    
+
     pub fn cons(self, cdr: Type) -> Type {
         Type::from_cons(&_Cons {_car: self, _cdr: cdr })
     }
-
+    
     pub fn cons_from_type(&self) -> &'static _Cons {
         let cons: &_Cons = unsafe { std::mem::transmute(detag(self)) };
         cons
@@ -66,6 +67,12 @@ mod tests {
 
     #[test]
     fn test_list() {
+        assert!(NIL.type_list());
+        assert!(NIL.cons(NIL).type_list());
+    }
+
+    #[test]
+    fn test_evict() {
         assert!(NIL.type_list());
         assert!(NIL.cons(NIL).type_list());
     }
