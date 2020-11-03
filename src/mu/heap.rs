@@ -75,7 +75,7 @@ impl Heap {
         let nwords: usize = (_nbytes + 15) / 8;
         let hinfo: u64 = _hinfo(0, nwords, 0, _tag);
 
-        self.mmap[self.fence] = _hinfo;
+        self.mmap[self.fence] = hinfo;
         self.fence += nwords;
         addr + 8
     }

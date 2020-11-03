@@ -15,10 +15,13 @@ pub struct _Cons {
 impl _Cons {
 
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
-        let _cons = env.heap.alloc(mem::size_of::<_Cons>(), Tag::Cons);
+        let cons = env.heap.alloc(mem::size_of::<_Cons>(), Tag::Cons);
+        unsafe {
+            let to_cons: *mut u8 = std::mem::transmute(cons);
+            // std::memcpy(to_cons, self, mem::size_of::<_Cons>());
+        }
         NIL
     }
-
 }
 
 impl Type {
