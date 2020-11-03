@@ -21,7 +21,8 @@ impl _Cons {
             let _src: *const u8 = std::mem::transmute(&self);
             std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Cons>());
         }
-        entag(cons << 3, Tag::Cons)
+        assert!((cons & 0x7) == 0);
+        entag(cons, Tag::Cons)
     }
 }
 
