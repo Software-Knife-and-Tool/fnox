@@ -1,6 +1,10 @@
 /* mu/symbol.rs */
+use std::mem;
+
 use crate::mu::r#type::{Type, Tag, entag, detag};
 use crate::mu::r#type::{ImmediateClass, _immediate};
+
+use crate::mu::env::{Env};
 
 #[derive(Debug)]
 pub struct _Symbol {
@@ -18,20 +22,28 @@ pub fn _symbol(_name: Type, _value: Type) -> Type {
     Type::from_symbol(&sym)
 }
 
-pub fn _keyword(_name: Type) -> Type {
+pub fn _keyword(name: Type) -> Type {
 
-    let str = &Type::string_from_type(&_name);
-    let _value = &str._value;
-//    let len : u8 = value.len() as u8;
-    let len : u8 = 0;
-    let data : u64 = 0;
-
-//    for ch in value.chars() {
-//        data = (data << 8) + ch as u64;
-//    }
-
-    let immed = _immediate(data, len, ImmediateClass::Keyword);
+    assert!(name.is_immediate());
+    let immed = _immediate(name.immediate_data(),
+                           name.immediate_size(),
+                           ImmediateClass::Keyword);
     immed
+}
+
+impl _Symbol {
+    
+    pub fn evict(&self, env: &mut Env<'_>) -> Type {
+        let symbol = env.heap.alloc(mem::size_of::<_Symbol>(), Tag::Symbol);
+        unsafe {
+            let _dest: *mut u8 = std::mem::transmute(symbol);
+            let _src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Symbol>());
+        }
+        assert!((symbol & 0x7) == 0);
+        entag(symbol, Tag::Symbol)
+    }
+
 }
 
 impl Type {

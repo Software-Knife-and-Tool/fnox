@@ -67,6 +67,15 @@ pub fn _immediate_class_from_u8(tag: u8) -> ImmediateClass {
     ImmediateClass::from_u8((tag & 0x7) as u8).unwrap()
 }
 
+pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
+    Type {
+        0: (data << 8)
+            | ((len as u64) << 5)
+            | ((tag as u64) << 3)
+            | ((Tag::Immediate as u64))
+    }
+}
+
 const _IMMEDIATE_STR_MAX: u64 = 7;
 
 pub const T: Type = Type {
@@ -91,15 +100,6 @@ pub fn entag(base: u64, tag: Tag) -> Type {
 
 pub fn detag(_type: &Type) -> u64 {
     (_type.0 >> 3) as u64
-}
-
-pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
-    Type {
-        0: (data << 8)
-            | ((len as u64) << 5)
-            | ((tag as u64) << 3)
-            | ((Tag::Immediate as u64))
-    }
 }
 
 impl Type {
@@ -151,8 +151,8 @@ impl Type {
         (self.0 >> 8) as u64
     }
 
-    pub fn immediate_size(&self) -> u64 {
-        ((self.0 >> 5) & 7) as u64
+    pub fn immediate_size(&self) -> u8 {
+        ((self.0 >> 5) & 7) as u8
     }
     
     pub fn immediate_class(&self) -> ImmediateClass {
