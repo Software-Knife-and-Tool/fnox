@@ -18,10 +18,10 @@ impl _Cons {
         let cons = env.heap.alloc(mem::size_of::<_Cons>(), Tag::Cons);
         unsafe {
             let _dest: *mut u8 = std::mem::transmute(cons);
-            let _src: *mut u8 = std::mem::transmute(&self);
-            // std::memcpy(to_cons, self, mem::size_of::<_Cons>());
+            let _src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Cons>());
         }
-        NIL
+        entag(cons << 3, Tag::Cons)
     }
 }
 
