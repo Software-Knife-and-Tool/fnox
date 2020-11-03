@@ -45,11 +45,11 @@ impl Type {
             entag(cons_addr << 3, Tag::Cons)
         }        
     }
-    
+
     pub fn cons(self, cdr: Type) -> Type {
         Type::from_cons(&_Cons {_car: self, _cdr: cdr })
     }
-
+    
     pub fn cons_from_type(&self) -> &'static _Cons {
         let cons: &_Cons = unsafe { std::mem::transmute(detag(self)) };
         cons
@@ -67,6 +67,12 @@ mod tests {
 
     #[test]
     fn test_list() {
+        assert!(NIL.type_list());
+        assert!(NIL.cons(NIL).type_list());
+    }
+
+    #[test]
+    fn test_evict() {
         assert!(NIL.type_list());
         assert!(NIL.cons(NIL).type_list());
     }
