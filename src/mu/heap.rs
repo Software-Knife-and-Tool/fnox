@@ -3,10 +3,10 @@ use crate::mu::r#type::{Tag, _tag_from_u8};
 // use crate::mu::r#type::{ImmediateClass, _immediate_class_from_u8};
 
 pub struct Heap {
-    nwords: usize,         // number of u64 words
-    fname: &'static str,   // mapped file name
-    mmap: Vec<u64>,        // on heap
-    fence: usize           // allocation fence, word offset
+    nwords: usize,       // number of u64 words
+    fname: &'static str, // mapped file name
+    mmap: Vec<u64>,      // on heap
+    fence: usize,        // allocation fence, word offset
 }
 
 // use memmap;
@@ -42,15 +42,12 @@ pub fn _heap(nwords: usize) -> Heap {
         nwords,
         fname: "/var/tmp/lispox",
         mmap: Vec::with_capacity(nwords * 8),
-        fence: 0
+        fence: 0,
     }
 }
 
 pub fn _hinfo(reloc: u32, len: usize, refbit: u8, tag: Tag) -> u64 {
-    ((reloc as u64) << 32)
-        | ((len as u64) << 4)
-        | ((refbit as u64) << 1)
-        | ((tag as u64) << 0)
+    ((reloc as u64) << 32) | ((len as u64) << 4) | ((refbit as u64) << 1) | ((tag as u64) << 0)
 }
 
 pub fn _hinfo_reloc(hinfo: u64) -> u32 {
@@ -83,11 +80,11 @@ impl Heap {
     pub fn size(&self) -> usize {
         self.nwords
     }
-    
+
     pub fn file_name(&self) -> &str {
         self.fname
     }
-    
+
     pub fn next(&self) -> usize {
         self.fence
     }

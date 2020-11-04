@@ -1,28 +1,27 @@
 /* mu/string.rs */
-use crate::mu::r#type::{Type, Tag, entag, detag};
 use crate::mu::r#type::NIL;
+use crate::mu::r#type::{detag, entag, Tag, Type};
 
 #[derive(Debug)]
 pub struct _String {
-    pub _value: Type
+    pub _value: Type,
 }
 
 pub fn _string(_value: &[u8]) -> Type {
     match std::str::from_utf8(_value) {
         Ok(str) => Type::from_string(str),
-        Err(_) => NIL
+        Err(_) => NIL,
     }
 }
 
 impl Type {
-    
-    pub fn type_string(&self) -> bool {
+    pub fn typep_string(&self) -> bool {
         match self.tag() {
             Tag::Vector => true,
-            _ => false
+            _ => false,
         }
     }
-    
+
     pub fn from_string(_str: &str) -> Type {
         unsafe {
             let str_addr: u64 = std::mem::transmute(&_str);
@@ -38,17 +37,17 @@ impl Type {
 
 #[cfg(test)]
 mod tests {
-/*
-    use super::*;
+    /*
+        use super::*;
 
-    #[test]
-    fn test_string() {
-        assert!(_string(b"yep").type_string());
-        assert!(
-            match Type::string_from_type(_string(b"astring")) {
-                Some(_) => true,
-                None => false
-            });
-    }
-*/
+        #[test]
+        fn test_string() {
+            assert!(_string(b"yep").typep_string());
+            assert!(
+                match Type::string_from_type(_string(b"astring")) {
+                    Some(_) => true,
+                    None => false
+                });
+        }
+    */
 }
