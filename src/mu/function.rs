@@ -1,6 +1,10 @@
 /* mu/function.rs */
+use std::mem;
+
 use crate::mu::r#type::NIL;
 use crate::mu::r#type::{detag, entag, Tag, Type};
+
+use crate::mu::env::Env;
 
 #[derive(Debug)]
 pub struct _Function {
@@ -22,6 +26,19 @@ pub fn _function(_name: Type, _func: fn(Vec<Type>) -> Type, _nargs: i16) -> Type
 impl _Function {
     pub fn funcall(&self, _args: Vec<Type>) -> Type {
         NIL
+    }
+}
+
+impl _Function {
+    pub fn evict(&self, env: &mut Env<'_>) -> Type {
+        let func = env.heap.alloc(mem::size_of::<_Function>(), Tag::Cons);
+        unsafe {
+            let _dest: *mut u8 = std::mem::transmute(func);
+            let _src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Function>());
+        }
+        assert!((func & 0x7) == 0);
+        entag(func, Tag::Function)
     }
 }
 

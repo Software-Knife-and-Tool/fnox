@@ -1,5 +1,8 @@
 /* mu/stream.rs */
+use std::mem;
+
 use crate::mu::r#type::{detag, entag, Tag, Type};
+use crate::mu::env::Env;
 
 #[derive(Debug)]
 pub struct _Stream {
@@ -18,7 +21,18 @@ pub fn _stream(_name: Type, _func: fn(Vec<Type>) -> Type, _nargs: i16) -> Type {
     Type::from_stream(&fun)
 }
 
-impl _Stream {}
+impl _Stream {
+    pub fn evict(&self, env: &mut Env<'_>) -> Type {
+        let stream = env.heap.alloc(mem::size_of::<_Stream>(), Tag::Cons);
+        unsafe {
+            let _dest: *mut u8 = std::mem::transmute(stream);
+            let _src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Stream>());
+        }
+        assert!((stream & 0x7) == 0);
+        entag(stream, Tag::Stream)
+    }
+}
 
 impl Type {
     pub fn typep_stream(&self) -> bool {
