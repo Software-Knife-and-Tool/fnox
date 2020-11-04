@@ -1,5 +1,9 @@
 /* mu/vector.rs */
+use std::mem;
+
 use crate::mu::r#type::{SysClass, Tag, Type};
+use crate::mu::r#type::{entag};
+use crate::mu::env::Env;
 
 #[derive(Debug)]
 enum Vector {
@@ -16,16 +20,17 @@ impl _Vector {
     pub fn _vector_type(&self) -> &SysClass {
         &self._type
     }
-
-    /*
-        fn homestar(&self) -> String {
-            use PlayerClass::*;
-            match self {
-                Sol(_) => String::from("sun"),
-                ...
-            }
+    
+    pub fn evict(&self, env: &mut Env<'_>) -> Type {
+        let vector = env.heap.alloc(mem::size_of::<_Vector>(), Tag::Vector);
+        unsafe {
+            let _dest: *mut u8 = std::mem::transmute(vector);
+            let _src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Vector>());
         }
-    */
+        assert!((vector & 0x7) == 0);
+        entag(vector, Tag::Vector)
+    }
 }
 
 impl Type {
