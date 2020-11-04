@@ -3,35 +3,33 @@
 
 use std::char::from_u32;
 
-use crate::mu::r#type::{Type, SysClass};
 use crate::mu::fixnum::*;
+use crate::mu::r#type::{SysClass, Type};
 
 pub fn _print(src: Type) {
     match src.type_of() {
         SysClass::String => {
             let _str = &Type::string_from_type(&src);
-//            println!("\"{}\"", &str._value)
-        },
-        SysClass::Symbol =>
-            if src.type_keyword() {
+            //            println!("\"{}\"", &str._value)
+        }
+        SysClass::Symbol => {
+            if src.typep_keyword() {
                 println!(":{}", "wahoo");
             } else {
                 let sym = Type::symbol_from_type(&src);
                 let name = &sym._name;
                 let _str = Type::string_from_type(name);
-//                println!("{}", &str._value);
-            },
-        SysClass::Fixnum =>
-            match _Fixnum::_from_type(&src) {
-                Some(fx) => fx._print(),
-                None => println!("isn't a fixnum")
-            },
-        SysClass::Char =>
-            println!("#\\{}",
-                     from_u32(src.immediate_data() as u32).unwrap()),
+                //                println!("{}", &str._value);
+            }
+        }
+        SysClass::Fixnum => match _Fixnum::_from_type(&src) {
+            Some(fx) => fx._print(),
+            None => println!("isn't a fixnum"),
+        },
+        SysClass::Char => println!("#\\{}", from_u32(src.immediate_data() as u32).unwrap()),
         SysClass::Function => println!("is a function"),
         SysClass::Cons => println!("is a cons"),
-        _ => println!("undecoded")
+        _ => println!("undecoded"),
     }
 }
 
@@ -42,7 +40,7 @@ mod tests {
     /*
     #[test]
     fn test_type() {
-        assert!(fixnum(0).type_fixnum());
+        assert!(fixnum(0).typep_fixnum());
     }
 
     #[test]
@@ -55,7 +53,7 @@ mod tests {
     fn test_eq() {
         assert!(fixnum(0).eq(fixnum(0)));
     }
-    
+
     #[test]
     fn test_add() {
         assert!(fixnum(1).fixnum_add(fixnum(2)).eq(fixnum(3)));

@@ -1,7 +1,7 @@
 /* mu/r#type.rs */
-use std::io::{self, Write};
 use crate::num::FromPrimitive;
-    
+use std::io::{self, Write};
+
 use crate::mu::cons::_Cons;
 use crate::mu::exception::_Exception;
 use crate::mu::fixnum::_Fixnum;
@@ -38,7 +38,7 @@ pub enum TagClass {
     Immediate(Type),
     Stream(_Stream),
     Symbol(_Symbol),
-    Vector(_Vector)
+    Vector(_Vector),
 }
 
 #[derive(Debug)]
@@ -52,7 +52,7 @@ pub enum SysClass {
     Stream,
     String,
     Symbol,
-    Vector
+    Vector,
 }
 
 #[derive(FromPrimitive)]
@@ -60,11 +60,17 @@ pub enum ImmediateClass {
     Char = 0,
     String = 1,
     Keyword = 2,
-    Float = 3
+    Float = 3,
 }
 
 pub fn _immediate_class_from_u8(tag: u8) -> ImmediateClass {
     ImmediateClass::from_u8((tag & 0x7) as u8).unwrap()
+}
+
+pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
+    Type {
+        0: (data << 8) | ((len as u64) << 5) | ((tag as u64) << 3) | (Tag::Immediate as u64),
+    }
 }
 
 const _IMMEDIATE_STR_MAX: u64 = 7;
@@ -73,47 +79,36 @@ pub const T: Type = Type {
     0: (('t' as u64) << 8)
         | (1 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
-        | (Tag::Immediate as u64)
+        | (Tag::Immediate as u64),
 };
 
 pub const NIL: Type = Type {
-    0: (((('l' as u64) << 16)
-         | (('i' as u64) << 8)
-         | (('n' as u64))) << 8)
+    0: (((('l' as u64) << 16) | (('i' as u64) << 8) | ('n' as u64)) << 8)
         | (3 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
-        | (Tag::Immediate as u64)
+        | (Tag::Immediate as u64),
 };
 
 pub fn entag(base: u64, tag: Tag) -> Type {
-    Type { 0: base | tag as u64 }
+    Type {
+        0: base | tag as u64,
+    }
 }
 
 pub fn detag(_type: &Type) -> u64 {
     (_type.0 >> 3) as u64
 }
 
-pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
-    Type {
-        0: (data << 8)
-            | ((len as u64) << 5)
-            | ((tag as u64) << 3)
-            | ((Tag::Immediate as u64))
-    }
-}
-
 impl Type {
-
     pub fn as_u64(&self) -> u64 {
         self.0
     }
-    
+
     pub fn tag(&self) -> Tag {
-        let tag: std::option::Option<Tag> =
-            num::FromPrimitive::from_u64(self.0 & 0x7);
+        let tag: std::option::Option<Tag> = num::FromPrimitive::from_u64(self.0 & 0x7);
         match tag {
             Some(_) => tag.unwrap(),
-            None => panic!("Unknown tag")
+            None => panic!("Unknown tag"),
         }
     }
 
@@ -126,49 +121,41 @@ impl Type {
             Tag::Stream => SysClass::Stream,
             Tag::Symbol => SysClass::Symbol,
             Tag::Vector => SysClass::Vector,
-            Tag::Immediate =>
-                match Type::immediate_class(self) {
-                    ImmediateClass::Char => SysClass::Char,
-                    ImmediateClass::String => SysClass::Vector,
-                    ImmediateClass::Keyword => SysClass::Symbol,
-                    ImmediateClass::Float => SysClass::Float
-                }
+            Tag::Immediate => match Type::immediate_class(self) {
+                ImmediateClass::Char => SysClass::Char,
+                ImmediateClass::String => SysClass::Vector,
+                ImmediateClass::Keyword => SysClass::Symbol,
+                ImmediateClass::Float => SysClass::Float,
+            },
         }
     }
 
-    pub fn type_char(&self) -> bool {
+    /* this goes in the eventual char.rs */
+    pub fn typep_char(&self) -> bool {
         match self.tag() {
-            Tag::Immediate =>
-                match Type::immediate_class(self) {
-                    ImmediateClass::Char => true,
-                    _ => false
-                },
-            _ => false
+            Tag::Immediate => match Type::immediate_class(self) {
+                ImmediateClass::Char => true,
+                _ => false,
+            },
+            _ => false,
         }
     }
-    
+
     pub fn immediate_data(&self) -> u64 {
         (self.0 >> 8) as u64
     }
 
-    pub fn immediate_size(&self) -> u64 {
-        ((self.0 >> 5) & 7) as u64
+    pub fn immediate_size(&self) -> u8 {
+        ((self.0 >> 5) & 7) as u8
     }
-    
+
     pub fn immediate_class(&self) -> ImmediateClass {
         let tag: std::option::Option<ImmediateClass> =
             num::FromPrimitive::from_u64((self.0 >> 3) & 3);
 
         match tag {
             Some(_) => tag.unwrap(),
-            None => panic!("Unknown tag")
-        }
-    }
-
-    pub fn is_immediate(&self) -> bool {
-        match self.tag() {
-            Tag::Immediate => true,
-            _ => false
+            None => panic!("Unknown tag"),
         }
     }
 
@@ -186,7 +173,7 @@ impl Type {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_eq() {
         assert!(T.eq(T));
