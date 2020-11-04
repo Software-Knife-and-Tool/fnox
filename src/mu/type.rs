@@ -130,17 +130,6 @@ impl Type {
         }
     }
 
-    /* this goes in the eventual char.rs */
-    pub fn typep_char(&self) -> bool {
-        match self.tag() {
-            Tag::Immediate => match Type::immediate_class(self) {
-                ImmediateClass::Char => true,
-                _ => false,
-            },
-            _ => false,
-        }
-    }
-
     pub fn immediate_data(&self) -> u64 {
         (self.0 >> 8) as u64
     }

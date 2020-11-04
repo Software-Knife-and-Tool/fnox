@@ -1,6 +1,7 @@
 /* mu.rs */
 
 // pub mod heap;
+pub mod char;
 pub mod cons;
 pub mod env;
 pub mod exception;
