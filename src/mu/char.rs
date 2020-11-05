@@ -23,13 +23,9 @@ impl _Char {
         _Char { _char: _char }
     }
 
-    pub fn _from_type(ch: &Type) -> Option<_Char> {
-        if Type::typep_char(ch) {
-            Some(_Char {
-                _char: (ch.immediate_data() as u32),
-            })
-        } else {
-            None
+    pub fn _from_type(&self) -> _Char {
+        _Char {
+            _char: std::char::from_u32(self.immediate_data() as u32),
         }
     }
 }
