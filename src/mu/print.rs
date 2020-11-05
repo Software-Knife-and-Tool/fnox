@@ -17,13 +17,13 @@ pub fn _print(src: Type) {
                 println!(":{}", "wahoo");
             } else {
                 let sym = Type::symbol_from_type(&src);
-                let name = &sym._name;
+                let name = &sym.name;
                 let _str = Type::string_from_type(name);
                 //                println!("{}", &str._value);
             }
         }
-        SysClass::Fixnum => match _Fixnum::_from_type(&src) {
-            Some(fx) => fx._print(),
+        SysClass::Fixnum => match Fixnum::from_type(&src) {
+            Some(fx) => fx.print(),
             None => println!("isn't a fixnum"),
         },
         SysClass::Char => println!("#\\{}", from_u32(src.immediate_data() as u32).unwrap()),

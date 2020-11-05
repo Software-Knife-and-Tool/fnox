@@ -4,12 +4,12 @@ use std::str::{from_utf8, FromStr};
 
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
-use crate::mu::r#type::{ImmediateClass, _immediate};
+use crate::mu::r#type::{immediate, ImmediateClass};
 
-use crate::mu::fixnum::_fixnum;
+use crate::mu::fixnum::fixnum;
 use crate::mu::string::_string;
-use crate::mu::symbol::_keyword;
-use crate::mu::symbol::_symbol;
+use crate::mu::symbol::keyword;
+use crate::mu::symbol::symbol;
 
 use nom::{alt, many1, named, opt};
 use nom::{tag, take, take_until, take_while, take_while1, tuple};
@@ -103,9 +103,9 @@ named!(
     alt!(
 
         char_ => { |cs: (Option<&[u8]>, &[u8], &[u8])|
-                    _immediate(cs.2[0] as u64,
-                               1,
-                               ImmediateClass::Char)
+                    immediate(cs.2[0] as u64,
+                              1,
+                              ImmediateClass::Char)
         } |
 
         /* distinguish fixnums from symbols */
@@ -113,7 +113,7 @@ named!(
                       match from_utf8(fs.1) {
                           Ok(str) =>
                               match i64::from_str(&str) {
-                                  Ok(fix) => _fixnum(fix),
+                                  Ok(fix) => fixnum(fix),
                                   Err(_) => NIL
                               },
                           Err(_) => NIL
@@ -121,11 +121,11 @@ named!(
         } |
 
         keyword_ => { |ks: (Option<&[u8]>, &[u8], &[u8])|
-                       _keyword(_string(ks.2))
+                       keyword(_string(ks.2))
         } |
 
         symbol_ => { |ss: (Option<&[u8]>, &[u8])|
-                      _symbol(_string(ss.1), NIL)
+                      symbol(_string(ss.1), NIL)
         } |
 
         string_ => { |ss: (Option<&[u8]>, &[u8], &[u8], &[u8])|
@@ -188,7 +188,7 @@ mod tests {
             Ok((_, (_, fx))) => match from_utf8(fx) {
                 Ok(str) => match i64::from_str(&str) {
                     Ok(fix) => {
-                        let _fx = _fixnum(fix);
+                        let _fx = fixnum(fix);
                         fix == 123
                     }
                     Err(_) => false,
@@ -203,7 +203,7 @@ mod tests {
     fn test_symbol() {
         assert!(match symbol_(b" abc123 ") {
             Ok((_, (_, str))) => {
-                let _sy = _symbol(_string(str), NIL);
+                let _sy = symbol(_string(str), NIL);
                 true
             }
             Err(_) => false,
@@ -214,7 +214,7 @@ mod tests {
     fn test_keyword() {
         assert!(match keyword_(b" :abc123 ") {
             Ok((_, (_, _, str))) => {
-                let _kjw = _keyword(_string(str));
+                let _kjw = keyword(_string(str));
                 true
             }
             Err(_) => false,

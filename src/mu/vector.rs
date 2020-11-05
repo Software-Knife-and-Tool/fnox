@@ -6,27 +6,26 @@ use crate::mu::r#type::entag;
 use crate::mu::r#type::{SysClass, Tag, Type};
 
 #[derive(Debug)]
-enum Vector {
+enum VectorTypes {
     _String(String),
 }
 
 #[derive(Debug)]
-pub struct _Vector {
-    _type: SysClass,
-    _vector: Vector,
+pub struct Vector {
+    type_: SysClass,
 }
 
-impl _Vector {
-    pub fn _vector_type(&self) -> &SysClass {
-        &self._type
+impl Vector {
+    pub fn vector_type(&self) -> &SysClass {
+        &self.type_
     }
 
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
-        let vector = env.heap.alloc(mem::size_of::<_Vector>(), Tag::Vector);
+        let vector = env.heap.alloc(mem::size_of::<Vector>(), Tag::Vector);
         unsafe {
-            let _dest: *mut u8 = std::mem::transmute(vector);
-            let _src: *const u8 = std::mem::transmute(&self);
-            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Vector>());
+            let dest: *mut u8 = std::mem::transmute(vector);
+            let src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(src, dest, mem::size_of::<Vector>());
         }
         assert!((vector & 0x7) == 0);
         entag(vector, Tag::Vector)

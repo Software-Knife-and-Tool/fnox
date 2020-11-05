@@ -3,17 +3,17 @@ use crate::mu::r#type::{entag, Tag, Type};
 use crate::mu::r#type::{NIL, T};
 
 #[derive(Debug)]
-pub struct _Fixnum {
+pub struct Fixnum {
     integer: i64,
 }
 
-pub fn _fixnum(src: i64) -> Type {
+pub fn fixnum(src: i64) -> Type {
     entag((src as u64) << 3, Tag::Fixnum)
 }
 
-pub fn _fixnum_add(args: Vec<Type>) -> Type {
-    match _Fixnum::_from_type(&args[0]) {
-        Some(fx) => match fx._add(&args[1]) {
+pub fn fixnum_add(args: Vec<Type>) -> Type {
+    match Fixnum::from_type(&args[0]) {
+        Some(fx) => match fx.add(&args[1]) {
             Some(s) => s,
             None => NIL,
         },
@@ -21,52 +21,56 @@ pub fn _fixnum_add(args: Vec<Type>) -> Type {
     }
 }
 
-impl _Fixnum {
-    pub fn _print(&self) {
+impl Fixnum {
+    pub fn print(&self) {
         println!("{}", self.integer);
     }
 
-    pub fn _from_i64(_integer: i64) -> _Fixnum {
-        _Fixnum {
+    pub fn from_i64(_integer: i64) -> Fixnum {
+        Fixnum {
             integer: _integer as i64,
         }
     }
 
-    pub fn _from_type(fx: &Type) -> Option<_Fixnum> {
+    pub fn from_type(fx: &Type) -> Option<Fixnum> {
         if Type::typep_fixnum(fx) {
-            Some(_Fixnum {
+            Some(Fixnum {
                 integer: (fx.as_u64() >> 3) as i64,
             })
         } else {
+            assert!(false);
             None
         }
     }
 
-    pub fn _add(&self, fx: &Type) -> Option<Type> {
+    pub fn add(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
-            Some(_fixnum(self.integer + (fx.as_u64() >> 3) as i64))
+            Some(fixnum(self.integer + (fx.as_u64() >> 3) as i64))
         } else {
+            assert!(false);
             None
         }
     }
 
-    pub fn _mul(&self, fx: &Type) -> Option<Type> {
+    pub fn mul(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
-            Some(_fixnum(self.integer * (fx.as_u64() >> 3) as i64))
+            Some(fixnum(self.integer * (fx.as_u64() >> 3) as i64))
         } else {
+            assert!(false);
             None
         }
     }
 
-    pub fn _trunc(&self, fx: &Type) -> Option<Type> {
+    pub fn trunc(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
-            Some(_fixnum(self.integer / (fx.as_u64() >> 3) as i64))
+            Some(fixnum(self.integer / (fx.as_u64() >> 3) as i64))
         } else {
+            assert!(false);
             None
         }
     }
 
-    pub fn _minusp(&self) -> Type {
+    pub fn minusp(&self) -> Type {
         if self.integer < 0 {
             T
         } else {
@@ -74,18 +78,20 @@ impl _Fixnum {
         }
     }
 
-    pub fn _mod(&self, fx: &Type) -> Option<Type> {
+    pub fn mod_(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
-            Some(_fixnum(self.integer % (fx.as_u64() >> 3) as i64))
+            Some(fixnum(self.integer % (fx.as_u64() >> 3) as i64))
         } else {
+            assert!(false);
             None
         }
     }
 
-    pub fn _logand(&self, fx: &Type) -> Option<Type> {
+    pub fn logand(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
-            Some(_fixnum(self.integer & (fx.as_u64() >> 3) as i64))
+            Some(fixnum(self.integer & (fx.as_u64() >> 3) as i64))
         } else {
+            assert!(false);
             None
         }
     }
@@ -101,9 +107,9 @@ impl Type {
 
     pub fn i64_from_fixnum(&self) -> Option<i64> {
         if Type::typep_fixnum(self) {
-            // que?
             Some((self.as_u64() >> 3) as i64)
         } else {
+            assert!(false);
             None
         }
     }
@@ -115,17 +121,17 @@ mod tests {
 
     #[test]
     fn test_type() {
-        assert!(_fixnum(0).typep_fixnum());
+        assert!(fixnum(0).typep_fixnum());
     }
 
     #[test]
     fn test_i64() {
-        assert!(match _fixnum(0).i64_from_fixnum() {
+        assert!(match fixnum(0).i64_from_fixnum() {
             None => false,
             Some(v) => v == 0,
         });
 
-        assert!(match _fixnum(1).i64_from_fixnum() {
+        assert!(match fixnum(1).i64_from_fixnum() {
             None => false,
             Some(v) => v == 1,
         });
@@ -133,22 +139,22 @@ mod tests {
 
     #[test]
     fn test_eq() {
-        assert!(_fixnum(0).eq(_fixnum(0)));
-        assert!(!_fixnum(0).eq(_fixnum(1)));
+        assert!(fixnum(0).eq(fixnum(0)));
+        assert!(!fixnum(0).eq(fixnum(1)));
     }
 
     #[test]
     fn test_minusp() {
-        assert!(match _Fixnum::_from_type(&_fixnum(-1)) {
-            Some(fx) => fx._minusp().eq(T),
+        assert!(match Fixnum::from_type(&fixnum(-1)) {
+            Some(fx) => fx.minusp().eq(T),
             None => false,
         });
     }
 
     #[test]
     fn test_add() {
-        assert!(match _Fixnum::_from_type(&_fixnum(1)) {
-            Some(fx) => match fx._add(&_fixnum(2)) {
+        assert!(match Fixnum::from_type(&fixnum(1)) {
+            Some(fx) => match fx.add(&fixnum(2)) {
                 Some(sum) => match sum.i64_from_fixnum() {
                     Some(v) => v == 3,
                     None => false,
@@ -161,8 +167,8 @@ mod tests {
 
     #[test]
     fn test_mul() {
-        assert!(match _Fixnum::_from_type(&_fixnum(2)) {
-            Some(fx) => match fx._mul(&_fixnum(3)) {
+        assert!(match Fixnum::from_type(&fixnum(2)) {
+            Some(fx) => match fx.mul(&fixnum(3)) {
                 Some(sum) => match sum.i64_from_fixnum() {
                     Some(v) => v == 6,
                     None => false,
@@ -175,8 +181,8 @@ mod tests {
 
     #[test]
     fn test_trunc() {
-        assert!(match _Fixnum::_from_type(&_fixnum(3)) {
-            Some(fx) => match fx._trunc(&_fixnum(2)) {
+        assert!(match Fixnum::from_type(&fixnum(3)) {
+            Some(fx) => match fx.trunc(&fixnum(2)) {
                 Some(sum) => match sum.i64_from_fixnum() {
                     Some(v) => v == 1,
                     None => false,
@@ -189,8 +195,8 @@ mod tests {
 
     #[test]
     fn test_logand() {
-        assert!(match _Fixnum::_from_type(&_fixnum(1)) {
-            Some(fx) => match fx._logand(&_fixnum(2)) {
+        assert!(match Fixnum::from_type(&fixnum(1)) {
+            Some(fx) => match fx.logand(&fixnum(2)) {
                 Some(sum) => match sum.i64_from_fixnum() {
                     Some(v) => v == 0,
                     None => false,
@@ -203,8 +209,8 @@ mod tests {
 
     #[test]
     fn test_mod() {
-        assert!(match _Fixnum::_from_type(&_fixnum(5)) {
-            Some(fx) => match fx._mod(&_fixnum(3)) {
+        assert!(match Fixnum::from_type(&fixnum(5)) {
+            Some(fx) => match fx.mod_(&fixnum(3)) {
                 Some(sum) => match sum.i64_from_fixnum() {
                     Some(v) => v == 2,
                     None => false,

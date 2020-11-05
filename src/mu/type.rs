@@ -2,13 +2,14 @@
 use crate::num::FromPrimitive;
 use std::io::{self, Write};
 
-use crate::mu::cons::_Cons;
-use crate::mu::exception::_Exception;
-use crate::mu::fixnum::_Fixnum;
-use crate::mu::function::_Function;
-use crate::mu::stream::_Stream;
-use crate::mu::symbol::_Symbol;
-use crate::mu::vector::_Vector;
+use crate::mu::char::Char;
+use crate::mu::cons::Cons;
+use crate::mu::exception::Exception;
+use crate::mu::fixnum::Fixnum;
+use crate::mu::function::Function;
+use crate::mu::stream::Stream;
+use crate::mu::symbol::Symbol;
+use crate::mu::vector::Vector;
 
 #[derive(Debug)]
 pub struct Type(u64);
@@ -30,15 +31,16 @@ pub fn _tag_from_u8(tag: u8) -> Tag {
 }
 
 #[derive(Debug)]
-pub enum TagClass {
-    Cons(_Cons),
-    Exception(_Exception),
-    Fixnum(_Fixnum),
-    Function(_Function),
+pub enum TypeClass {
+    Char(Char),
+    Cons(Cons),
+    Exception(Exception),
+    Fixnum(Fixnum),
+    Function(Function),
     Immediate(Type),
-    Stream(_Stream),
-    Symbol(_Symbol),
-    Vector(_Vector),
+    Stream(Stream),
+    Symbol(Symbol),
+    Vector(Vector),
 }
 
 #[derive(Debug)]
@@ -63,11 +65,11 @@ pub enum ImmediateClass {
     Float = 3,
 }
 
-pub fn _immediate_class_from_u8(tag: u8) -> ImmediateClass {
+pub fn immediate_class_from_u8(tag: u8) -> ImmediateClass {
     ImmediateClass::from_u8((tag & 0x7) as u8).unwrap()
 }
 
-pub fn _immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
+pub fn immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
     Type {
         0: (data << 8) | ((len as u64) << 5) | ((tag as u64) << 3) | (Tag::Immediate as u64),
     }

@@ -3,30 +3,30 @@ use std::mem;
 
 use crate::mu::r#type::NIL;
 use crate::mu::r#type::{detag, entag, Tag, Type};
-use crate::mu::r#type::{ImmediateClass, _immediate};
+use crate::mu::r#type::{immediate, ImmediateClass};
 
 use crate::mu::env::Env;
 
 #[derive(Debug)]
-pub struct _Symbol {
-    pub _name: Type,
-    pub _value: Type,
+pub struct Symbol {
+    pub name: Type,
+    pub value: Type,
 }
 
 #[derive(Debug)]
-pub struct _Keyword {
-    _keyword: Type,
+pub struct Keyword {
+    keyword: Type,
 }
 
-pub fn _symbol(_name: Type, _value: Type) -> Type {
-    let sym = _Symbol { _name, _value };
+pub fn symbol(name: Type, value: Type) -> Type {
+    let sym = Symbol { name, value };
 
     Type::from_symbol(&sym)
 }
 
-pub fn _keyword(name: Type) -> Type {
+pub fn keyword(name: Type) -> Type {
     match name.tag() {
-        Tag::Immediate => _immediate(
+        Tag::Immediate => immediate(
             name.immediate_data(),
             name.immediate_size(),
             ImmediateClass::Keyword,
@@ -35,13 +35,13 @@ pub fn _keyword(name: Type) -> Type {
     }
 }
 
-impl _Symbol {
+impl Symbol {
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
-        let symbol = env.heap.alloc(mem::size_of::<_Symbol>(), Tag::Symbol);
+        let symbol = env.heap.alloc(mem::size_of::<Symbol>(), Tag::Symbol);
         unsafe {
-            let _dest: *mut u8 = std::mem::transmute(symbol);
-            let _src: *const u8 = std::mem::transmute(&self);
-            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Symbol>());
+            let dest: *mut u8 = std::mem::transmute(symbol);
+            let src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(src, dest, mem::size_of::<Symbol>());
         }
         assert!((symbol & 0x7) == 0);
         entag(symbol, Tag::Symbol)
@@ -66,15 +66,15 @@ impl Type {
         }
     }
 
-    pub fn from_symbol(_sym: &_Symbol) -> Type {
+    pub fn from_symbol(sym: &Symbol) -> Type {
         unsafe {
-            let sym_addr: u64 = std::mem::transmute(_sym);
-            entag(sym_addr << 3, Tag::Symbol)
+            let addr: u64 = std::mem::transmute(sym);
+            entag(addr << 3, Tag::Symbol)
         }
     }
 
-    pub fn symbol_from_type(&self) -> &'static _Symbol {
-        let sym: &_Symbol = unsafe { std::mem::transmute(detag(self)) };
+    pub fn symbol_from_type(&self) -> &'static Symbol {
+        let sym: &Symbol = unsafe { std::mem::transmute(detag(self)) };
         sym
     }
 }
