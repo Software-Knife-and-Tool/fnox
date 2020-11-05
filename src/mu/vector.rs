@@ -7,7 +7,7 @@ use crate::mu::r#type::{SysClass, Tag, Type};
 
 #[derive(Debug)]
 enum VectorTypes {
-    _String(String),
+    String(String),
 }
 
 #[derive(Debug)]

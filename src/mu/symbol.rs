@@ -9,8 +9,8 @@ use crate::mu::env::Env;
 
 #[derive(Debug)]
 pub struct Symbol {
-    pub name: Type,
-    pub value: Type,
+    name: Type,
+    value: Type,
 }
 
 #[derive(Debug)]
@@ -45,6 +45,14 @@ impl Symbol {
         }
         assert!((symbol & 0x7) == 0);
         entag(symbol, Tag::Symbol)
+    }
+
+    pub fn name(&self) -> &Type{
+        &self.name
+    }
+
+    pub fn value(&self) -> &Type {
+        &self.value
     }
 }
 

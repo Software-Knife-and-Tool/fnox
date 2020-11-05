@@ -17,7 +17,7 @@ pub fn _print(src: Type) {
                 println!(":{}", "wahoo");
             } else {
                 let sym = Type::symbol_from_type(&src);
-                let name = &sym.name;
+                let name = sym.name();
                 let _str = Type::string_from_type(name);
                 //                println!("{}", &str._value);
             }
