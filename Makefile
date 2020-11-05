@@ -20,7 +20,5 @@ run:
 tests:
 	@cargo test
 
-install:
-
 clean:
 	@rm -rf Cargo.lock target
