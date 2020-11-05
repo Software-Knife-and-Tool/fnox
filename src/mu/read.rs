@@ -153,11 +153,13 @@ named!(
 // pub fn _read(_src: Type) -> Type {
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
-
-    match read_(input.as_bytes()) {
-        Ok((_, _type)) => _type,
-        Err(_err) => {
-            println!("undecoded {}", _err);
+    let instr = input.as_bytes();
+    
+    println!("read: {:?}", instr);
+    match read_(instr) {
+        Ok((_, type_)) => type_,
+        Err(err) => {
+            println!("undecoded {:?}", err);
             NIL
         }
     }
