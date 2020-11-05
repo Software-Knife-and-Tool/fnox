@@ -1,6 +1,5 @@
 /* mu/char.rs */
 use std::char;
-// use std::mem;
 
 use crate::mu::r#type::{ImmediateClass, _immediate};
 use crate::mu::r#type::{Tag, Type};

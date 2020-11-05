@@ -38,16 +38,16 @@ impl Type {
 #[cfg(test)]
 mod tests {
     /*
-        use super::*;
+    use super::*;
 
-        #[test]
-        fn test_string() {
-            assert!(_string(b"yep").typep_string());
-            assert!(
-                match Type::string_from_type(_string(b"astring")) {
-                    Some(_) => true,
-                    None => false
-                });
-        }
+    #[test]
+    fn test_string() {
+        assert!(_string(b"yep").typep_string());
+        assert!(
+            match Type::string_from_type(_string(b"astring")) {
+                Some(_) => true,
+                None => false
+        });
+    }
     */
 }
