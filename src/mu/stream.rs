@@ -5,29 +5,25 @@ use crate::mu::env::Env;
 use crate::mu::r#type::{detag, entag, Tag, Type};
 
 #[derive(Debug)]
-pub struct _Stream {
-    _name: Type,
-    _func: fn(Vec<Type>) -> Type,
-    _nargs: i16,
+pub struct Stream {
+    name: Type,
+    func: fn(Vec<Type>) -> Type,
+    nargs: i16,
 }
 
-pub fn _stream(_name: Type, _func: fn(Vec<Type>) -> Type, _nargs: i16) -> Type {
-    let fun = _Stream {
-        _name,
-        _func,
-        _nargs,
-    };
+pub fn _stream(name: Type, func: fn(Vec<Type>) -> Type, nargs: i16) -> Type {
+    let fun = Stream { name, func, nargs };
 
     Type::from_stream(&fun)
 }
 
-impl _Stream {
+impl Stream {
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
-        let stream = env.heap.alloc(mem::size_of::<_Stream>(), Tag::Cons);
+        let stream = env.heap.alloc(mem::size_of::<Stream>(), Tag::Cons);
         unsafe {
-            let _dest: *mut u8 = std::mem::transmute(stream);
-            let _src: *const u8 = std::mem::transmute(&self);
-            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<_Stream>());
+            let dest: *mut u8 = std::mem::transmute(stream);
+            let src: *const u8 = std::mem::transmute(&self);
+            std::ptr::copy_nonoverlapping::<u8>(src, dest, mem::size_of::<Stream>());
         }
         assert!((stream & 0x7) == 0);
         entag(stream, Tag::Stream)
@@ -42,16 +38,16 @@ impl Type {
         }
     }
 
-    pub fn from_stream(_fn: &_Stream) -> Type {
+    pub fn from_stream(stream: &Stream) -> Type {
         unsafe {
-            let fn_addr: u64 = std::mem::transmute(_fn);
-            entag(fn_addr << 3, Tag::Stream)
+            let addr: u64 = std::mem::transmute(stream);
+            entag(addr << 3, Tag::Stream)
         }
     }
 
-    pub fn stream_from_type(&self) -> &'static _Stream {
-        let _fn: &_Stream = unsafe { std::mem::transmute(detag(self)) };
-        _fn
+    pub fn stream_from_type(&self) -> &'static Stream {
+        let stream: &Stream = unsafe { std::mem::transmute(detag(self)) };
+        stream
     }
 }
 

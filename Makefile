@@ -11,6 +11,9 @@ build:
 debug: 
 	@cargo run
 
+fmt:
+	@cargo fmt
+
 run:
 	@$(CMD)
 

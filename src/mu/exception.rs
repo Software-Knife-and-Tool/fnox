@@ -2,23 +2,19 @@
 use crate::mu::r#type::{detag, entag, Tag, Type};
 
 #[derive(Debug)]
-pub struct _Exception {
-    _name: Type,
-    _func: fn(Vec<Type>) -> Type,
-    _nargs: i16,
+pub struct Exception {
+    name: Type,
+    func: fn(Vec<Type>) -> Type,
+    nargs: i16,
 }
 
-pub fn _exception(_name: Type, _func: fn(Vec<Type>) -> Type, _nargs: i16) -> Type {
-    let fun = _Exception {
-        _name,
-        _func,
-        _nargs,
-    };
+pub fn exception(name: Type, func: fn(Vec<Type>) -> Type, nargs: i16) -> Type {
+    let fun = Exception { name, func, nargs };
 
     Type::from_exception(&fun)
 }
 
-impl _Exception {}
+impl Exception {}
 
 impl Type {
     pub fn typep_exception(&self) -> bool {
@@ -28,16 +24,16 @@ impl Type {
         }
     }
 
-    pub fn from_exception(_fn: &_Exception) -> Type {
+    pub fn from_exception(fn_: &Exception) -> Type {
         unsafe {
-            let fn_addr: u64 = std::mem::transmute(_fn);
+            let fn_addr: u64 = std::mem::transmute(fn_);
             entag(fn_addr << 3, Tag::Exception)
         }
     }
 
-    pub fn exception_from_type(&self) -> &'static _Exception {
-        let _ex: &_Exception = unsafe { std::mem::transmute(detag(self)) };
-        _ex
+    pub fn exception_from_type(&self) -> &'static Exception {
+        let ex: &Exception = unsafe { std::mem::transmute(detag(self)) };
+        ex
     }
 }
 

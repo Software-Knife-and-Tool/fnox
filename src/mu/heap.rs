@@ -1,6 +1,5 @@
 /* mu/heap.rs */
 use crate::mu::r#type::{Tag, _tag_from_u8};
-// use crate::mu::r#type::{ImmediateClass, _immediate_class_from_u8};
 
 pub struct Heap {
     nwords: usize,       // number of u64 words
