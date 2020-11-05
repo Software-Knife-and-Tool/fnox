@@ -1,31 +1,32 @@
 /* mu/char.rs */
-use crate::mu::r#type::{Tag, Type};
+use std::char;
+use std::mem;
+
 use crate::mu::r#type::{ImmediateClass, _immediate};
+use crate::mu::r#type::{Tag, Type};
 
 #[derive(Debug)]
 pub struct _Char {
-    char_: u8
+    _char: char,
 }
 
-pub fn _char(src: u8) -> Type {
+pub fn _char(src: char) -> Type {
     _immediate(src as u64, 0, ImmediateClass::Char)
 }
 
 impl _Char {
     pub fn _print(&self) {
-        println!("{}", self.char_);
+        println!("{}", self._char);
     }
 
-    pub fn _from_u8(_char: u8) -> _Char {
-        _Char {
-            char_: _char
-        }
+    pub fn _from_char(_char: char) -> _Char {
+        _Char { _char: _char }
     }
 
     pub fn _from_type(ch: &Type) -> Option<_Char> {
         if Type::typep_char(ch) {
             Some(_Char {
-                char_: (ch.immediate_data() & 0xff) as u8,
+                _char: (ch.immediate_data() as u32),
             })
         } else {
             None
