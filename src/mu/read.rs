@@ -147,7 +147,6 @@ named!(
         list_ => { |_ls: (Option<&[u8]>, &[u8], Vec<Type>, Option<&[u8]>, &[u8])|
                     NIL
         }
-
     )
 );
 
