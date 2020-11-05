@@ -1,9 +1,9 @@
 /* mu/vector.rs */
 use std::mem;
 
-use crate::mu::r#type::{SysClass, Tag, Type};
-use crate::mu::r#type::{entag};
 use crate::mu::env::Env;
+use crate::mu::r#type::entag;
+use crate::mu::r#type::{SysClass, Tag, Type};
 
 #[derive(Debug)]
 enum Vector {
@@ -20,7 +20,7 @@ impl _Vector {
     pub fn _vector_type(&self) -> &SysClass {
         &self._type
     }
-    
+
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
         let vector = env.heap.alloc(mem::size_of::<_Vector>(), Tag::Vector);
         unsafe {

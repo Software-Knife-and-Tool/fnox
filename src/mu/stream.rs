@@ -1,8 +1,8 @@
 /* mu/stream.rs */
 use std::mem;
 
-use crate::mu::r#type::{detag, entag, Tag, Type};
 use crate::mu::env::Env;
+use crate::mu::r#type::{detag, entag, Tag, Type};
 
 #[derive(Debug)]
 pub struct _Stream {
