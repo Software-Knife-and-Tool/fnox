@@ -16,11 +16,11 @@ use nom::{tag, take, take_until, take_while, take_while1, tuple};
 
 use nom::character::{is_alphanumeric, is_digit, is_space};
 
-named!(fixnum_<&[u8], (Option<&[u8]>, &[u8], &[u8])>,
+named!(fixnum_<&[u8], (Option<&[u8]>, &[u8], Option<&[u8]>)>,
        tuple!(
            opt!(take_while!(is_space)),
            take_while1!(is_digit),
-           eof!()
+           opt!(eof!())
        )
 );
 
@@ -102,7 +102,6 @@ named!(nil_<&[u8], (Option<&[u8]>, &[u8], Option<&[u8]>, &[u8])>,
 named!(
     read_<Type>,
     alt!(
-
         char_ => { |cs: (Option<&[u8]>, &[u8], &[u8])|
                     immediate(cs.2[0] as u64,
                               1,
@@ -110,7 +109,7 @@ named!(
         } |
 
         /* distinguish fixnums from symbols */
-        fixnum_ => { |fs: (Option<&[u8]>, &[u8], &[u8])|
+        fixnum_ => { |fs: (Option<&[u8]>, &[u8], Option<&[u8]>)|
                       match from_utf8(fs.1) {
                           Ok(str) =>
                               match i64::from_str(&str) {
@@ -151,12 +150,10 @@ named!(
     )
 );
 
-// pub fn _read(_src: Type) -> Type {
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
     let instr = input.as_bytes();
     
-    println!("read: {:?}", instr);
     match read_(instr) {
         Ok((_, type_)) => type_,
         Err(err) => {
@@ -172,7 +169,7 @@ mod tests {
 
     #[test]
     fn test_fx() {
-        assert!(match fixnum_(b"123") {
+        assert!(match fixnum_(b" 123 ") {
             Ok((_, (_, fx, _))) => match from_utf8(fx) {
                 Ok(str) => match i64::from_str(&str) {
                     Ok(fix) => fix == 123,
@@ -186,7 +183,7 @@ mod tests {
 
     #[test]
     fn test_fx1() {
-        assert!(match fixnum_(b"123") {
+        assert!(match fixnum_(b"123 ") {
             Ok((_, (_, fx, _))) => match from_utf8(fx) {
                 Ok(str) => match i64::from_str(&str) {
                     Ok(fix) => {
