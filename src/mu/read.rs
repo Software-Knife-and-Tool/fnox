@@ -11,15 +11,16 @@ use crate::mu::string::_string;
 use crate::mu::symbol::keyword;
 use crate::mu::symbol::symbol;
 
-use nom::{alt, many1, named, opt};
+use nom::{alt, many1, named, opt, eof};
 use nom::{tag, take, take_until, take_while, take_while1, tuple};
 
 use nom::character::{is_alphanumeric, is_digit, is_space};
 
-named!(fixnum_<&[u8], (Option<&[u8]>, &[u8])>,
+named!(fixnum_<&[u8], (Option<&[u8]>, &[u8], &[u8])>,
        tuple!(
            opt!(take_while!(is_space)),
-           take_while1!(is_digit)
+           take_while1!(is_digit),
+           eof!()
        )
 );
 
@@ -109,7 +110,7 @@ named!(
         } |
 
         /* distinguish fixnums from symbols */
-        fixnum_ => { |fs: (Option<&[u8]>, &[u8])|
+        fixnum_ => { |fs: (Option<&[u8]>, &[u8], &[u8])|
                       match from_utf8(fs.1) {
                           Ok(str) =>
                               match i64::from_str(&str) {
@@ -171,8 +172,8 @@ mod tests {
 
     #[test]
     fn test_fx() {
-        assert!(match fixnum_(b" 123 ") {
-            Ok((_, (_, fx))) => match from_utf8(fx) {
+        assert!(match fixnum_(b"123") {
+            Ok((_, (_, fx, _))) => match from_utf8(fx) {
                 Ok(str) => match i64::from_str(&str) {
                     Ok(fix) => fix == 123,
                     Err(_) => false,
@@ -185,8 +186,8 @@ mod tests {
 
     #[test]
     fn test_fx1() {
-        assert!(match fixnum_(b"123 ") {
-            Ok((_, (_, fx))) => match from_utf8(fx) {
+        assert!(match fixnum_(b"123") {
+            Ok((_, (_, fx, _))) => match from_utf8(fx) {
                 Ok(str) => match i64::from_str(&str) {
                     Ok(fix) => {
                         let _fx = fixnum(fix);
