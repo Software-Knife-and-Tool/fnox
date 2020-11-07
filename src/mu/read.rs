@@ -11,18 +11,14 @@ use crate::mu::string::_string;
 use crate::mu::symbol::keyword;
 use crate::mu::symbol::symbol;
 
-use nom::{alt, many1, named, opt, eof};
+use nom::{alt, eof, many1, named, opt};
 use nom::{tag, take, take_until, take_while, take_while1, tuple};
 
 use nom::character::{is_alphanumeric, is_digit, is_space};
 
-named!(fixnum_<&[u8], &[u8]>,
-       take_while1!(is_digit)
-);
+named!(fixnum_<&[u8], &[u8]>, take_while1!(is_digit));
 
-named!(symbol_<&[u8], &[u8]>,
-       take_while1!(is_alphanumeric)
-);
+named!(symbol_<&[u8], &[u8]>, take_while1!(is_alphanumeric));
 
 named!(keyword_<&[u8], (&[u8], &[u8])>,
        tuple!(
@@ -97,29 +93,19 @@ named!(
                       }
         } |
 
-        keyword_ => { |ks: (&[u8], &[u8]) |
-                       keyword(_string(ks.1))
-        } |
+        keyword_ => { |ks: (&[u8], &[u8]) | keyword(_string(ks.1))} |
 
-        symbol_ => { |ss: &[u8]|
-                      symbol(_string(ss), NIL)
-        } |
+        symbol_ => { |ss: &[u8]| symbol(_string(ss), NIL)} |
 
-        string_ => { |ss: (&[u8], &[u8], &[u8])|
-                      _string(ss.1)
-        } |
+        string_ => { |ss: (&[u8], &[u8], &[u8])| _string(ss.1)} |
 
-        nil_ => { |_fs: (&[u8], Option<&[u8]>, &[u8])|
-                    NIL
-        } |
+        nil_ => { |_fs: (&[u8], Option<&[u8]>, &[u8])| NIL} |
 
         dotted_ => { |ds: (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])|
                        ds.1.cons(ds.5)
         } |
 
-        list_ => { |_ls: (&[u8], Vec<Type>, Option<&[u8]>, &[u8])|
-                    NIL
-        }
+        list_ => { |_ls: (&[u8], Vec<Type>, Option<&[u8]>, &[u8])| NIL}
     )
 );
 
