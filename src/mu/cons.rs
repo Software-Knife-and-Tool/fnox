@@ -8,8 +8,8 @@ use crate::mu::env::Env;
 
 #[derive(Debug)]
 pub struct Cons {
-    car: Type,
-    cdr: Type,
+    car: &'static Type,
+    cdr: &'static Type,
 }
 
 impl Cons {
@@ -44,9 +44,9 @@ impl Type {
         }
     }
 
-    pub fn cons(self, cdr: Type) -> Type {
+    pub fn cons(&self, cdr: &'static Type) -> Type {
         Type::from_cons(&Cons {
-            car: self,
+            car: &self,
             cdr: cdr,
         })
     }

@@ -31,14 +31,15 @@ pub fn env<'e>() -> Env<'e> {
 }
 
 impl Env<'_> {
-    pub fn read(&self) -> Type {
+    pub fn read(&self) -> &'static Type {
         _read()
     }
     pub fn print(&self, src: Type) {
         _print(src);
     }
 
-    pub fn eval(ptr: &'static Type) -> &'static Type {
+    //  pub fn eval(&self, ptr: &'static Type) -> &'static Type {
+    pub fn eval(&self, ptr: &'static Type) -> &'static Type {
         match ptr.type_of() {
             SysClass::Cons => ptr,
             SysClass::Symbol => ptr,

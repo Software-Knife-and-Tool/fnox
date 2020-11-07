@@ -11,6 +11,6 @@ fn main() {
     let e = env();
 
     loop {
-        e.print(e.read());
+        e.print(e.eval(e.read()));
     }
 }
