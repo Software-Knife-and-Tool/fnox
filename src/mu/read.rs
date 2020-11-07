@@ -46,15 +46,6 @@ named!(string_<&[u8], (&[u8], &[u8], &[u8])>,
        )
 );
 
-named!(cons_<&[u8], (&[u8], Type, Option<&[u8]>, &[u8])>,
-       tuple!(
-           tag!("("),
-           type_,
-           opt!(take_while!(is_space)),
-           tag!(")")
-       )
-);
-
 named!(dotted_<&[u8], (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])>,
        tuple!(
            tag!("("),
@@ -120,10 +111,6 @@ named!(
 
         nil_ => { |_fs: (&[u8], Option<&[u8]>, &[u8])|
                     NIL
-        } |
-
-        cons_ => { |cs: (&[u8], Type, Option<&[u8]>, &[u8])|
-                    cs.1.cons(NIL)
         } |
 
         dotted_ => { |ds: (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])|
@@ -229,14 +216,6 @@ mod tests {
     fn test_char() {
         assert!(match char_(b"#\\a ") {
             Ok((_, (_, _ch))) => true,
-            Err(_) => false,
-        })
-    }
-
-    #[test]
-    fn test_cons() {
-        assert!(match cons_(b"( 1234 ) ") {
-            Ok((_, (_, type_, _, _))) => type_.typep_fixnum(),
             Err(_) => false,
         })
     }
