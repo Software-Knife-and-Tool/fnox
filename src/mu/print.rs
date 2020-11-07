@@ -14,7 +14,7 @@ pub fn _print(src: Type) {
         }
         SysClass::Symbol => {
             if src.typep_keyword() {
-                println!(":{}", "wahoo");
+                println!(":{}", "keyword");
             } else {
                 let sym = Type::symbol_from_type(&src);
                 let name = sym.name();

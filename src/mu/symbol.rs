@@ -47,7 +47,7 @@ impl Symbol {
         entag(symbol, Tag::Symbol)
     }
 
-    pub fn name(&self) -> &Type{
+    pub fn name(&self) -> &Type {
         &self.name
     }
 
