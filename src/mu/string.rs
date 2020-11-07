@@ -7,7 +7,7 @@ pub struct _String {
     pub _value: Type,
 }
 
-pub fn _string(_value: &[u8]) -> Type {
+pub fn string(_value: &[u8]) -> Type {
     match std::str::from_utf8(_value) {
         Ok(str) => Type::from_string(str),
         Err(_) => NIL,

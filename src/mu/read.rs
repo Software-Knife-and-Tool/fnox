@@ -7,7 +7,7 @@ use crate::mu::r#type::NIL;
 use crate::mu::r#type::{immediate, ImmediateClass};
 
 use crate::mu::fixnum::fixnum;
-use crate::mu::string::_string;
+use crate::mu::string::string;
 use crate::mu::symbol::keyword;
 use crate::mu::symbol::symbol;
 
@@ -93,11 +93,11 @@ named!(
                       }
         } |
 
-        keyword_ => { |ks: (&[u8], &[u8]) | keyword(_string(ks.1))} |
+        keyword_ => { |ks: (&[u8], &[u8])| keyword(string(ks.1))} |
 
-        symbol_ => { |ss: &[u8]| symbol(_string(ss), NIL)} |
+        symbol_ => { |ss: &[u8]| symbol(string(ss), NIL)} |
 
-        string_ => { |ss: (&[u8], &[u8], &[u8])| _string(ss.1)} |
+        string_ => { |ss: (&[u8], &[u8], &[u8])| string(ss.1)} |
 
         nil_ => { |_fs: (&[u8], Option<&[u8]>, &[u8])| NIL} |
 
@@ -122,7 +122,8 @@ pub fn _read() -> Type {
     let instr = input.as_bytes();
 
     match read_form(instr) {
-        Ok((_, (_, type_, _))) => type_,
+        Ok((_, (_, type_, _))) =>
+            type_,
         Err(err) => {
             println!("undecoded {:?}", err);
             NIL
@@ -169,7 +170,7 @@ mod tests {
     fn test_symbol() {
         assert!(match symbol_(b"abc123 ") {
             Ok((_, str)) => {
-                let _sy = symbol(_string(str), NIL);
+                let _sy = symbol(string(str), NIL);
                 true
             }
             Err(_) => false,
@@ -180,7 +181,7 @@ mod tests {
     fn test_keyword() {
         assert!(match keyword_(b":abc123 ") {
             Ok((_, (_, str))) => {
-                let _kw = keyword(_string(str));
+                let _kw = keyword(string(str));
                 true
             }
             Err(_) => false,
@@ -191,7 +192,7 @@ mod tests {
     fn test_string() {
         assert!(match string_(b"\"abc123\" ") {
             Ok((_, (_, str, _))) => {
-                let _st = _string(str);
+                let _st = string(str);
                 true
             }
             Err(_) => false,
