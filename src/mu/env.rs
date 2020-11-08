@@ -39,8 +39,8 @@ impl Env<'_> {
     }
 
     //  pub fn eval(&self, ptr: &'static Type) -> &'static Type {
-    pub fn eval(&self, ptr: &Type) -> &Type {
-        &NIL
+    pub fn eval(&self, ptr: &'static Type) -> &'static Type {
+        ptr
         /*
         match ptr.type_of() {
             SysClass::Cons => ptr,
@@ -52,7 +52,7 @@ impl Env<'_> {
             SysClass::Fixnum => ptr,
             _ => ptr,
         }
-*/
+         */
     }
 
     pub fn lookup(&self, name: &str) -> &Type {

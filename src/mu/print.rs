@@ -4,26 +4,32 @@
 use std::char::from_u32;
 
 use crate::mu::fixnum::*;
-use crate::mu::r#type::{SysClass, Type};
+use crate::mu::r#type::{SysClass, Type, NIL};
 
 pub fn _print(src: &Type) {
     match src.type_of() {
         SysClass::String => {
             let _str = &Type::string_from_type(&src);
-            //            println!("\"{}\"", &str._value)
-        }
+            println!("\"{:?}\"", &_str._value)
+        },
         SysClass::Symbol => {
-            if src.typep_keyword() {
+            if src.eq(NIL) {
+                println!(":nil");
+            } else if src.typep_keyword() {
                 println!(":{}", "keyword");
             } else {
                 let sym = Type::symbol_from_type(&src);
                 let name = sym.name();
                 let _str = Type::string_from_type(name);
-                //                println!("{}", &str._value);
+
+                println!("{:?}", &_str._value);
             }
-        }
+        },
         SysClass::Fixnum => match Fixnum::from_type(&src) {
-            Some(fx) => fx.print(),
+            Some(fx) => {
+                println!("fixnum:");
+                fx.print()
+            },
             None => println!("isn't a fixnum"),
         },
         SysClass::Char => println!("#\\{}", from_u32(src.immediate_data() as u32).unwrap()),

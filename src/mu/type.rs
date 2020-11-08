@@ -115,6 +115,8 @@ impl Type {
     }
 
     pub fn type_of(&self) -> SysClass {
+        println!("type-of: {:x?}", self.0);
+        
         match self.tag() {
             Tag::Cons => SysClass::Cons,
             Tag::Fixnum => SysClass::Fixnum,
