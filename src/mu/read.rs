@@ -77,13 +77,13 @@ named!(nil_<&[u8], (&[u8], Option<&[u8]>, &[u8])>,
 named!(
     type_<Type>,
     alt!(
-        char_ => { |cs: (&[u8], &[u8])|
+        char_ => { |cs: (_, &[u8])|
                     immediate(cs.1[0] as u64,
                               1,
                               ImmediateClass::Char)
         } |
 
-        /* distinguish fixnums from symbols */
+        // distinguish fixnums from symbols
         fixnum_ => { |fs: &[u8] |
                       match from_utf8(fs) {
                           Ok(str) =>
@@ -95,21 +95,21 @@ named!(
                       }
         } |
 
-        keyword_ => { |ks: (&[u8], &[u8])| keyword(string(ks.1)) } |
+        keyword_ => { |ks: (_, &[u8])| keyword(string(ks.1)) } |
 
         symbol_ => { |ss: &[u8]| symbol(string(ss), NIL) } |
 
-        string_ => { |ss: (&[u8], &[u8], &[u8])| string(ss.1) } |
+        string_ => { |ss: (_, &[u8], _)| string(ss.1) } |
 
-        nil_ => { |_fs: (&[u8], Option<&[u8]>, &[u8])| NIL } // |
+        nil_ => { |_fs: (_, _, _)| NIL }
 
         /*
         dotted_ => { |ds: (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])|
                       ds.1.cons(&NIL)
         } |
 
-        list_ => { |_ls: (&[u8], Vec<&Type>, Option<&[u8]>, &[u8])| &NIL }
-        */
+        list_ => { |_ls: (&[u8], Vec<&Type>, Option<&[u8]>, &[u8])| NIL }
+         */      
     )
 
 );
