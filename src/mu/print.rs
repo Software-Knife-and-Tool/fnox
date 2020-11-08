@@ -6,7 +6,7 @@ use std::char::from_u32;
 use crate::mu::fixnum::*;
 use crate::mu::r#type::{SysClass, Type};
 
-pub fn _print(src: Type) {
+pub fn _print(src: &Type) {
     match src.type_of() {
         SysClass::String => {
             let _str = &Type::string_from_type(&src);

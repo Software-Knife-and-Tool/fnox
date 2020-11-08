@@ -31,9 +31,9 @@ pub fn _tag_from_u8(tag: u8) -> Tag {
 }
 
 #[derive(Debug)]
-pub enum TypeClass {
+pub enum TypeClass<'a> {
     Char(Char),
-    Cons(Cons),
+    Cons(Cons<'a>),
     Exception(Exception),
     Fixnum(Fixnum),
     Function(Function),

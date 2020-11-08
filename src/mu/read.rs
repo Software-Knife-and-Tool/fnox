@@ -42,6 +42,7 @@ named!(string_<&[u8], (&[u8], &[u8], &[u8])>,
        )
 );
 
+/*
 named!(dotted_<&[u8], (&[u8], &Type, Option<&[u8]>, &[u8], Option<&[u8]>, &Type, Option<&[u8]>, &[u8])>,
        tuple!(
            tag!("("),
@@ -63,6 +64,7 @@ named!(list_<&[u8], (&[u8], Vec<&Type>, Option<&[u8]>, &[u8])>,
            tag!(")")
        )
 );
+*/
 
 named!(nil_<&[u8], (&[u8], Option<&[u8]>, &[u8])>,
        tuple!(
@@ -73,10 +75,10 @@ named!(nil_<&[u8], (&[u8], Option<&[u8]>, &[u8])>,
 );
 
 named!(
-    type_<&Type>,
+    type_<Type>,
     alt!(
         char_ => { |cs: (&[u8], &[u8])|
-                    &immediate(cs.1[0] as u64,
+                    immediate(cs.1[0] as u64,
                               1,
                               ImmediateClass::Char)
         } |
@@ -86,30 +88,33 @@ named!(
                       match from_utf8(fs) {
                           Ok(str) =>
                               match i64::from_str(&str) {
-                                  Ok(fix) => &fixnum(fix),
-                                  Err(_) => &NIL
+                                  Ok(fix) => fixnum(fix),
+                                  Err(_) => NIL
                               },
-                          Err(_) => &NIL
+                          Err(_) => NIL
                       }
         } |
 
-        keyword_ => { |ks: (&[u8], &[u8])| &keyword(string(ks.1)) } |
+        keyword_ => { |ks: (&[u8], &[u8])| keyword(string(ks.1)) } |
 
-        symbol_ => { |ss: &[u8]| &symbol(string(ss), NIL) } |
+        symbol_ => { |ss: &[u8]| symbol(string(ss), NIL) } |
 
-        string_ => { |ss: (&[u8], &[u8], &[u8])| &string(ss.1) } |
+        string_ => { |ss: (&[u8], &[u8], &[u8])| string(ss.1) } |
 
-        nil_ => { |_fs: (&[u8], Option<&[u8]>, &[u8])| &NIL } |
+        nil_ => { |_fs: (&[u8], Option<&[u8]>, &[u8])| NIL } // |
 
-        dotted_ => { |ds: (&[u8], &Type, Option<&[u8]>, &[u8], Option<&[u8]>, &Type, Option<&[u8]>, &[u8])|
-                       &ds.1.cons(ds.5)
+        /*
+        dotted_ => { |ds: (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])|
+                      ds.1.cons(&NIL)
         } |
 
         list_ => { |_ls: (&[u8], Vec<&Type>, Option<&[u8]>, &[u8])| &NIL }
+        */
     )
+
 );
 
-named!(read_form<&[u8], (Option<&[u8]>, &Type, Option<&[u8]>)>,
+named!(read_form<&[u8], (Option<&[u8]>, Type, Option<&[u8]>)>,
        tuple!(
            opt!(take_while!(is_space)),
            type_,
@@ -117,16 +122,15 @@ named!(read_form<&[u8], (Option<&[u8]>, &Type, Option<&[u8]>)>,
        )
 );
 
-pub fn _read() -> &'static Type {
+pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
-    let instr = input.as_bytes();
 
-    match read_form(instr) {
+    match read_form(input.as_bytes()) {
         Ok((_, (_, type_, _))) =>
-            &type_,
+            type_,
         Err(err) => {
             println!("undecoded {:?}", err);
-            &NIL
+            NIL
         }
     }
 }
@@ -207,6 +211,7 @@ mod tests {
         })
     }
 
+        /*
     #[test]
     fn test_dotted() {
         assert!(match dotted_(b"( 123 . 456 ) ") {
@@ -215,6 +220,7 @@ mod tests {
         })
     }
 
+
     #[test]
     fn test_list() {
         assert!(match list_(b"( 1234 5678 ) ") {
@@ -222,6 +228,7 @@ mod tests {
             Err(_) => false,
         })
     }
+*/
 
     #[test]
     fn test_nil() {
