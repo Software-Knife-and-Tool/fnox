@@ -7,12 +7,12 @@ use crate::mu::r#type::{detag, entag, Tag, Type};
 use crate::mu::env::Env;
 
 #[derive(Debug)]
-pub struct Cons {
-    car: Type,
-    cdr: Type,
+pub struct Cons<'a> {
+    car: &'a Type,
+    cdr: &'a Type,
 }
 
-impl Cons {
+impl Cons<'_> {
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
         let cons = env.heap.alloc(mem::size_of::<Cons>(), Tag::Cons);
         unsafe {
@@ -44,9 +44,9 @@ impl Type {
         }
     }
 
-    pub fn cons(self, cdr: Type) -> Type {
+    pub fn cons(&self, cdr: &'static Type) -> Type {
         Type::from_cons(&Cons {
-            car: self,
+            car: &self,
             cdr: cdr,
         })
     }
@@ -63,19 +63,19 @@ mod tests {
 
     #[test]
     fn test_type() {
-        assert!(NIL.cons(NIL).typep_cons());
+        assert!(NIL.cons(&NIL).typep_cons());
     }
 
     #[test]
     fn test_list() {
         assert!(NIL.typep_list());
-        assert!(NIL.cons(NIL).typep_list());
+        assert!(NIL.cons(&NIL).typep_list());
     }
 
     #[test]
     fn test_evict() {
         assert!(NIL.typep_list());
-        assert!(NIL.cons(NIL).typep_list());
+        assert!(NIL.cons(&NIL).typep_list());
     }
 
     /*

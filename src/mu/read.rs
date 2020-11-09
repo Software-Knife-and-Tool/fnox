@@ -7,12 +7,12 @@ use crate::mu::r#type::NIL;
 use crate::mu::r#type::{immediate, ImmediateClass};
 
 use crate::mu::fixnum::fixnum;
-use crate::mu::string::_string;
+use crate::mu::string::string;
 use crate::mu::symbol::keyword;
 use crate::mu::symbol::symbol;
 
 use nom::{alt, eof, many1, named, opt};
-use nom::{tag, take, take_until, take_while, take_while1, tuple};
+use nom::{tag, take, take_until, take_while, take_while1, tuple, ws};
 
 use nom::character::{is_alphanumeric, is_digit, is_space};
 
@@ -42,7 +42,8 @@ named!(string_<&[u8], (&[u8], &[u8], &[u8])>,
        )
 );
 
-named!(dotted_<&[u8], (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])>,
+/*
+named!(dotted_<&[u8], (&[u8], &Type, Option<&[u8]>, &[u8], Option<&[u8]>, &Type, Option<&[u8]>, &[u8])>,
        tuple!(
            tag!("("),
            type_,
@@ -55,7 +56,7 @@ named!(dotted_<&[u8], (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, O
        )
 );
 
-named!(list_<&[u8], (&[u8], Vec<Type>, Option<&[u8]>, &[u8])>,
+named!(list_<&[u8], (&[u8], Vec<&Type>, Option<&[u8]>, &[u8])>,
        tuple!(
            tag!("("),
            many1!(type_),
@@ -63,6 +64,7 @@ named!(list_<&[u8], (&[u8], Vec<Type>, Option<&[u8]>, &[u8])>,
            tag!(")")
        )
 );
+*/
 
 named!(nil_<&[u8], (&[u8], Option<&[u8]>, &[u8])>,
        tuple!(
@@ -73,15 +75,8 @@ named!(nil_<&[u8], (&[u8], Option<&[u8]>, &[u8])>,
 );
 
 named!(
-    type_<Type>,
+    atom<Type>,
     alt!(
-        char_ => { |cs: (&[u8], &[u8])|
-                    immediate(cs.1[0] as u64,
-                              1,
-                              ImmediateClass::Char)
-        } |
-
-        /* distinguish fixnums from symbols */
         fixnum_ => { |fs: &[u8] |
                       match from_utf8(fs) {
                           Ok(str) =>
@@ -93,38 +88,31 @@ named!(
                       }
         } |
 
-        keyword_ => { |ks: (&[u8], &[u8]) | keyword(_string(ks.1))} |
-
-        symbol_ => { |ss: &[u8]| symbol(_string(ss), NIL)} |
-
-        string_ => { |ss: (&[u8], &[u8], &[u8])| _string(ss.1)} |
-
-        nil_ => { |_fs: (&[u8], Option<&[u8]>, &[u8])| NIL} |
-
-        dotted_ => { |ds: (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])|
-                       ds.1.cons(ds.5)
+        char_ => { |cs: (_, &[u8])|
+                    immediate(cs.1[0] as u64,
+                              1,
+                              ImmediateClass::Char)
         } |
 
-        list_ => { |_ls: (&[u8], Vec<Type>, Option<&[u8]>, &[u8])| NIL}
+        keyword_ => { |ks: (_, &[u8])| keyword(string(ks.1)) } |
+
+        symbol_ => { |ss: &[u8]| symbol(string(ss), NIL) } |
+
+        string_ => { |ss: (_, &[u8], _)| string(ss.1) } |
+
+        nil_ => { |_fs: (_, _, _)| NIL }
     )
 );
 
-named!(read_form<&[u8], (Option<&[u8]>, Type, Option<&[u8]>)>,
-       tuple!(
-           opt!(take_while!(is_space)),
-           type_,
-           opt!(eof!())
-       )
-);
+named!(read_form<&[u8], Type>, ws!(atom));
 
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
-    let instr = input.as_bytes();
 
-    match read_form(instr) {
-        Ok((_, (_, type_, _))) => type_,
+    match read_form(input.as_bytes()) {
+        Ok((_, t)) => t,
         Err(err) => {
-            println!("undecoded {:?}", err);
+            println!("unparsed {:?}", err);
             NIL
         }
     }
@@ -169,7 +157,7 @@ mod tests {
     fn test_symbol() {
         assert!(match symbol_(b"abc123 ") {
             Ok((_, str)) => {
-                let _sy = symbol(_string(str), NIL);
+                let _sy = symbol(string(str), NIL);
                 true
             }
             Err(_) => false,
@@ -180,7 +168,7 @@ mod tests {
     fn test_keyword() {
         assert!(match keyword_(b":abc123 ") {
             Ok((_, (_, str))) => {
-                let _kw = keyword(_string(str));
+                let _kw = keyword(string(str));
                 true
             }
             Err(_) => false,
@@ -191,7 +179,7 @@ mod tests {
     fn test_string() {
         assert!(match string_(b"\"abc123\" ") {
             Ok((_, (_, str, _))) => {
-                let _st = _string(str);
+                let _st = string(str);
                 true
             }
             Err(_) => false,
@@ -206,6 +194,7 @@ mod tests {
         })
     }
 
+        /*
     #[test]
     fn test_dotted() {
         assert!(match dotted_(b"( 123 . 456 ) ") {
@@ -214,6 +203,7 @@ mod tests {
         })
     }
 
+
     #[test]
     fn test_list() {
         assert!(match list_(b"( 1234 5678 ) ") {
@@ -221,6 +211,7 @@ mod tests {
             Err(_) => false,
         })
     }
+*/
 
     #[test]
     fn test_nil() {
