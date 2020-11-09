@@ -28,7 +28,7 @@ pub fn keyword(name: Type) -> Type {
     match name.tag() {
         Tag::Immediate => immediate(
             name.immediate_data(),
-            name.immediate_size(),
+            name.immediate_size() as u8,
             ImmediateClass::Keyword,
         ),
         _ => NIL,

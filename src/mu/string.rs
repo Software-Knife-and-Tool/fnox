@@ -19,6 +19,11 @@ impl Type {
     pub fn typep_string(&self) -> bool {
         match self.tag() {
             Tag::Vector => true,
+            Tag::Immediate =>
+                match self.immediate_class() {
+                  ImmediateClass::String => true,
+                  _ => false,
+                }
             _ => false,
         }
     }
@@ -38,13 +43,29 @@ impl Type {
         }
     }
 
-    pub fn str_from_type(&self) -> &'static &str {
+    pub fn string_from_type(&self) -> &'static _String {
+        let str: &_String = unsafe { std::mem::transmute(detag(self)) };
+        str
+    }
+    
+    pub fn str_from_type(&self) -> &str {
         match self.tag() {
-            Tag::Immediate => b"",
-            Tag::Vector => {
-                let str: &_String = unsafe { std::mem::transmute(detag(self)) };
-                &str
-            }
+            Tag::Immediate => {
+                /*
+                let mut chars = self.immediate_data();
+                let mut v = &[u8; self.immediate_size()];
+
+                for ch in &v {
+                    v[i] = chars & 0xff;
+                    chars /= 8;
+                }
+                
+                std::str::from_utf8(v).unwrap()
+                 */
+                std::str::from_utf8(b"immediate").unwrap()
+            },
+            Tag::Vector => std::str::from_utf8(b"tagged").unwrap(),
+            _ => std::str::from_utf8(b"whoa").unwrap(),
         }
     }
 }

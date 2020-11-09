@@ -1,6 +1,5 @@
 /* mu/r#type.rs */
 use crate::num::FromPrimitive;
-use std::io::{self, Write};
 
 use crate::mu::char::Char;
 use crate::mu::cons::Cons;
@@ -138,8 +137,8 @@ impl Type {
         (self.0 >> 8) as u64
     }
 
-    pub fn immediate_size(&self) -> u8 {
-        ((self.0 >> 5) & 7) as u8
+    pub fn immediate_size(&self) -> usize {
+        ((self.0 >> 5) & 7) as usize
     }
 
     pub fn immediate_class(&self) -> ImmediateClass {

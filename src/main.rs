@@ -12,6 +12,6 @@ fn main() {
 
     loop {
         //        e.print(e.eval(&e.read()));
-        e.print(&e.read());
+        e.print(e.read());
     }
 }
