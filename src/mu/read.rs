@@ -12,7 +12,7 @@ use crate::mu::symbol::keyword;
 use crate::mu::symbol::symbol;
 
 use nom::{alt, eof, many1, named, opt};
-use nom::{tag, take, take_until, take_while, take_while1, tuple};
+use nom::{tag, take, take_until, take_while, take_while1, tuple, ws};
 
 use nom::character::{is_alphanumeric, is_digit, is_space};
 
@@ -75,15 +75,8 @@ named!(nil_<&[u8], (&[u8], Option<&[u8]>, &[u8])>,
 );
 
 named!(
-    type_<Type>,
+    atom<Type>,
     alt!(
-        char_ => { |cs: (_, &[u8])|
-                    immediate(cs.1[0] as u64,
-                              1,
-                              ImmediateClass::Char)
-        } |
-
-        // distinguish fixnums from symbols
         fixnum_ => { |fs: &[u8] |
                       match from_utf8(fs) {
                           Ok(str) =>
@@ -95,6 +88,12 @@ named!(
                       }
         } |
 
+        char_ => { |cs: (_, &[u8])|
+                    immediate(cs.1[0] as u64,
+                              1,
+                              ImmediateClass::Char)
+        } |
+
         keyword_ => { |ks: (_, &[u8])| keyword(string(ks.1)) } |
 
         symbol_ => { |ss: &[u8]| symbol(string(ss), NIL) } |
@@ -102,34 +101,18 @@ named!(
         string_ => { |ss: (_, &[u8], _)| string(ss.1) } |
 
         nil_ => { |_fs: (_, _, _)| NIL }
-
-        /*
-        dotted_ => { |ds: (&[u8], Type, Option<&[u8]>, &[u8], Option<&[u8]>, Type, Option<&[u8]>, &[u8])|
-                      ds.1.cons(&NIL)
-        } |
-
-        list_ => { |_ls: (&[u8], Vec<&Type>, Option<&[u8]>, &[u8])| NIL }
-         */      
     )
-
 );
 
-named!(read_form<&[u8], (Option<&[u8]>, Type, Option<&[u8]>)>,
-       tuple!(
-           opt!(take_while!(is_space)),
-           type_,
-           opt!(eof!())
-       )
-);
+named!(read_form<&[u8], Type>, ws!(atom));
 
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
     match read_form(input.as_bytes()) {
-        Ok((_, (_, type_, _))) =>
-            type_,
+        Ok((_, t)) => t,
         Err(err) => {
-            println!("undecoded {:?}", err);
+            println!("unparsed {:?}", err);
             NIL
         }
     }

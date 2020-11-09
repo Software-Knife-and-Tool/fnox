@@ -16,14 +16,14 @@ pub struct Type(u64);
 
 #[derive(FromPrimitive)]
 pub enum Tag {
-    Fixnum = 0,    /* fixnum 61 bites */
-    Cons = 1,      /* cons */
-    Symbol = 2,    /* symbol/keyword */
-    Function = 3,  /* function */
-    Exception = 4, /* exception */
-    Stream = 5,    /* stream */
-    Vector = 6,    /* vector */
-    Immediate = 7, /* immediate (char, keyword, small string, float) */
+    Fixnum = 0,    // fixnum 61 bits
+    Cons = 1,      // cons
+    Symbol = 2,    // symbol/keyword
+    Function = 3,  // function
+    Exception = 4, // exception
+    Stream = 5,    // stream
+    Vector = 6,    // vector
+    Immediate = 7, // immediate (char, keyword, small string, float)
 }
 
 pub fn _tag_from_u8(tag: u8) -> Tag {
@@ -75,7 +75,7 @@ pub fn immediate(data: u64, len: u8, tag: ImmediateClass) -> Type {
     }
 }
 
-const _IMMEDIATE_STR_MAX: u64 = 7;
+pub const IMMEDIATE_STR_MAX: usize = 7;
 
 pub const T: Type = Type {
     0: (('t' as u64) << 8)
@@ -97,8 +97,8 @@ pub fn entag(base: u64, tag: Tag) -> Type {
     }
 }
 
-pub fn detag(_type: &Type) -> u64 {
-    (_type.0 >> 3) as u64
+pub fn detag(t: &Type) -> u64 {
+    (t.0 >> 3) as u64
 }
 
 impl Type {
@@ -127,7 +127,7 @@ impl Type {
             Tag::Vector => SysClass::Vector,
             Tag::Immediate => match Type::immediate_class(self) {
                 ImmediateClass::Char => SysClass::Char,
-                ImmediateClass::String => SysClass::Vector,
+                ImmediateClass::String => SysClass::String,
                 ImmediateClass::Keyword => SysClass::Symbol,
                 ImmediateClass::Float => SysClass::Float,
             },
@@ -153,8 +153,6 @@ impl Type {
     }
 
     pub fn eq(&self, ptr: Type) -> bool {
-        // println!("{:x?} v {:x?}", self.as_u64(), ptr.as_u64());
-        io::stdout().flush().unwrap();
         self.0 == ptr.0
     }
 

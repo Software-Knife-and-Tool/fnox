@@ -34,7 +34,7 @@ impl Env<'_> {
     pub fn read(&self) -> Type {
         _read()
     }
-    pub fn print(&self, src: &Type) {
+    pub fn print(&self, src: &'static Type) {
         _print(src);
     }
 
