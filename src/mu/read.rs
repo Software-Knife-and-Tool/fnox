@@ -18,58 +18,42 @@ use nom::{
     sequence::tuple};
 
 // numbers
-fn is_hex_digit(c: char) -> bool {
-    c.is_digit(16)
-}
-
-fn is_dec_digit(c: char) -> bool {
-    c.is_digit(10)
-}
-
-fn from_hex64(input: &str) -> Result<i64, std::num::ParseIntError> {
-    i64::from_str_radix(input, 16)
-}
-
-fn from_dec64(input: &str) -> Result<i64, std::num::ParseIntError> {
-    i64::from_str_radix(input, 10)
-}
-
 fn hex_digits(input: &str) -> IResult<&str, i64> {
     map_res(
-        take_while(is_hex_digit),
-        from_hex64
+        take_while(|c: char| c.is_digit(16)),
+        |input: &str| i64::from_str_radix(input, 16)
     )(input)
 }
 
 fn dec_digits(input: &str) -> IResult<&str, i64> {
     map_res(
-        take_while(is_dec_digit),
-        from_dec64
+        take_while(|c: char| c.is_digit(10)),
+        |input: &str| i64::from_str_radix(input, 10)
     )(input)
 }
 
-fn hexadecimal_(input: &str) -> IResult<&str, Type> {
+fn parse_hexadecimal(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#x")(input)?;
     let (input, hex) = hex_digits(input)?;
 
     Ok((input, Fixnum::make_type(hex)))
 }
 
-fn decimal_(input: &str) -> IResult<&str, Type> {
+fn parse_decimal(input: &str) -> IResult<&str, Type> {
     let (input, dec) = dec_digits(input)?;
 
     Ok((input, Fixnum::make_type(dec)))
 }
 
 // string/char
-fn string_(input: &str) -> IResult<&str, Type> {
+fn parse_string(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("\"")(input)?;
     let (input, str) = take_until("\"")(input)?;
 
     Ok((input, String::make_type(str)))
 }
 
-fn char_(input: &str) -> IResult<&str, Type> {
+fn parse_char(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#\\")(input)?;
     let (input, ch) = take(1 as usize)(input)?;
 
@@ -77,7 +61,6 @@ fn char_(input: &str) -> IResult<&str, Type> {
 }
 
 // list; nil as a special case
-
 
 /*
 named!(
@@ -136,7 +119,7 @@ mod tests {
 
     fn test_hex() {
         assert!(
-            match hexadecimal_("#x2F14DF") {
+            match parse_hexadecimal("#x2F14DF") {
                 Ok(("", fx)) =>
                    match fx.i64_from_fixnum() {
                        Some(ival) => ival == 0x2f14df,
@@ -148,7 +131,7 @@ mod tests {
 
     fn test_dec() {
         assert!(
-            match decimal_("123456") {
+            match parse_decimal("123456") {
                 Ok(("", fx)) =>
                    match fx.i64_from_fixnum() {
                        Some(ival) => ival == 123456,
@@ -161,7 +144,7 @@ mod tests {
     #[test]
     fn test_string() {
         assert!(
-            match string_("\"abc123\"") {
+            match parse_string("\"abc123\"") {
                 Ok(("", str)) => str.typep_string(),
                 _ => false,
             })
@@ -170,7 +153,7 @@ mod tests {
     #[test]
     fn test_char() {
         assert!(
-            match char_("#\\a") {
+            match parse_char("#\\a") {
                 Ok(("", ch)) => ch.typep_char(),
                 _ => false,
             })
