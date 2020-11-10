@@ -9,11 +9,11 @@ pub struct Char {
     char_: char,
 }
 
-pub fn char_(src: char) -> Type {
-    immediate(src as u64, 0, ImmediateClass::Char)
-}
-
 impl Char {
+    pub fn make_type(src: char) -> Type {
+        immediate(src as u64, 0, ImmediateClass::Char)
+    }
+
     pub fn _print(&self) {
         println!("{}", self.char_);
     }
@@ -52,6 +52,6 @@ mod tests {
 
     #[test]
     fn test_type() {
-        assert!(char_('a').typep_char());
+        assert!(Char::make_type('a').typep_char());
     }
 }

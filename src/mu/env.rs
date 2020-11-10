@@ -10,8 +10,8 @@ use crate::mu::print::_print;
 use crate::mu::read::_read;
 
 use crate::mu::fixnum::fixnum_add;
-use crate::mu::function::function;
-use crate::mu::string::string;
+use crate::mu::function::{Function};
+use crate::mu::string::{String};
 
 pub struct Env<'e> {
     pub heap: Heap,
@@ -22,7 +22,7 @@ pub fn env<'e>() -> Env<'e> {
     let mut init: HashMap<&'e str, Type> = HashMap::new();
 
     init.insert("fixnum-add",
-                function(string(b"fixnum-add"), fixnum_add, 2));
+                Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2));
 
     Env {
         heap: _heap(1024 * 1024),

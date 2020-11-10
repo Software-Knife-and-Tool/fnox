@@ -4,12 +4,11 @@ use std::str::{from_utf8, FromStr};
 
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
-use crate::mu::r#type::{immediate, ImmediateClass};
 
-use crate::mu::fixnum::{fixnum};
-use crate::mu::string::string;
-use crate::mu::symbol::keyword;
-use crate::mu::symbol::symbol;
+use crate::mu::char::{Char};
+use crate::mu::fixnum::{Fixnum};
+use crate::mu::string::{String};
+use crate::mu::symbol::{Symbol};
 
 use nom::{
     IResult,
@@ -53,13 +52,13 @@ fn hexadecimal_(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#x")(input)?;
     let (input, hex) = hex_digits(input)?;
 
-    Ok((input, fixnum(hex)))
+    Ok((input, Fixnum::make_type(hex)))
 }
 
 fn decimal_(input: &str) -> IResult<&str, Type> {
     let (input, dec) = dec_digits(input)?;
 
-    Ok((input, fixnum(dec)))
+    Ok((input, Fixnum::make_type(dec)))
 }
 
 // string/char
@@ -67,17 +66,14 @@ fn string_(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("\"")(input)?;
     let (input, str) = take_until("\"")(input)?;
 
-    Ok((input, string(str.as_bytes())))
+    Ok((input, String::make_type(str)))
 }
 
 fn char_(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#\\")(input)?;
     let (input, ch) = take(1 as usize)(input)?;
-    let type_ = immediate(ch.as_bytes()[0 as usize] as u64,
-                          1,
-                          ImmediateClass::Char);
 
-    Ok((input, type_))
+    Ok((input, Char::make_type(ch.chars().nth(0).unwrap())))
 }
 
 // list; nil as a special case
@@ -120,7 +116,7 @@ named!(read_form<&[u8], Type>, ws!(atom));
 
 
 pub fn _read() -> Type {
-    let input = io::stdin().lock().lines().next().unwrap().unwrap();
+    let _input = io::stdin().lock().lines().next().unwrap().unwrap();
 
     /*
     match read_form(input.as_bytes()) {

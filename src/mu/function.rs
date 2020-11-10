@@ -13,15 +13,15 @@ pub struct Function {
     nargs: i16,
 }
 
-pub fn function(name: Type, func: fn(Vec<Type>) -> Type, nargs: i16) -> Type {
-    let fun = Function { name, func, nargs };
-
-    Type::from_function(&fun)
-}
-
 impl Function {
     pub fn funcall(&self, _args: Vec<Type>) -> Type {
         NIL
+    }
+
+    pub fn make_type(name: Type, func: fn(Vec<Type>) -> Type, nargs: i16) -> Type {
+        let fun = Function { name, func, nargs };
+
+        Type::from_function(&fun)
     }
 
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
