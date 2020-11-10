@@ -49,14 +49,14 @@ fn dec_digits(input: &str) -> IResult<&str, i64> {
     )(input)
 }
 
-fn hex_number(input: &str) -> IResult<&str, Type> {
+fn hexadecimal_(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#x")(input)?;
     let (input, hex) = hex_digits(input)?;
 
     Ok((input, fixnum(hex)))
 }
 
-fn dec_number(input: &str) -> IResult<&str, Type> {
+fn decimal_(input: &str) -> IResult<&str, Type> {
     let (input, dec) = dec_digits(input)?;
 
     Ok((input, fixnum(dec)))
@@ -140,7 +140,7 @@ mod tests {
 
     fn test_hex() {
         assert!(
-            match hex_number("#x2F14DF") {
+            match hexadecimal_("#x2F14DF") {
                 Ok(("", fx)) =>
                    match fx.i64_from_fixnum() {
                        Some(ival) => ival == 0x2f14df,
@@ -152,7 +152,7 @@ mod tests {
 
     fn test_dec() {
         assert!(
-            match dec_number("123456") {
+            match decimal_("123456") {
                 Ok(("", fx)) =>
                    match fx.i64_from_fixnum() {
                        Some(ival) => ival == 123456,
