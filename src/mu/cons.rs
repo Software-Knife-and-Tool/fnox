@@ -13,6 +13,7 @@ pub struct Cons<'a> {
 }
 
 impl Cons<'_> {
+
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
         let cons = env.heap.alloc(mem::size_of::<Cons>(), Tag::Cons);
         unsafe {

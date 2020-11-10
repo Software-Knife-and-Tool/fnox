@@ -1,9 +1,6 @@
 /* mu/print.rs */
-// use std::io;
-
 use std::char::from_u32;
 
-use crate::mu::fixnum::*;
 use crate::mu::r#type::{SysClass, Type, NIL};
 
 pub fn _print(src: Type) {
@@ -25,21 +22,14 @@ pub fn _print(src: Type) {
                 // println!("{:?}", &_str._value);
             }
         },
-        SysClass::Fixnum => match Fixnum::from_type(&src) {
-            Some(fx) => {
-                println!("fixnum:");
-                fx.print()
-            },
-            None => println!("isn't a fixnum"),
-        },
         SysClass::Char => println!("#\\{}", from_u32(src.immediate_data() as u32).unwrap()),
         SysClass::Cons => println!("is a cons"),
         SysClass::Exception => println!("is an exception"),
+        SysClass::Fixnum => println!("[fixnum] {:?}", src.i64_from_fixnum().unwrap()),
         SysClass::Float => println!("is a float"),
         SysClass::Function => println!("is a function"),
         SysClass::Stream => println!("is a stream"),
-        SysClass::Vector => println!("is a vector"),
-        _ => println!("undecoded, should panic"),
+        SysClass::Vector => println!("is a vector")
     }
 }
 

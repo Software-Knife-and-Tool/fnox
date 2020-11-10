@@ -18,24 +18,24 @@ pub struct Keyword {
     keyword: Type,
 }
 
-pub fn symbol(name: Type, value: Type) -> Type {
-    let sym = Symbol { name, value };
-
-    Type::from_symbol(&sym)
-}
-
-pub fn keyword(name: Type) -> Type {
-    match name.tag() {
-        Tag::Immediate => immediate(
-            name.immediate_data(),
-            name.immediate_size() as u8,
-            ImmediateClass::Keyword,
-        ),
-        _ => NIL,
-    }
-}
-
 impl Symbol {
+    pub fn make_type(name: Type, value: Type) -> Type {
+        let sym = Symbol { name, value };
+
+        Type::from_symbol(&sym)
+    }
+
+    pub fn make_keyword(name: Type) -> Type {
+        match name.tag() {
+            Tag::Immediate => immediate(
+                name.immediate_data(),
+                name.immediate_size() as u8,
+                ImmediateClass::Keyword,
+            ),
+            _ => NIL,
+        }
+    }
+
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
         let symbol = env.heap.alloc(mem::size_of::<Symbol>(), Tag::Symbol);
         unsafe {

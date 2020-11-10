@@ -4,76 +4,82 @@ use std::str::{from_utf8, FromStr};
 
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
-use crate::mu::r#type::{immediate, ImmediateClass};
 
-use crate::mu::fixnum::fixnum;
-use crate::mu::string::string;
-use crate::mu::symbol::keyword;
-use crate::mu::symbol::symbol;
+use crate::mu::char::{Char};
+use crate::mu::fixnum::{Fixnum};
+use crate::mu::string::{String};
+use crate::mu::symbol::{Symbol};
 
-use nom::{alt, eof, many1, named, opt};
-use nom::{tag, take, take_until, take_while, take_while1, tuple, ws};
+use nom::{
+    IResult,
+    take_while,
+    bytes::complete::{tag, take_while, take, take_until},
+    combinator::map_res,
+    sequence::tuple};
 
-use nom::character::{is_alphanumeric, is_digit, is_space};
+// numbers
+fn is_hex_digit(c: char) -> bool {
+    c.is_digit(16)
+}
 
-named!(fixnum_<&[u8], &[u8]>, take_while1!(is_digit));
+fn is_dec_digit(c: char) -> bool {
+    c.is_digit(10)
+}
 
-named!(symbol_<&[u8], &[u8]>, take_while1!(is_alphanumeric));
+fn from_hex64(input: &str) -> Result<i64, std::num::ParseIntError> {
+    i64::from_str_radix(input, 16)
+}
 
-named!(keyword_<&[u8], (&[u8], &[u8])>,
-       tuple!(
-           tag!(":"),
-           take_while1!(is_alphanumeric)
-       )
-);
+fn from_dec64(input: &str) -> Result<i64, std::num::ParseIntError> {
+    i64::from_str_radix(input, 10)
+}
 
-named!(char_<&[u8], (&[u8], &[u8])>,
-       tuple!(
-           tag!("#\\"),
-           take!(1)
-       )
-);
+fn hex_digits(input: &str) -> IResult<&str, i64> {
+    map_res(
+        take_while(is_hex_digit),
+        from_hex64
+    )(input)
+}
 
-named!(string_<&[u8], (&[u8], &[u8], &[u8])>,
-       tuple!(
-           tag!("\""),
-           take_until!("\""),
-           tag!("\"")
-       )
-);
+fn dec_digits(input: &str) -> IResult<&str, i64> {
+    map_res(
+        take_while(is_dec_digit),
+        from_dec64
+    )(input)
+}
+
+fn hexadecimal_(input: &str) -> IResult<&str, Type> {
+    let (input, _) = tag("#x")(input)?;
+    let (input, hex) = hex_digits(input)?;
+
+    Ok((input, Fixnum::make_type(hex)))
+}
+
+fn decimal_(input: &str) -> IResult<&str, Type> {
+    let (input, dec) = dec_digits(input)?;
+
+    Ok((input, Fixnum::make_type(dec)))
+}
+
+// string/char
+fn string_(input: &str) -> IResult<&str, Type> {
+    let (input, _) = tag("\"")(input)?;
+    let (input, str) = take_until("\"")(input)?;
+
+    Ok((input, String::make_type(str)))
+}
+
+fn char_(input: &str) -> IResult<&str, Type> {
+    let (input, _) = tag("#\\")(input)?;
+    let (input, ch) = take(1 as usize)(input)?;
+
+    Ok((input, Char::make_type(ch.chars().nth(0).unwrap())))
+}
+
+// list; nil as a special case
+
 
 /*
-named!(dotted_<&[u8], (&[u8], &Type, Option<&[u8]>, &[u8], Option<&[u8]>, &Type, Option<&[u8]>, &[u8])>,
-       tuple!(
-           tag!("("),
-           type_,
-           opt!(take_while!(is_space)),
-           tag!("."),
-           opt!(take_while!(is_space)),
-           type_,
-           opt!(take_while!(is_space)),
-           tag!(")")
-       )
-);
-
-named!(list_<&[u8], (&[u8], Vec<&Type>, Option<&[u8]>, &[u8])>,
-       tuple!(
-           tag!("("),
-           many1!(type_),
-           opt!(take_while!(is_space)),
-           tag!(")")
-       )
-);
-*/
-
-named!(nil_<&[u8], (&[u8], Option<&[u8]>, &[u8])>,
-       tuple!(
-           tag!("("),
-           opt!(take_while!(is_space)),
-           tag!(")")
-       )
-);
-
 named!(
     atom<Type>,
     alt!(
@@ -106,9 +112,13 @@ named!(
 
 named!(read_form<&[u8], Type>, ws!(atom));
 
-pub fn _read() -> Type {
-    let input = io::stdin().lock().lines().next().unwrap().unwrap();
+*/
 
+
+pub fn _read() -> Type {
+    let _input = io::stdin().lock().lines().next().unwrap().unwrap();
+
+    /*
     match read_form(input.as_bytes()) {
         Ok((_, t)) => t,
         Err(err) => {
@@ -116,43 +126,57 @@ pub fn _read() -> Type {
             NIL
         }
     }
+     */
+    NIL
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_fx() {
-        assert!(match fixnum_(b"123 ") {
-            Ok((_, fx)) => match from_utf8(fx) {
-                Ok(str) => match i64::from_str(&str) {
-                    Ok(fix) => fix == 123,
-                    Err(_) => false,
-                },
-                Err(_) => false,
-            },
-            Err(_) => false,
-        })
+    fn test_hex() {
+        assert!(
+            match hexadecimal_("#x2F14DF") {
+                Ok(("", fx)) =>
+                   match fx.i64_from_fixnum() {
+                       Some(ival) => ival == 0x2f14df,
+                       _ => false,
+                   },
+                _ => false,
+            })
+    }
+
+    fn test_dec() {
+        assert!(
+            match decimal_("123456") {
+                Ok(("", fx)) =>
+                   match fx.i64_from_fixnum() {
+                       Some(ival) => ival == 123456,
+                       _ => false,
+                   },
+                _ => false,
+            })
     }
 
     #[test]
-    fn test_fx1() {
-        assert!(match fixnum_(b"123 ") {
-            Ok((_, fx)) => match from_utf8(fx) {
-                Ok(str) => match i64::from_str(&str) {
-                    Ok(fix) => {
-                        let _fx = fixnum(fix);
-                        fix == 123
-                    }
-                    Err(_) => false,
-                },
-                Err(_) => false,
-            },
-            Err(_) => false,
-        })
+    fn test_string() {
+        assert!(
+            match string_("\"abc123\"") {
+                Ok(("", str)) => str.typep_string(),
+                _ => false,
+            })
     }
 
+    #[test]
+    fn test_char() {
+        assert!(
+            match char_("#\\a") {
+                Ok(("", ch)) => ch.typep_char(),
+                _ => false,
+            })
+    }
+
+    /*
     #[test]
     fn test_symbol() {
         assert!(match symbol_(b"abc123 ") {
@@ -194,7 +218,6 @@ mod tests {
         })
     }
 
-        /*
     #[test]
     fn test_dotted() {
         assert!(match dotted_(b"( 123 . 456 ) ") {
@@ -203,7 +226,6 @@ mod tests {
         })
     }
 
-
     #[test]
     fn test_list() {
         assert!(match list_(b"( 1234 5678 ) ") {
@@ -211,7 +233,6 @@ mod tests {
             Err(_) => false,
         })
     }
-*/
 
     #[test]
     fn test_nil() {
@@ -220,4 +241,6 @@ mod tests {
             Err(_) => false,
         })
     }
+     */
 }
+

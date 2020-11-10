@@ -4,14 +4,24 @@ use crate::mu::r#type::{detag, entag, Tag, Type};
 use crate::mu::r#type::{immediate, ImmediateClass, IMMEDIATE_STR_MAX};
 
 #[derive(Debug)]
-pub struct _String {
+pub struct String {
     pub _value: Type,
 }
 
-pub fn string(chars: &[u8]) -> Type {
-    match std::str::from_utf8(chars) {
-        Ok(str) => Type::from_string(str),
-        Err(_) => NIL,
+impl String {
+    pub fn make_type(str_: &str) -> Type {
+        if str_.len() <= IMMEDIATE_STR_MAX {
+            let mut charf : u64 = 0;
+            for ch in str_.as_bytes() {
+                charf = (charf << 8) | *ch as u64;
+            }
+            immediate(charf, str_.len() as u8, ImmediateClass::String)
+        } else {
+            unsafe {
+                let addr: u64 = std::mem::transmute(&str_.as_bytes());
+                entag(addr << 3, Tag::Vector)
+            }
+        }
     }
 }
 
@@ -28,23 +38,8 @@ impl Type {
         }
     }
 
-    pub fn from_string(str: &str) -> Type {
-        if str.len() <= IMMEDIATE_STR_MAX {
-            let mut chars : u64 = 0;
-            for ch in str.as_bytes() {
-                chars = (chars << 8) | *ch as u64;
-            }
-            immediate(chars, str.len() as u8, ImmediateClass::String)
-        } else {
-            unsafe {
-                let addr: u64 = std::mem::transmute(&str);
-                entag(addr << 3, Tag::Vector)
-            }
-        }
-    }
-
-    pub fn string_from_type(&self) -> &'static _String {
-        let str: &_String = unsafe { std::mem::transmute(detag(self)) };
+    pub fn string_from_type(&self) -> &'static String {
+        let str: &String = unsafe { std::mem::transmute(detag(self)) };
         str
     }
     
