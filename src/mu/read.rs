@@ -18,29 +18,28 @@ use nom::{
     sequence::tuple};
 
 // numbers
-fn hex_digits(input: &str) -> IResult<&str, i64> {
-    map_res(
-        take_while(|c: char| c.is_digit(16)),
-        |input: &str| i64::from_str_radix(input, 16)
-    )(input)
-}
-
-fn dec_digits(input: &str) -> IResult<&str, i64> {
-    map_res(
-        take_while(|c: char| c.is_digit(10)),
-        |input: &str| i64::from_str_radix(input, 10)
-    )(input)
-}
-
 fn parse_hexadecimal(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#x")(input)?;
-    let (input, hex) = hex_digits(input)?;
+    let (input, hex) =
+         || -> IResult<&str, i64> {
+             map_res(
+                 take_while(|c: char| c.is_digit(16)),
+                 |input: &str| i64::from_str_radix(input, 16)
+             )
+                 (input)
+         }()?;
 
     Ok((input, Fixnum::make_type(hex)))
 }
 
 fn parse_decimal(input: &str) -> IResult<&str, Type> {
-    let (input, dec) = dec_digits(input)?;
+    let (input, dec) =
+         || -> IResult<&str, i64> {
+            map_res(
+                take_while(|c: char| c.is_digit(10)),
+                |input: &str| i64::from_str_radix(input, 10)
+            )(input)
+         }()?;
 
     Ok((input, Fixnum::make_type(dec)))
 }
