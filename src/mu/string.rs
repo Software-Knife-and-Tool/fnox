@@ -57,9 +57,9 @@ impl Type {
                 
                 std::str::from_utf8(v).unwrap()
                  */
-                std::str::from_utf8(b"immediate").unwrap()
+                std::str::from_utf8(b"immediate-string").unwrap()
             },
-            Tag::Vector => std::str::from_utf8(b"tagged").unwrap(),
+            Tag::Vector => std::str::from_utf8(b"char-vector").unwrap(),
             _ => std::str::from_utf8(b"whoa").unwrap(),
         }
     }

@@ -1,6 +1,5 @@
 /* mu/read.rs */
 use std::io::{self, BufRead};
-use std::str::{from_utf8, FromStr};
 
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
@@ -12,7 +11,7 @@ use crate::mu::symbol::{Symbol};
 
 use nom::{
     IResult,
-    take_while,
+    branch::alt,
     bytes::complete::{tag, take_while, take, take_until},
     combinator::map_res,
     sequence::tuple};
@@ -59,57 +58,23 @@ fn parse_char(input: &str) -> IResult<&str, Type> {
     Ok((input, Char::make_type(ch.chars().nth(0).unwrap())))
 }
 
-// list; nil as a special case
-
-/*
-named!(
-    atom<Type>,
-    alt!(
-        fixnum_ => { |fs: &[u8]|
-                      match from_utf8(fs) {
-                          Ok(str) =>
-                              match i64::from_str(&str) {
-                                  Ok(fix) => fixnum(fix),
-                                  Err(_) => NIL
-                              },
-                          Err(_) => NIL
-                      }
-        } |
-
-        char_ => { |cs: (_, &[u8])|
-                    immediate(cs.1[0] as u64,
-                              1,
-                              ImmediateClass::Char)
-        } |
-
-        keyword_ => { |ks: (_, &[u8])| keyword(string(ks.1)) } |
-
-        symbol_ => { |ss: &[u8]| symbol(string(ss), NIL) } |
-
-        string_ => { |ss: (_, &[u8], _)| string(ss.1) } |
-
-        nil_ => { |_fs: (_, _, _)| NIL }
-    )
-);
-
-named!(read_form<&[u8], Type>, ws!(atom));
-
-*/
-
+fn parse_atom(input: &str) -> IResult<&str, Type> {
+    alt((parse_char,
+         parse_decimal,
+//         parse_hexidecimal,
+         parse_string))(input)
+}
 
 pub fn _read() -> Type {
-    let _input = io::stdin().lock().lines().next().unwrap().unwrap();
+    let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
-    /*
-    match read_form(input.as_bytes()) {
+    match parse_atom(&input) {
         Ok((_, t)) => t,
         Err(err) => {
             println!("unparsed {:?}", err);
             NIL
         }
     }
-     */
-    NIL
 }
 
 #[cfg(test)]
