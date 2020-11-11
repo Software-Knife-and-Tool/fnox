@@ -61,7 +61,7 @@ fn parse_char(input: &str) -> IResult<&str, Type> {
 fn parse_atom(input: &str) -> IResult<&str, Type> {
     alt((parse_char,
          parse_decimal,
-//         parse_hexidecimal,
+         parse_hexadecimal,
          parse_string))(input)
 }
 
