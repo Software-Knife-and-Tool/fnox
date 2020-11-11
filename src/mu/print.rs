@@ -7,7 +7,7 @@ pub fn _print(src: Type) {
     match src.type_of() {
         SysClass::String => {
             let _str = &Type::str_from_type(&src);
-            println!("\"{:?}\"", _str)
+            println!("[string] \"{:?}\"", _str)
         },
         SysClass::Symbol => {
             if src.eq(NIL) {
@@ -22,7 +22,7 @@ pub fn _print(src: Type) {
                 // println!("{:?}", &_str._value);
             }
         },
-        SysClass::Char => println!("#\\{}", from_u32(src.immediate_data() as u32).unwrap()),
+        SysClass::Char => println!("[char] #\\{}", from_u32(src.immediate_data() as u32).unwrap()),
         SysClass::Cons => println!("is a cons"),
         SysClass::Exception => println!("is an exception"),
         SysClass::Fixnum => println!("[fixnum] {:?}", src.i64_from_fixnum().unwrap()),
