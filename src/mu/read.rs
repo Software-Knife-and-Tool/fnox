@@ -66,7 +66,7 @@ fn parse_char(input: &str) -> IResult<&str, Type> {
 named!(
     atom<Type>,
     alt!(
-        fixnum_ => { |fs: &[u8] |
+        fixnum_ => { |fs: &[u8]|
                       match from_utf8(fs) {
                           Ok(str) =>
                               match i64::from_str(&str) {
