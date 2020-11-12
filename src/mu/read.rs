@@ -15,7 +15,8 @@ use nom::{
     bytes::complete::{tag, take_while, take, take_until},
     character::{is_space, is_alphanumeric},
     combinator::{map_res, opt},
-    sequence::{tuple, many0}
+    many0,
+    sequence::{tuple}
 };
 
 // numbers
@@ -60,9 +61,16 @@ fn parse_char(input: &str) -> IResult<&str, Type> {
     Ok((input, Char::make_type(ch.chars().nth(0).unwrap())))
 }
 
-fn parse_list(input: &str) -> IResult<&str, Type> {
-    let list = tuple(tag("("), many0(parse_form), tag(")"))(input)?;
-
+// special forms
+fn parse_quote(input: &str) -> IResult<&str, Type> {
+    let (input, _) = tag("'")(input)?;
+    let (input, form) =
+        alt((parse_char,
+             parse_decimal,
+             parse_hexadecimal,
+             parse_quote,
+             parse_string))(input)?;
+    
     Ok((input, NIL))
 }
 
@@ -72,7 +80,7 @@ fn parse_form(input: &str) -> IResult<&str, Type> {
     alt((parse_char,
          parse_decimal,
          parse_hexadecimal,
-         parse_list,
+         parse_quote,
          parse_string))(input)
 }
 
