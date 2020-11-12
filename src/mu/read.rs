@@ -13,8 +13,11 @@ use nom::{
     IResult,
     branch::alt,
     bytes::complete::{tag, take_while, take, take_until},
-    combinator::map_res,
-    sequence::tuple};
+    character::{is_space, is_alphanumeric},
+    combinator::{map_res, opt},
+    many0,
+    sequence::{tuple}
+};
 
 // numbers
 fn parse_hexadecimal(input: &str) -> IResult<&str, Type> {
@@ -58,17 +61,33 @@ fn parse_char(input: &str) -> IResult<&str, Type> {
     Ok((input, Char::make_type(ch.chars().nth(0).unwrap())))
 }
 
-fn parse_atom(input: &str) -> IResult<&str, Type> {
+// special forms
+fn parse_quote(input: &str) -> IResult<&str, Type> {
+    let (input, _) = tag("'")(input)?;
+    let (input, form) =
+        alt((parse_char,
+             parse_decimal,
+             parse_hexadecimal,
+             parse_quote,
+             parse_string))(input)?;
+    
+    Ok((input, NIL))
+}
+
+fn parse_form(input: &str) -> IResult<&str, Type> {
+    let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
+    
     alt((parse_char,
          parse_decimal,
          parse_hexadecimal,
+         parse_quote,
          parse_string))(input)
 }
 
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
-    match parse_atom(&input) {
+    match parse_form(&input) {
         Ok((_, t)) => t,
         Err(err) => {
             println!("unparsed {:?}", err);
