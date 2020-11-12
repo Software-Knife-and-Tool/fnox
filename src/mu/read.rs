@@ -20,7 +20,7 @@ use nom::{
 };
 
 // numbers
-fn parse_hexadecimal(input: &str) -> IResult<&str, Type> {
+fn read_hexadecimal(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#x")(input)?;
     let (input, hex) =
          || -> IResult<&str, i64> {
@@ -34,7 +34,7 @@ fn parse_hexadecimal(input: &str) -> IResult<&str, Type> {
     Ok((input, Fixnum::make_type(hex)))
 }
 
-fn parse_decimal(input: &str) -> IResult<&str, Type> {
+fn read_decimal(input: &str) -> IResult<&str, Type> {
     let (input, dec) =
          || -> IResult<&str, i64> {
             map_res(
@@ -47,14 +47,14 @@ fn parse_decimal(input: &str) -> IResult<&str, Type> {
 }
 
 // string/char
-fn parse_string(input: &str) -> IResult<&str, Type> {
+fn read_string(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("\"")(input)?;
     let (input, str) = take_until("\"")(input)?;
 
     Ok((input, String::make_type(str)))
 }
 
-fn parse_char(input: &str) -> IResult<&str, Type> {
+fn read_char(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#\\")(input)?;
     let (input, ch) = take(1 as usize)(input)?;
 
@@ -62,35 +62,35 @@ fn parse_char(input: &str) -> IResult<&str, Type> {
 }
 
 // special forms
-fn parse_quote(input: &str) -> IResult<&str, Type> {
+fn read_quote(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("'")(input)?;
     let (input, form) =
-        alt((parse_char,
-             parse_decimal,
-             parse_hexadecimal,
-             parse_quote,
-             parse_string))(input)?;
+        alt((read_char,
+             read_decimal,
+             read_hexadecimal,
+             read_quote,
+             read_string))(input)?;
     
     Ok((input, NIL))
 }
 
-fn parse_form(input: &str) -> IResult<&str, Type> {
+fn read_form(input: &str) -> IResult<&str, Type> {
     let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
     
-    alt((parse_char,
-         parse_decimal,
-         parse_hexadecimal,
-         parse_quote,
-         parse_string))(input)
+    alt((read_char,
+         read_decimal,
+         read_hexadecimal,
+         read_quote,
+         read_string))(input)
 }
 
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
-    match parse_form(&input) {
+    match read_form(&input) {
         Ok((_, t)) => t,
         Err(err) => {
-            println!("unparsed {:?}", err);
+            println!("unreadd {:?}", err);
             NIL
         }
     }
@@ -102,7 +102,7 @@ mod tests {
 
     fn test_hex() {
         assert!(
-            match parse_hexadecimal("#x2F14DF") {
+            match read_hexadecimal("#x2F14DF") {
                 Ok(("", fx)) =>
                    match fx.i64_from_fixnum() {
                        Some(ival) => ival == 0x2f14df,
@@ -114,7 +114,7 @@ mod tests {
 
     fn test_dec() {
         assert!(
-            match parse_decimal("123456") {
+            match read_decimal("123456") {
                 Ok(("", fx)) =>
                    match fx.i64_from_fixnum() {
                        Some(ival) => ival == 123456,
@@ -127,7 +127,7 @@ mod tests {
     #[test]
     fn test_string() {
         assert!(
-            match parse_string("\"abc123\"") {
+            match read_string("\"abc123\"") {
                 Ok(("", str)) => str.typep_string(),
                 _ => false,
             })
@@ -136,7 +136,7 @@ mod tests {
     #[test]
     fn test_char() {
         assert!(
-            match parse_char("#\\a") {
+            match read_char("#\\a") {
                 Ok(("", ch)) => ch.typep_char(),
                 _ => false,
             })
