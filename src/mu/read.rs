@@ -15,8 +15,8 @@ use nom::{
     bytes::complete::{tag, take_while, take, take_until},
     character::{is_space, is_alphanumeric},
     combinator::{map_res, opt},
-    preceded,
-    sequence::tuple};
+    sequence::{tuple, many0}
+};
 
 // numbers
 fn parse_hexadecimal(input: &str) -> IResult<&str, Type> {
@@ -60,19 +60,26 @@ fn parse_char(input: &str) -> IResult<&str, Type> {
     Ok((input, Char::make_type(ch.chars().nth(0).unwrap())))
 }
 
-fn parse_atom(input: &str) -> IResult<&str, Type> {
+fn parse_list(input: &str) -> IResult<&str, Type> {
+    let list = tuple(tag("("), many0(parse_form), tag(")"))(input)?;
+
+    Ok((input, NIL))
+}
+
+fn parse_form(input: &str) -> IResult<&str, Type> {
     let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
     
     alt((parse_char,
          parse_decimal,
          parse_hexadecimal,
+         parse_list,
          parse_string))(input)
 }
 
 pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
-    match parse_atom(&input) {
+    match parse_form(&input) {
         Ok((_, t)) => t,
         Err(err) => {
             println!("unparsed {:?}", err);
