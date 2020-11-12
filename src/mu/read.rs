@@ -13,7 +13,9 @@ use nom::{
     IResult,
     branch::alt,
     bytes::complete::{tag, take_while, take, take_until},
-    combinator::map_res,
+    character::{is_space, is_alphanumeric},
+    combinator::{map_res, opt},
+    preceded,
     sequence::tuple};
 
 // numbers
@@ -59,6 +61,8 @@ fn parse_char(input: &str) -> IResult<&str, Type> {
 }
 
 fn parse_atom(input: &str) -> IResult<&str, Type> {
+    let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
+    
     alt((parse_char,
          parse_decimal,
          parse_hexadecimal,
