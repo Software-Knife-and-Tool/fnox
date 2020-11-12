@@ -74,6 +74,19 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
     Ok((input, NIL))
 }
 
+// lists/vectors
+fn read_list(input: &str) -> IResult<&str, Type> {
+    let (input, _) = tag("(")(input)?;
+    let (input, form) =
+        alt((read_char,
+             read_decimal,
+             read_hexadecimal,
+             read_quote,
+             read_string))(input)?;
+    
+    Ok((input, NIL))
+}
+
 fn read_form(input: &str) -> IResult<&str, Type> {
     let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
     
