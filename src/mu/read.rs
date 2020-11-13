@@ -15,7 +15,7 @@ use nom::{
     bytes::complete::{tag, take_while, take, take_until},
     character::{is_space, is_alphanumeric},
     combinator::{map_res, opt},
-    many0,
+    multi::{many0},
     sequence::{tuple}
 };
 
@@ -27,8 +27,7 @@ fn read_hexadecimal(input: &str) -> IResult<&str, Type> {
              map_res(
                  take_while(|c: char| c.is_digit(16)),
                  |input: &str| i64::from_str_radix(input, 16)
-             )
-                 (input)
+             )(input)
          }()?;
 
     Ok((input, Fixnum::make_type(hex)))
@@ -68,19 +67,7 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
         alt((read_char,
              read_decimal,
              read_hexadecimal,
-             read_quote,
-             read_string))(input)?;
-    
-    Ok((input, NIL))
-}
-
-// lists/vectors
-fn read_list(input: &str) -> IResult<&str, Type> {
-    let (input, _) = tag("(")(input)?;
-    let (input, form) =
-        alt((read_char,
-             read_decimal,
-             read_hexadecimal,
+             read_list,
              read_quote,
              read_string))(input)?;
     
@@ -93,8 +80,16 @@ fn read_form(input: &str) -> IResult<&str, Type> {
     alt((read_char,
          read_decimal,
          read_hexadecimal,
+         read_list,
          read_quote,
          read_string))(input)
+}
+
+// lists/vectors
+fn read_list(input: &str) -> IResult<&str, Type> {
+    let (input, form) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
+
+    Ok((input, NIL))
 }
 
 pub fn _read() -> Type {

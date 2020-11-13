@@ -33,7 +33,7 @@ impl Vector {
 }
 
 impl Type {
-    pub fn is_vector(&self) -> bool {
+    pub fn typep_vector(&self) -> bool {
         match self.tag() {
             Tag::Vector => true,
             _ => false,
