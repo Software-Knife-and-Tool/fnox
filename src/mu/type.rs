@@ -1,4 +1,4 @@
-/* mu/r#type.rs */
+// mu/r#type.rs
 use crate::num::FromPrimitive;
 
 use crate::mu::char::Char;

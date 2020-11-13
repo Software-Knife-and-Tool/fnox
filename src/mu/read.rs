@@ -69,9 +69,31 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
              read_hexadecimal,
              read_list,
              read_quote,
-             read_string))(input)?;
+             read_string,
+             read_vector))(input)?;
     
-    Ok((input, NIL))
+    Ok((input, form))
+}
+
+// lists/vectors
+fn vec_to_list(list: Type, mut vec: Vec<Type>) -> Type {
+    if (vec.len() == 0) {
+        list
+    } else {
+        vec_to_list(vec.remove(0).cons(&list), vec)
+    }
+}
+
+fn read_list(input: &str) -> IResult<&str, Type> {
+    let (input, (_, vec, _)) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
+
+    Ok((input, vec_to_list(NIL, vec)))
+}
+
+fn read_vector(input: &str) -> IResult<&str, Type> {
+    let (input, (_, vec, _)) = tuple((tag("#("), many0(read_form), tag(")")))(input)?;
+
+    Ok((input, vec_to_list(NIL, vec)))
 }
 
 fn read_form(input: &str) -> IResult<&str, Type> {
@@ -82,14 +104,8 @@ fn read_form(input: &str) -> IResult<&str, Type> {
          read_hexadecimal,
          read_list,
          read_quote,
-         read_string))(input)
-}
-
-// lists/vectors
-fn read_list(input: &str) -> IResult<&str, Type> {
-    let (input, form) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
-
-    Ok((input, NIL))
+         read_string,
+         read_vector))(input)
 }
 
 pub fn _read() -> Type {
@@ -98,7 +114,7 @@ pub fn _read() -> Type {
     match read_form(&input) {
         Ok((_, t)) => t,
         Err(err) => {
-            println!("unreadd {:?}", err);
+            println!("unread {:?}", err);
             NIL
         }
     }
@@ -108,6 +124,7 @@ pub fn _read() -> Type {
 mod tests {
     use super::*;
 
+    #[test]
     fn test_hex() {
         assert!(
             match read_hexadecimal("#x2F14DF") {
@@ -120,6 +137,7 @@ mod tests {
             })
     }
 
+    #[test]
     fn test_dec() {
         assert!(
             match read_decimal("123456") {
