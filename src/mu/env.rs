@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use crate::mu::heap::{Heap, _heap};
 
 use crate::mu::r#type::NIL;
-use crate::mu::r#type::{SysClass, Type};
+use crate::mu::r#type::{SysClass, Tag, Type};
 
 use crate::mu::print::_print;
 use crate::mu::read::_read;
@@ -19,13 +19,10 @@ pub struct Env<'e> {
 }
 
 pub fn env<'e>() -> Env<'e> {
-    let init: HashMap<&'e str, Type> = HashMap::new();
+    let mut init: HashMap<&'e str, Type> = HashMap::new();
 
-    /*
     init.insert("fixnum-add",
                 Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2));
-     */
-
     Env {
         heap: _heap(1024 * 1024),
         symtab: init,
@@ -41,17 +38,18 @@ impl Env<'_> {
     }
 
     pub fn eval(&self, ptr: Type) -> Type {
-        match ptr.type_of() {
-            SysClass::Cons => ptr,
-            SysClass::Symbol => ptr,
-            /*
-               match ptr._symbol_value() {
-                   Some(v) => v,
-                   None => NIL
-               },
-            */
-            SysClass::Fixnum => ptr,
-            _ => ptr,
+        match ptr.tag() {
+            Tag::Cons => ptr, // funcall
+            Tag::Fixnum => ptr,
+            Tag::Exception => ptr,
+            Tag::Function => ptr,
+            Tag::Stream => ptr,
+            Tag::Symbol => {
+                let sym = Type::symbol_from_type(&ptr);
+                *sym.value()
+            }
+            Tag::Vector => ptr,
+            Tag::Immediate => ptr,
         }
     }
 
