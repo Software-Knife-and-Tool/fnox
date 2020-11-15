@@ -20,7 +20,7 @@ use nom::{
 };
 
 // numbers
-fn read_hexadecimal(input: &str) -> IResult<&str, &Type> {
+fn read_hexadecimal(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#x")(input)?;
     let (input, hex) =
          || -> IResult<&str, i64> {
@@ -33,7 +33,7 @@ fn read_hexadecimal(input: &str) -> IResult<&str, &Type> {
     Ok((input, Fixnum::make_type(hex)))
 }
 
-fn read_decimal(input: &str) -> IResult<&str, &Type> {
+fn read_decimal(input: &str) -> IResult<&str, Type> {
     let (input, dec) =
          || -> IResult<&str, i64> {
             map_res(
@@ -46,22 +46,22 @@ fn read_decimal(input: &str) -> IResult<&str, &Type> {
 }
 
 // string/char
-fn read_string(input: &str) -> IResult<&str, &Type> {
+fn read_string(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("\"")(input)?;
     let (input, str) = take_until("\"")(input)?;
 
-    Ok((input, &String::make_type(str)))
+    Ok((input, String::make_type(str)))
 }
 
-fn read_char(input: &str) -> IResult<&str, &Type> {
+fn read_char(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#\\")(input)?;
     let (input, ch) = take(1 as usize)(input)?;
 
-    Ok((input, &Char::make_type(ch.chars().nth(0).unwrap())))
+    Ok((input, Char::make_type(ch.chars().nth(0).unwrap())))
 }
 
 // special forms
-fn read_quote(input: &str) -> IResult<&str, &Type> {
+fn read_quote(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("'")(input)?;
     let (input, form) =
         alt((read_char,
@@ -76,29 +76,29 @@ fn read_quote(input: &str) -> IResult<&str, &Type> {
 }
 
 // lists/vectors
-fn vec_to_list(list: &'static Type, i: usize, vec: &Vec<&Type>) -> &'static Type {
+fn vec_to_list(list: Type, i: usize, vec: &Vec<Type>) -> Type {
     if i == vec.len() {
         list
     } else {
-        let l: &'static Type = &vec[i].cons(list);
+        let k = vec[i].cons(list);
         
-        vec_to_list(l, i + 1, vec)
+        vec_to_list(k, i + 1, vec)
     }
 }
 
-fn read_list(input: &str) -> IResult<&str, &Type> {
+fn read_list(input: &str) -> IResult<&str, Type> {
     let (input, (_, vec, _)) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
 
-    Ok((input, vec_to_list(&NIL, 0, &vec)))
+    Ok((input, vec_to_list(NIL, 0, &vec)))
 }
 
-fn read_vector(input: &str) -> IResult<&str, &Type> {
+fn read_vector(input: &str) -> IResult<&str, Type> {
     let (input, (_, vec, _)) = tuple((tag("#("), many0(read_form), tag(")")))(input)?;
 
-    Ok((input, vec_to_list(&NIL, 0, &vec)))
+    Ok((input, vec_to_list(NIL, 0, &vec)))
 }
 
-fn read_form(input: &str) -> IResult<&str, &Type> {
+fn read_form(input: &str) -> IResult<&str, Type> {
     let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
     
     alt((read_char,
@@ -110,14 +110,14 @@ fn read_form(input: &str) -> IResult<&str, &Type> {
          read_vector))(input)
 }
 
-pub fn _read() -> &'static Type {
+pub fn _read() -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
     match read_form(&input) {
         Ok((_, t)) => t,
         Err(err) => {
             println!("unread {:?}", err);
-            &NIL
+            NIL
         }
     }
 }

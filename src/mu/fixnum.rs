@@ -7,21 +7,19 @@ pub struct Fixnum {
     integer: i64,
 }
 
-/*
-pub fn fixnum_add(args: Vec<Type>) -> &'static Type {
+pub fn fixnum_add(args: Vec<Type>) -> Type {
     match Fixnum::from_type(&args[0]) {
         Some(fx) => match fx.add(&args[1]) {
             Some(s) => s,
-            None => &NIL,
+            None => NIL,
         },
-        None => &NIL,
+        None => NIL,
     }
 }
-*/
 
 impl Fixnum {
-    pub fn make_type(src: i64) -> &'static Type {
-        &entag((src as u64) << 3, Tag::Fixnum)
+    pub fn make_type(src: i64) -> Type {
+        entag((src as u64) << 3, Tag::Fixnum)
     }
 
     pub fn from_i64(_integer: i64) -> Fixnum {
@@ -41,7 +39,7 @@ impl Fixnum {
         }
     }
 
-    pub fn add(&self, fx: &Type) -> Option<&Type> {
+    pub fn add(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(Fixnum::make_type(self.integer + (fx.as_u64() >> 3) as i64))
         } else {
@@ -50,7 +48,7 @@ impl Fixnum {
         }
     }
 
-    pub fn mul(&self, fx: &Type) -> Option<&Type> {
+    pub fn mul(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(Fixnum::make_type(self.integer * (fx.as_u64() >> 3) as i64))
         } else {
@@ -59,7 +57,7 @@ impl Fixnum {
         }
     }
 
-    pub fn trunc(&self, fx: &Type) -> Option<&Type> {
+    pub fn trunc(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(Fixnum::make_type(self.integer / (fx.as_u64() >> 3) as i64))
         } else {
@@ -76,7 +74,7 @@ impl Fixnum {
         }
     }
 
-    pub fn mod_(&self, fx: &Type) -> Option<&Type> {
+    pub fn mod_(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(Fixnum::make_type(self.integer % (fx.as_u64() >> 3) as i64))
         } else {
@@ -85,7 +83,7 @@ impl Fixnum {
         }
     }
 
-    pub fn logand(&self, fx: &Type) -> Option<&Type> {
+    pub fn logand(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(Fixnum::make_type(self.integer & (fx.as_u64() >> 3) as i64))
         } else {

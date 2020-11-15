@@ -9,17 +9,17 @@ pub struct String {
 }
 
 impl String {
-    pub fn make_type(str_: &str) -> &Type {
+    pub fn make_type(str_: &str) -> Type {
         if str_.len() <= IMMEDIATE_STR_MAX {
             let mut charf : u64 = 0;
             for ch in str_.as_bytes() {
                 charf = (charf << 8) | *ch as u64;
             }
-            &immediate(charf, str_.len() as u8, ImmediateClass::String)
+            immediate(charf, str_.len() as u8, ImmediateClass::String)
         } else {
             unsafe {
                 let addr: u64 = std::mem::transmute(&str_.as_bytes());
-                &entag(addr << 3, Tag::Vector)
+                entag(addr << 3, Tag::Vector)
             }
         }
     }

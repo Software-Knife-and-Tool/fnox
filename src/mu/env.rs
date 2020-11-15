@@ -9,7 +9,7 @@ use crate::mu::r#type::{SysClass, Type};
 use crate::mu::print::_print;
 use crate::mu::read::_read;
 
-// use crate::mu::fixnum::fixnum_add;
+use crate::mu::fixnum::fixnum_add;
 use crate::mu::function::{Function};
 use crate::mu::string::{String};
 
@@ -33,21 +33,21 @@ pub fn env<'e>() -> Env<'e> {
 }
 
 impl Env<'_> {
-    pub fn read(&self) -> &Type {
+    pub fn read(&self) -> Type {
         _read()
     }
     pub fn print(&self, src: Type) {
         _print(src);
     }
 
-    pub fn eval(&self, ptr: &'static Type) -> &'static Type {
+    pub fn eval(&self, ptr: Type) -> Type {
         match ptr.type_of() {
             SysClass::Cons => ptr,
             SysClass::Symbol => ptr,
             /*
                match ptr._symbol_value() {
                    Some(v) => v,
-                   None => &NIL
+                   None => NIL
                },
             */
             SysClass::Fixnum => ptr,
@@ -55,10 +55,10 @@ impl Env<'_> {
         }
     }
 
-    pub fn lookup(&self, name: &str) -> &Type {
+    pub fn lookup(&self, name: &str) -> Type {
         match self.symtab.get(name) {
-            Some(_type) => _type,
-            None => &NIL,
+            Some(_type) => *_type,
+            None => NIL,
         }
     }
 }
