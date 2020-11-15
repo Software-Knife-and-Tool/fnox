@@ -3,7 +3,7 @@
 #
 CMD = ./target/debug/lispox
 
-all: build run
+all: build
 
 build:
 	@cargo build

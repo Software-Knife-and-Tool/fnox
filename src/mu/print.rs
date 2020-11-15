@@ -21,16 +21,13 @@ fn to_string(src: Type) -> String {
                 format!("{:?}", name)
             }
         }
-        SysClass::Char => format!(
-            "[char] #\\{}",
-            from_u32(src.immediate_data() as u32).unwrap()
-        ),
+        SysClass::Char => format!("#\\{}", from_u32(src.immediate_data() as u32).unwrap()),
         SysClass::Cons => format!("(...)"),
-        SysClass::Exception => format!("[exception]"),
-        SysClass::Fixnum => format!("[fixnum] {:?}", src.i64_from_fixnum().unwrap()),
+        SysClass::Exception => format!("#<exception>"),
+        SysClass::Fixnum => format!("{:?}", src.i64_from_fixnum().unwrap()),
         SysClass::Float => format!("[float]"),
-        SysClass::Function => format!("[function]"),
-        SysClass::Stream => format!("[stream]"),
+        SysClass::Function => format!("#<function>"),
+        SysClass::Stream => format!("#<stream>"),
         SysClass::Vector => format!("[vector]"),
     }
 }
