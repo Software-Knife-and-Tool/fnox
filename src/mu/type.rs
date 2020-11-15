@@ -10,7 +10,7 @@ use crate::mu::stream::Stream;
 use crate::mu::symbol::Symbol;
 use crate::mu::vector::Vector;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Type(u64);
 
 #[derive(FromPrimitive)]
