@@ -9,7 +9,7 @@ use crate::mu::r#type::{SysClass, Type};
 use crate::mu::print::_print;
 use crate::mu::read::_read;
 
-use crate::mu::fixnum::fixnum_add;
+// use crate::mu::fixnum::fixnum_add;
 use crate::mu::function::{Function};
 use crate::mu::string::{String};
 
@@ -19,11 +19,13 @@ pub struct Env<'e> {
 }
 
 pub fn env<'e>() -> Env<'e> {
-    let mut init: HashMap<&'e str, Type> = HashMap::new();
+    let init: HashMap<&'e str, Type> = HashMap::new();
 
+    /*
     init.insert("fixnum-add",
                 Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2));
-
+     */
+    
     Env {
         heap: _heap(1024 * 1024),
         symtab: init,
@@ -31,7 +33,7 @@ pub fn env<'e>() -> Env<'e> {
 }
 
 impl Env<'_> {
-    pub fn read(&self) -> Type {
+    pub fn read(&self) -> &Type {
         _read()
     }
     pub fn print(&self, src: Type) {

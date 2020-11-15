@@ -10,8 +10,8 @@ pub struct Char {
 }
 
 impl Char {
-    pub fn make_type(src: char) -> Type {
-        immediate(src as u64, 0, ImmediateClass::Char)
+    pub fn make_type(src: char) -> &'static Type {
+        &immediate(src as u64, 0, ImmediateClass::Char)
     }
 
     pub fn _print(&self) {
