@@ -1,4 +1,4 @@
-/* mu/r#type.rs */
+// mu/r#type.rs
 use crate::num::FromPrimitive;
 
 use crate::mu::char::Char;
@@ -10,7 +10,7 @@ use crate::mu::stream::Stream;
 use crate::mu::symbol::Symbol;
 use crate::mu::vector::Vector;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Type(u64);
 
 #[derive(FromPrimitive)]
@@ -30,9 +30,9 @@ pub fn _tag_from_u8(tag: u8) -> Tag {
 }
 
 #[derive(Debug)]
-pub enum TypeClass<'a> {
+pub enum TypeClass {
     Char(Char),
-    Cons(Cons<'a>),
+    Cons(Cons),
     Exception(Exception),
     Fixnum(Fixnum),
     Function(Function),
@@ -115,7 +115,7 @@ impl Type {
 
     pub fn type_of(&self) -> SysClass {
         println!("type-of: {:x?}", self.0);
-        
+
         match self.tag() {
             Tag::Cons => SysClass::Cons,
             Tag::Fixnum => SysClass::Fixnum,

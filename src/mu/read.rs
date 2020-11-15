@@ -4,44 +4,39 @@ use std::io::{self, BufRead};
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
 
-use crate::mu::char::{Char};
-use crate::mu::fixnum::{Fixnum};
-use crate::mu::string::{String};
-use crate::mu::symbol::{Symbol};
+use crate::mu::char::Char;
+use crate::mu::fixnum::Fixnum;
+use crate::mu::string::String;
+use crate::mu::symbol::Symbol;
 
 use nom::{
-    IResult,
     branch::alt,
-    bytes::complete::{tag, take_while, take, take_until},
-    character::{is_space, is_alphanumeric},
+    bytes::complete::{tag, take, take_until, take_while},
+    character::{is_alphanumeric, is_space},
     combinator::{map_res, opt},
-    many0,
-    sequence::{tuple}
+    multi::many0,
+    sequence::tuple,
+    IResult,
 };
 
 // numbers
 fn read_hexadecimal(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#x")(input)?;
-    let (input, hex) =
-         || -> IResult<&str, i64> {
-             map_res(
-                 take_while(|c: char| c.is_digit(16)),
-                 |input: &str| i64::from_str_radix(input, 16)
-             )
-                 (input)
-         }()?;
+    let (input, hex) = || -> IResult<&str, i64> {
+        map_res(take_while(|c: char| c.is_digit(16)), |input: &str| {
+            i64::from_str_radix(input, 16)
+        })(input)
+    }()?;
 
     Ok((input, Fixnum::make_type(hex)))
 }
 
 fn read_decimal(input: &str) -> IResult<&str, Type> {
-    let (input, dec) =
-         || -> IResult<&str, i64> {
-            map_res(
-                take_while(|c: char| c.is_digit(10)),
-                |input: &str| i64::from_str_radix(input, 10)
-            )(input)
-         }()?;
+    let (input, dec) = || -> IResult<&str, i64> {
+        map_res(take_while(|c: char| c.is_digit(10)), |input: &str| {
+            i64::from_str_radix(input, 10)
+        })(input)
+    }()?;
 
     Ok((input, Fixnum::make_type(dec)))
 }
@@ -64,37 +59,52 @@ fn read_char(input: &str) -> IResult<&str, Type> {
 // special forms
 fn read_quote(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("'")(input)?;
-    let (input, form) =
-        alt((read_char,
-             read_decimal,
-             read_hexadecimal,
-             read_quote,
-             read_string))(input)?;
-    
-    Ok((input, NIL))
+    let (input, form) = alt((
+        read_char,
+        read_decimal,
+        read_hexadecimal,
+        read_list,
+        read_quote,
+        read_string,
+        read_vector,
+    ))(input)?;
+
+    Ok((input, form))
 }
 
 // lists/vectors
+fn vec_to_list(list: Type, i: usize, v: &Vec<Type>) -> Type {
+    if i == v.len() {
+        list
+    } else {
+        vec_to_list(v[i].cons(list), i + 1, v)
+    }
+}
+
 fn read_list(input: &str) -> IResult<&str, Type> {
-    let (input, _) = tag("(")(input)?;
-    let (input, form) =
-        alt((read_char,
-             read_decimal,
-             read_hexadecimal,
-             read_quote,
-             read_string))(input)?;
-    
-    Ok((input, NIL))
+    let (input, (_, v, _)) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
+
+    Ok((input, vec_to_list(NIL, 0, &v)))
+}
+
+fn read_vector(input: &str) -> IResult<&str, Type> {
+    let (input, (_, v, _)) = tuple((tag("#("), many0(read_form), tag(")")))(input)?;
+
+    Ok((input, vec_to_list(NIL, 0, &v)))
 }
 
 fn read_form(input: &str) -> IResult<&str, Type> {
     let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
-    
-    alt((read_char,
-         read_decimal,
-         read_hexadecimal,
-         read_quote,
-         read_string))(input)
+
+    alt((
+        read_char,
+        read_decimal,
+        read_hexadecimal,
+        read_list,
+        read_quote,
+        read_string,
+        read_vector,
+    ))(input)
 }
 
 pub fn _read() -> Type {
@@ -103,7 +113,7 @@ pub fn _read() -> Type {
     match read_form(&input) {
         Ok((_, t)) => t,
         Err(err) => {
-            println!("unreadd {:?}", err);
+            println!("unread {:?}", err);
             NIL
         }
     }
@@ -113,46 +123,42 @@ pub fn _read() -> Type {
 mod tests {
     use super::*;
 
+    #[test]
     fn test_hex() {
-        assert!(
-            match read_hexadecimal("#x2F14DF") {
-                Ok(("", fx)) =>
-                   match fx.i64_from_fixnum() {
-                       Some(ival) => ival == 0x2f14df,
-                       _ => false,
-                   },
+        assert!(match read_hexadecimal("#x2F14DF") {
+            Ok(("", fx)) => match fx.i64_from_fixnum() {
+                Some(ival) => ival == 0x2f14df,
                 _ => false,
-            })
+            },
+            _ => false,
+        })
     }
 
+    #[test]
     fn test_dec() {
-        assert!(
-            match read_decimal("123456") {
-                Ok(("", fx)) =>
-                   match fx.i64_from_fixnum() {
-                       Some(ival) => ival == 123456,
-                       _ => false,
-                   },
+        assert!(match read_decimal("123456") {
+            Ok(("", fx)) => match fx.i64_from_fixnum() {
+                Some(ival) => ival == 123456,
                 _ => false,
-            })
+            },
+            _ => false,
+        })
     }
 
     #[test]
     fn test_string() {
-        assert!(
-            match read_string("\"abc123\"") {
-                Ok(("", str)) => str.typep_string(),
-                _ => false,
-            })
+        assert!(match read_string("\"abc123\"") {
+            Ok(("", str)) => str.typep_string(),
+            _ => false,
+        })
     }
 
     #[test]
     fn test_char() {
-        assert!(
-            match read_char("#\\a") {
-                Ok(("", ch)) => ch.typep_char(),
-                _ => false,
-            })
+        assert!(match read_char("#\\a") {
+            Ok(("", ch)) => ch.typep_char(),
+            _ => false,
+        })
     }
 
     /*
@@ -222,4 +228,3 @@ mod tests {
     }
      */
 }
-

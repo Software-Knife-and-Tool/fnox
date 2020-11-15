@@ -7,12 +7,15 @@ use crate::mu::r#type::{detag, entag, Tag, Type};
 use crate::mu::env::Env;
 
 #[derive(Debug)]
-pub struct Cons<'a> {
-    car: &'a Type,
-    cdr: &'a Type,
+pub struct Cons {
+    car: Type,
+    cdr: Type,
 }
 
-impl Cons<'_> {
+impl Cons {
+    pub fn make_type(_car: Type, _cdr: Type) -> Type {
+        NIL
+    }
 
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
         let cons = env.heap.alloc(mem::size_of::<Cons>(), Tag::Cons);
@@ -45,9 +48,9 @@ impl Type {
         }
     }
 
-    pub fn cons(&self, cdr: &'static Type) -> Type {
+    pub fn cons(&self, cdr: Type) -> Type {
         Type::from_cons(&Cons {
-            car: &self,
+            car: *self,
             cdr: cdr,
         })
     }

@@ -10,8 +10,8 @@ use crate::mu::print::_print;
 use crate::mu::read::_read;
 
 use crate::mu::fixnum::fixnum_add;
-use crate::mu::function::{Function};
-use crate::mu::string::{String};
+use crate::mu::function::Function;
+use crate::mu::string::String;
 
 pub struct Env<'e> {
     pub heap: Heap,
@@ -19,10 +19,12 @@ pub struct Env<'e> {
 }
 
 pub fn env<'e>() -> Env<'e> {
-    let mut init: HashMap<&'e str, Type> = HashMap::new();
+    let init: HashMap<&'e str, Type> = HashMap::new();
 
+    /*
     init.insert("fixnum-add",
                 Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2));
+     */
 
     Env {
         heap: _heap(1024 * 1024),
@@ -38,14 +40,14 @@ impl Env<'_> {
         _print(src);
     }
 
-    pub fn eval(&self, ptr: &'static Type) -> &'static Type {
+    pub fn eval(&self, ptr: Type) -> Type {
         match ptr.type_of() {
             SysClass::Cons => ptr,
             SysClass::Symbol => ptr,
             /*
                match ptr._symbol_value() {
                    Some(v) => v,
-                   None => &NIL
+                   None => NIL
                },
             */
             SysClass::Fixnum => ptr,
@@ -53,10 +55,10 @@ impl Env<'_> {
         }
     }
 
-    pub fn lookup(&self, name: &str) -> &Type {
+    pub fn lookup(&self, name: &str) -> Type {
         match self.symtab.get(name) {
-            Some(_type) => _type,
-            None => &NIL,
+            Some(_type) => *_type,
+            None => NIL,
         }
     }
 }
