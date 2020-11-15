@@ -22,7 +22,7 @@ fn to_string(src: Type) -> String {
             }
         }
         SysClass::Char => format!(
-            "[char] #\\{}",
+            "#\\{}",
             from_u32(src.immediate_data() as u32).unwrap()
         ),
         SysClass::Cons => format!("(...)"),
