@@ -39,7 +39,7 @@ fn mmap(size: u64, fname: &str) -> memmap::MmapMut {
 pub fn _heap(nwords: usize) -> Heap {
     Heap {
         nwords,
-        fname: "/var/tmp/lispox",
+        fname: "/var/tmp/fnox",
         mmap: Vec::with_capacity(nwords * 8),
         fence: 0,
     }

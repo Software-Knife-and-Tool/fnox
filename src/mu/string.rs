@@ -11,7 +11,7 @@ pub struct String {
 impl String {
     pub fn make_type(str_: &str) -> Type {
         if str_.len() <= IMMEDIATE_STR_MAX {
-            let mut charf : u64 = 0;
+            let mut charf: u64 = 0;
             for ch in str_.as_bytes() {
                 charf = (charf << 8) | *ch as u64;
             }
@@ -29,11 +29,10 @@ impl Type {
     pub fn typep_string(&self) -> bool {
         match self.tag() {
             Tag::Vector => true,
-            Tag::Immediate =>
-                match self.immediate_class() {
-                  ImmediateClass::String => true,
-                  _ => false,
-                }
+            Tag::Immediate => match self.immediate_class() {
+                ImmediateClass::String => true,
+                _ => false,
+            },
             _ => false,
         }
     }
@@ -42,7 +41,7 @@ impl Type {
         let str: &String = unsafe { std::mem::transmute(detag(self)) };
         str
     }
-    
+
     pub fn str_from_type(&self) -> &str {
         match self.tag() {
             Tag::Immediate => {
@@ -54,11 +53,11 @@ impl Type {
                     v[i] = chars & 0xff;
                     chars /= 8;
                 }
-                
+
                 std::str::from_utf8(v).unwrap()
                  */
                 std::str::from_utf8(b"immediate-string").unwrap()
-            },
+            }
             Tag::Vector => std::str::from_utf8(b"char-vector").unwrap(),
             _ => std::str::from_utf8(b"whoa").unwrap(),
         }

@@ -10,8 +10,8 @@ use crate::mu::print::_print;
 use crate::mu::read::_read;
 
 use crate::mu::fixnum::fixnum_add;
-use crate::mu::function::{Function};
-use crate::mu::string::{String};
+use crate::mu::function::Function;
+use crate::mu::string::String;
 
 pub struct Env<'e> {
     pub heap: Heap,
@@ -25,7 +25,7 @@ pub fn env<'e>() -> Env<'e> {
     init.insert("fixnum-add",
                 Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2));
      */
-    
+
     Env {
         heap: _heap(1024 * 1024),
         symtab: init,

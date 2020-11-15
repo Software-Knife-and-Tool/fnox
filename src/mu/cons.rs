@@ -16,7 +16,7 @@ impl Cons {
     pub fn make_type(_car: Type, _cdr: Type) -> Type {
         NIL
     }
-    
+
     pub fn evict(&self, env: &mut Env<'_>) -> Type {
         let cons = env.heap.alloc(mem::size_of::<Cons>(), Tag::Cons);
         unsafe {
