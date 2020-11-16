@@ -1,13 +1,14 @@
-/* mu/env.rs */
+// mu/env.rs
 use std::collections::HashMap;
+// use std::io::{self, BufRead};
 
 use crate::mu::heap::{Heap, _heap};
 
-use crate::mu::r#type::NIL;
+use crate::mu::r#type::{NIL, T};
 use crate::mu::r#type::{SysClass, Tag, Type};
 
 use crate::mu::print::_print;
-use crate::mu::read::_read;
+use crate::mu::read::read_from_stdin;
 
 use crate::mu::fixnum::fixnum_add;
 use crate::mu::function::Function;
@@ -34,8 +35,9 @@ pub fn env<'e>() -> Env<'e> {
 
 impl Env<'_> {
     pub fn read(&self) -> Type {
-        _read()
+        read_from_stdin(T)
     }
+    
     pub fn print(&self, src: Type) {
         _print(src);
     }
