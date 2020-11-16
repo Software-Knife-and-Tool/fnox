@@ -21,8 +21,10 @@ pub struct Env<'e> {
 pub fn env<'e>() -> Env<'e> {
     let mut init: HashMap<&'e str, Type> = HashMap::new();
 
-    init.insert("fixnum-add",
-                Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2));
+    init.insert(
+        "fixnum-add",
+        Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2),
+    );
     Env {
         heap: _heap(1024 * 1024),
         symtab: init,
@@ -39,7 +41,12 @@ impl Env<'_> {
 
     pub fn eval(&self, ptr: Type) -> Type {
         match ptr.tag() {
-            Tag::Cons => ptr, // funcall
+            Tag::Cons => {
+                let cons = ptr.cons_from_type();
+                let fn_ = cons.car();
+
+                fn_.funcall(self, NIL)
+            }
             Tag::Fixnum => ptr,
             Tag::Exception => ptr,
             Tag::Function => ptr,
