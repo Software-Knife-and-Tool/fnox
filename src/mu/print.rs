@@ -28,6 +28,7 @@ fn to_string(src: Type) -> String {
         SysClass::Float => format!("[float]"),
         SysClass::Function => format!("#<function>"),
         SysClass::Stream => format!("#<stream>"),
+        SysClass::T => format!("#<T>"),
         SysClass::Vector => format!("[vector]"),
     }
 }
