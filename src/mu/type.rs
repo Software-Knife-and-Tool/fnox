@@ -30,19 +30,6 @@ pub fn _tag_from_u8(tag: u8) -> Tag {
 }
 
 #[derive(Debug)]
-pub enum TypeClass {
-    Char(Char),
-    Cons(Cons),
-    Exception(Exception),
-    Fixnum(Fixnum),
-    Function(Function),
-    Immediate(Type),
-    Stream(Stream),
-    Symbol(Symbol),
-    Vector(Vector),
-}
-
-#[derive(Debug)]
 pub enum SysClass {
     Char,
     Cons,
@@ -53,6 +40,7 @@ pub enum SysClass {
     Stream,
     String,
     Symbol,
+    T,
     Vector,
 }
 

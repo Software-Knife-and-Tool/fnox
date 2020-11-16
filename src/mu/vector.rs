@@ -6,16 +6,32 @@ use crate::mu::r#type::entag;
 use crate::mu::r#type::{SysClass, Tag, Type};
 
 #[derive(Debug)]
-enum VectorTypes {
-    String(String),
+enum VecData {
+    Char(&'static str),
+    Byte(Vec<u8>),
+    Fixnum(Vec<u64>),
+    Float(Vec<f32>),
+    T(&'static Vec<Type>),
 }
 
 #[derive(Debug)]
 pub struct Vector {
     type_: SysClass,
+    data_: VecData,
 }
 
 impl Vector {
+    pub fn make_type(vec_: &'static Vec<Type>) -> Type {
+        let v = Vector {
+            type_: SysClass::T,
+            data_: VecData::T(vec_),
+        };
+        unsafe {
+            let addr: u64 = std::mem::transmute(&v);
+            entag(addr << 3, Tag::Vector)
+        }
+    }
+
     pub fn vector_type(&self) -> &SysClass {
         &self.type_
     }
