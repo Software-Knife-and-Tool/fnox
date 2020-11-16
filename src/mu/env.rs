@@ -25,6 +25,7 @@ pub fn env<'e>() -> Env<'e> {
         "fixnum-add",
         Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2),
     );
+
     Env {
         heap: _heap(1024 * 1024),
         symtab: init,
@@ -43,20 +44,53 @@ impl Env<'_> {
         match ptr.tag() {
             Tag::Cons => {
                 let cons = ptr.cons_from_type();
-                let fn_ = cons.car();
+                let fsym = cons.car();
 
-                fn_.funcall(self, NIL)
+                println!("looks like a cons");
+                if !fsym.typep_symbol() {
+                    println!("unquoted list form");
+                    NIL
+                } else {
+                    let sym = Type::symbol_from_type(&fsym);
+                    let fn_ = *sym.value();
+
+                    if !fn_.typep_function() {
+                        println!("not a function");
+                        NIL
+                    } else {
+                        fn_.funcall(self, NIL)
+                    }
+                }
             }
-            Tag::Fixnum => ptr,
-            Tag::Exception => ptr,
-            Tag::Function => ptr,
-            Tag::Stream => ptr,
+            Tag::Fixnum => {
+                println!("looks like a fixnum");
+                ptr
+            }
+            Tag::Exception => {
+                println!("looks like an exception");
+                ptr
+            }
+            Tag::Function => {
+                println!("looks like a function");
+                ptr
+            }
+            Tag::Stream => {
+                println!("looks like a stream");
+                ptr
+            }
             Tag::Symbol => {
+                println!("looks like a symbol");
                 let sym = Type::symbol_from_type(&ptr);
                 *sym.value()
             }
-            Tag::Vector => ptr,
-            Tag::Immediate => ptr,
+            Tag::Vector => {
+                println!("looks like a vector");
+                ptr
+            }
+            Tag::Immediate => {
+                println!("looks like an immediate");
+                ptr
+            }
         }
     }
 

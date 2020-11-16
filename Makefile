@@ -18,7 +18,7 @@ run:
 	@$(RUNPATH)
 
 tests:
-	@cargo test
+	-cargo test
 
 clean:
 	@rm -rf Cargo.lock target
