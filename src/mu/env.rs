@@ -4,8 +4,8 @@ use std::collections::HashMap;
 
 use crate::mu::heap::{Heap, _heap};
 
-use crate::mu::r#type::{NIL, T};
 use crate::mu::r#type::{SysClass, Tag, Type};
+use crate::mu::r#type::{NIL, T};
 
 use crate::mu::print::_print;
 use crate::mu::read::read_from_stdin;
@@ -37,7 +37,7 @@ impl Env<'_> {
     pub fn read(&self) -> Type {
         read_from_stdin(T)
     }
-    
+
     pub fn print(&self, src: Type) {
         _print(src);
     }
