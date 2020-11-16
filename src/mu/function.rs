@@ -14,10 +14,6 @@ pub struct Function {
 }
 
 impl Function {
-    pub fn funcall(&self, _args: Vec<Type>) -> Type {
-        NIL
-    }
-
     pub fn make_type(name: Type, func: fn(Vec<Type>) -> Type, nargs: i16) -> Type {
         let fun = Function { name, func, nargs };
 
@@ -37,6 +33,10 @@ impl Function {
 }
 
 impl Type {
+    pub fn funcall(&self, _env: &Env<'_>, _args: Type) -> Type {
+        NIL
+    }
+
     pub fn typep_function(&self) -> bool {
         match self.tag() {
             Tag::Function => true,

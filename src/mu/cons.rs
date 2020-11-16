@@ -13,6 +13,14 @@ pub struct Cons {
 }
 
 impl Cons {
+    pub fn car(&self) -> Type {
+        self.car
+    }
+
+    pub fn cdr(&self) -> Type {
+        self.cdr
+    }
+
     pub fn make_type(_car: Type, _cdr: Type) -> Type {
         NIL
     }
