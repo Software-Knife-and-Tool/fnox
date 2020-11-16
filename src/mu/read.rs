@@ -61,12 +61,13 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("'")(input)?;
     let (input, form) = alt((
         read_char,
-        read_decimal,
         read_hexadecimal,
         read_list,
         read_quote,
         read_string,
         read_vector,
+        read_decimal,
+        read_symbol,
     ))(input)?;
 
     Ok((input, form))
@@ -93,17 +94,26 @@ fn read_vector(input: &str) -> IResult<&str, Type> {
     Ok((input, vec_to_list(NIL, 0, &v)))
 }
 
+// symbols
+fn read_symbol(input: &str) -> IResult<&str, Type> {
+    let (input, str) = take_while(|c: char| c.is_alphanumeric())(input)?;
+    
+    Ok((input, Symbol::make_type(String::make_type(str), NIL)))
+}
+
+// reader
 fn read_form(input: &str) -> IResult<&str, Type> {
     let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
 
     alt((
         read_char,
-        read_decimal,
         read_hexadecimal,
         read_list,
         read_quote,
         read_string,
         read_vector,
+        read_decimal,
+        read_symbol,
     ))(input)
 }
 
