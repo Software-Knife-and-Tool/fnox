@@ -1,7 +1,7 @@
 #
 #
 #
-CMD = ./target/debug/lispox
+RUNPATH = ./target/debug/fnox
 
 all: build
 
@@ -15,7 +15,7 @@ fmt:
 	@cargo fmt
 
 run:
-	@$(CMD)
+	@$(RUNPATH)
 
 tests:
 	@cargo test

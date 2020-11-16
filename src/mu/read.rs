@@ -83,7 +83,9 @@ fn vec_to_list(list: Type, i: usize, v: &Vec<Type>) -> Type {
 }
 
 fn read_list(input: &str) -> IResult<&str, Type> {
-    let (input, (_, v, _)) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
+    let (input, (_, v)) = tuple((tag("("), many0(read_form)))(input)?;
+    let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
+    let (input, _) = tag(")")(input)?;
 
     Ok((input, vec_to_list(NIL, 0, &v)))
 }
@@ -171,29 +173,23 @@ mod tests {
         })
     }
 
-    /*
     #[test]
     fn test_symbol() {
-        assert!(match symbol_(b"abc123 ") {
-            Ok((_, str)) => {
-                let _sy = symbol(string(str), NIL);
-                true
-            }
-            Err(_) => false,
+        assert!(match read_symbol("abc123") {
+            Ok(("", sym)) => sym.typep_symbol(),
+            _ => false,
         })
     }
 
     #[test]
     fn test_keyword() {
-        assert!(match keyword_(b":abc123 ") {
-            Ok((_, (_, str))) => {
-                let _kw = keyword(string(str));
-                true
-            }
-            Err(_) => false,
+        assert!(match read_symbol(":abc123") {
+            Ok(("", kwd)) => kwd.typep_keyword(),
+            _ => false,
         })
     }
 
+    /*
     #[test]
     fn test_string() {
         assert!(match string_(b"\"abc123\" ") {

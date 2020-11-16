@@ -1,11 +1,11 @@
 [package]
-name = "lispox"
-version = "0.1.0"
-authors = ["putnamjm <putnamjm.design@gmail.edu>"]
+name = "fnox"
+version = "0.0.1"
+authors = ["putnamjm <putnamjm.design@gmail.com>"]
 edition = "2018"
 
 [[bin]]
-name = "lispox"
+name = "fnox"
 path = "src/main.rs"
 
 [lib]

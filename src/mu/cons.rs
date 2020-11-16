@@ -75,19 +75,19 @@ mod tests {
 
     #[test]
     fn test_type() {
-        assert!(NIL.cons(&NIL).typep_cons());
+        assert!(NIL.cons(NIL).typep_cons());
     }
 
     #[test]
     fn test_list() {
         assert!(NIL.typep_list());
-        assert!(NIL.cons(&NIL).typep_list());
+        assert!(NIL.cons(NIL).typep_list());
     }
 
     #[test]
     fn test_evict() {
         assert!(NIL.typep_list());
-        assert!(NIL.cons(&NIL).typep_list());
+        assert!(NIL.cons(NIL).typep_list());
     }
 
     /*
