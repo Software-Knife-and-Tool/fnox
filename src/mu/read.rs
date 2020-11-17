@@ -138,7 +138,7 @@ fn read_list(input: &str) -> IResult<&str, Type> {
 
     let (input, (_, v, _)) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
 
-    println!("we got a vec len {}", v.len());
+    println!("we got a list {}", v.len());
     Ok((input, vec_to_list(NIL, 0, &v)))
 }
 
@@ -148,7 +148,7 @@ fn read_vector(input: &str) -> IResult<&str, Type> {
     let (input, (_, n, _, v, _)) =
         tuple((tag("#"), read_decimal, tag("("), many0(read_form), tag(")")))(input)?;
 
-    print!("got a vector");
+    print!("got a vector {}", v.len());
     Ok((input, vec_to_list(NIL, 0, &v)))
 }
 
