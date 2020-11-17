@@ -11,7 +11,7 @@ use crate::mu::symbol::Symbol;
 
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take, take_until, take_while},
+    bytes::complete::{tag, take, take_until, take_while, take_while1},
     character::{is_alphanumeric, is_space},
     combinator::{map_res, opt},
     multi::many0,
@@ -57,12 +57,6 @@ Space      whitespace[2]
 Tab        whitespace[2]
 */
 
-fn not_parsed(input: &str) -> IResult<&str, Type> {
-    println!("not parsed: {} ", input);
-    assert!(false);
-    Ok((input, NIL))
-}
-
 // numbers
 fn read_hexadecimal(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#x")(input)?;
@@ -76,8 +70,6 @@ fn read_hexadecimal(input: &str) -> IResult<&str, Type> {
 }
 
 fn read_decimal(input: &str) -> IResult<&str, Type> {
-    println!("testing fixnum {}", input);
-
     let (input, dec) = || -> IResult<&str, i64> {
         map_res(take_while(|c: char| c.is_digit(10)), |input: &str| {
             i64::from_str_radix(input, 10)
@@ -96,8 +88,6 @@ fn read_string(input: &str) -> IResult<&str, Type> {
 }
 
 fn read_char(input: &str) -> IResult<&str, Type> {
-    println!("testing {} for char", input);
-
     let (input, _) = tag("#\\")(input)?;
     let (input, ch) = take(1 as usize)(input)?;
 
@@ -116,7 +106,6 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
         read_vector,
         read_decimal,
         read_symbol,
-        not_parsed,
     ))(input)?;
 
     Ok((input, form))
@@ -124,27 +113,25 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
 
 // lists/vectors
 fn vec_to_list(list: Type, i: usize, v: &Vec<Type>) -> Type {
-    println!("vec_to_list {}", i);
     if i == v.len() {
         list
     } else {
-        println!("vect_to_list: {}", i);
         vec_to_list(v[i].cons(list), i + 1, v)
     }
 }
 
 fn read_list(input: &str) -> IResult<&str, Type> {
-    println!("testing {} for list", input);
+    let (input, (_, v, _, _)) = tuple((
+        tag("("),
+        many0(read_form),
+        take_while(|ch: char| ch.is_ascii_whitespace()),
+        tag(")"),
+    ))(input)?;
 
-    let (input, (_, v, _)) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
-
-    println!("we got a list {}", v.len());
     Ok((input, vec_to_list(NIL, 0, &v)))
 }
 
 fn read_vector(input: &str) -> IResult<&str, Type> {
-    println!("testing {} for vector", input);
-
     let (input, (_, n, _, v, _)) =
         tuple((tag("#"), read_decimal, tag("("), many0(read_form), tag(")")))(input)?;
 
@@ -154,9 +141,7 @@ fn read_vector(input: &str) -> IResult<&str, Type> {
 
 // symbols
 fn read_symbol(input: &str) -> IResult<&str, Type> {
-    let (input, str) = take_while(|ch: char| is_constituent(ch))(input)?;
-
-    println!("symbol: {}", str);
+    let (input, str) = take_while1(|ch: char| is_constituent(ch))(input)?;
 
     Ok((input, Symbol::make_type(String::make_type(str), NIL)))
 }
@@ -164,8 +149,6 @@ fn read_symbol(input: &str) -> IResult<&str, Type> {
 // reader
 fn read_form(input: &str) -> IResult<&str, Type> {
     let (input, _) = take_while(|ch: char| ch.is_ascii_whitespace())(input)?;
-
-    println!("read_form: {}", input);
 
     alt((
         read_char,
@@ -176,7 +159,7 @@ fn read_form(input: &str) -> IResult<&str, Type> {
         read_vector,
         read_decimal,
         read_symbol,
-        not_parsed,
+        // not_parsed,
     ))(input)
 }
 
