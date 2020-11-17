@@ -128,11 +128,7 @@ fn read_list(input: &str) -> IResult<&str, Type> {
         tag(")"),
     ))(input)?;
 
-    if v.len() == 0 {
-        Ok((input, NIL))
-    } else {
-        Ok((input, vec_to_list(NIL, 0, &v)))
-    }
+    Ok((input, vec_to_list(NIL, 0, &v)))
 }
 
 fn read_vector(input: &str) -> IResult<&str, Type> {
