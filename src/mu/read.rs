@@ -163,7 +163,7 @@ fn read_form(input: &str) -> IResult<&str, Type> {
     ))(input)
 }
 
-pub fn read_from_stdin(stream: Type) -> Type {
+pub fn read_from_stdin(_stream: Type) -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
     match read_form(&input) {
