@@ -121,7 +121,12 @@ fn vec_to_list(list: Type, i: usize, v: &Vec<Type>) -> Type {
 }
 
 fn read_list(input: &str) -> IResult<&str, Type> {
-    let (input, (_, v, _)) = tuple((tag("("), many0(read_form), tag(")")))(input)?;
+    let (input, (_, v, _, _)) = tuple((
+        tag("("),
+        many0(read_form),
+        take_while(|ch: char| ch.is_ascii_whitespace()),
+        tag(")"),
+    ))(input)?;
 
     if v.len() == 0 {
         Ok((input, NIL))
