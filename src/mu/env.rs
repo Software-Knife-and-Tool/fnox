@@ -43,6 +43,7 @@ impl Env<'_> {
     }
 
     pub fn eval(&self, ptr: Type) -> Type {
+        print!("eval: ");
         match ptr.tag() {
             Tag::Cons => {
                 let cons = ptr.cons_from_type();

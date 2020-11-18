@@ -97,9 +97,11 @@ fn read_char(input: &str) -> IResult<&str, Type> {
 // special forms
 fn read_quote(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("'")(input)?;
+    
     let (input, form) = alt((
         read_char,
         read_hexadecimal,
+        read_cons,
         read_list,
         read_quote,
         read_string,
@@ -108,10 +110,10 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
         read_symbol,
     ))(input)?;
 
-    Ok((input, form))
+    Ok((input, Symbol::make_keyword(String::make_type("quote")).cons(form)))
 }
 
-// lists/vectors
+// lists/vectors/dotted pair
 fn vec_to_list(list: Type, i: usize, v: &Vec<Type>) -> Type {
     if i == v.len() {
         list
@@ -139,11 +141,31 @@ fn read_vector(input: &str) -> IResult<&str, Type> {
     Ok((input, vec_to_list(NIL, 0, &v)))
 }
 
+fn read_cons(input: &str) -> IResult<&str, Type> {
+    let (input, (_, car, _, _, _, cdr, _, _)) = tuple((
+        tag("("),
+        read_form,
+        take_while1(|ch: char| ch.is_ascii_whitespace()),
+        tag("."),
+        take_while1(|ch: char| ch.is_ascii_whitespace()),
+        read_form,
+        take_while(|ch: char| ch.is_ascii_whitespace()),
+        tag(")"),
+    ))(input)?;
+
+    Ok((input, car.cons(cdr)))
+}
+
 // symbols
 fn read_symbol(input: &str) -> IResult<&str, Type> {
     let (input, str) = take_while1(|ch: char| is_constituent(ch))(input)?;
-
-    Ok((input, Symbol::make_type(String::make_type(str), NIL)))
+    let ch = str.chars().nth(0).unwrap();
+    
+    if ch == ':' {
+        Ok((input, Symbol::make_keyword(String::make_type(str))))        
+    } else {
+        Ok((input, Symbol::make_type(String::make_type(str), NIL)))
+    }
 }
 
 // reader
@@ -153,17 +175,17 @@ fn read_form(input: &str) -> IResult<&str, Type> {
     alt((
         read_char,
         read_hexadecimal,
+        read_cons,
         read_list,
         read_quote,
         read_string,
         read_vector,
         read_decimal,
         read_symbol,
-        // not_parsed,
     ))(input)
 }
 
-pub fn read_from_stdin(stream: Type) -> Type {
+pub fn read_from_stdin(_stream: Type) -> Type {
     let input = io::stdin().lock().lines().next().unwrap().unwrap();
 
     match read_form(&input) {

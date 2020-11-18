@@ -37,29 +37,18 @@ impl Type {
         }
     }
 
-    pub fn string_from_type(&self) -> &'static String {
-        let str: &String = unsafe { std::mem::transmute(detag(self)) };
-        str
-    }
-
-    pub fn str_from_type(&self) -> &str {
+    pub fn str_from_type(&self) -> std::string::String {
         match self.tag() {
-            Tag::Immediate => {
-                /*
-                let mut chars = self.immediate_data();
-                let mut v = &[u8; self.immediate_size()];
-
-                for ch in &v {
-                    v[i] = chars & 0xff;
-                    chars /= 8;
-                }
-
-                std::str::from_utf8(v).unwrap()
-                 */
-                std::str::from_utf8(b"immediate-string").unwrap()
+            Tag::Immediate => {  // clean this the hell up
+                let l = self.immediate_size();
+                let v = &self.immediate_data().to_be_bytes();
+                let s = std::str::from_utf8(v).unwrap().to_string();
+                let c = &s[(8 - l)..];
+                
+                c.to_string()
             }
-            Tag::Vector => std::str::from_utf8(b"char-vector").unwrap(),
-            _ => std::str::from_utf8(b"whoa").unwrap(),
+            Tag::Vector => std::str::from_utf8(b"char-vector").unwrap().to_string(),
+            _ => std::str::from_utf8(b"whoa").unwrap().to_string(),
         }
     }
 }
