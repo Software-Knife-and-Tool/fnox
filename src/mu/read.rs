@@ -97,6 +97,7 @@ fn read_char(input: &str) -> IResult<&str, Type> {
 // special forms
 fn read_quote(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("'")(input)?;
+    
     let (input, form) = alt((
         read_char,
         read_hexadecimal,
