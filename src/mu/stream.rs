@@ -1,29 +1,29 @@
-/* mu/stream.rs */
+// mu/stream.rs
 use std::mem;
 
-use crate::mu::env::Env;
+use crate::mu::env::FnEnv;
 use crate::mu::r#type::{detag, entag, Tag, Type};
 
 #[derive(Debug)]
-pub struct Stream {
+pub struct FnStream {
     name: Type,
     func: fn(Vec<Type>) -> Type,
     nargs: i16,
 }
 
 pub fn _stream(name: Type, func: fn(Vec<Type>) -> Type, nargs: i16) -> Type {
-    let fun = Stream { name, func, nargs };
+    let fun = FnStream { name, func, nargs };
 
     Type::from_stream(&fun)
 }
 
-impl Stream {
-    pub fn evict(&self, env: &mut Env<'_>) -> Type {
-        let stream = env.heap.alloc(mem::size_of::<Stream>(), Tag::Cons);
+impl FnStream {
+    pub fn evict(&self, env: &mut FnEnv<'_>) -> Type {
+        let stream = env.heap.alloc(mem::size_of::<FnStream>(), Tag::Cons);
         unsafe {
             let dest: *mut u8 = std::mem::transmute(stream);
             let src: *const u8 = std::mem::transmute(&self);
-            std::ptr::copy_nonoverlapping::<u8>(src, dest, mem::size_of::<Stream>());
+            std::ptr::copy_nonoverlapping::<u8>(src, dest, mem::size_of::<FnStream>());
         }
         assert!((stream & 0x7) == 0);
         entag(stream, Tag::Stream)
@@ -38,15 +38,15 @@ impl Type {
         }
     }
 
-    pub fn from_stream(stream: &Stream) -> Type {
+    pub fn from_stream(stream: &FnStream) -> Type {
         unsafe {
             let addr: u64 = std::mem::transmute(stream);
             entag(addr << 3, Tag::Stream)
         }
     }
 
-    pub fn stream_from_type(&self) -> &'static Stream {
-        let stream: &Stream = unsafe { std::mem::transmute(detag(self)) };
+    pub fn stream_from_type(&self) -> &'static FnStream {
+        let stream: &FnStream = unsafe { std::mem::transmute(detag(self)) };
         stream
     }
 }

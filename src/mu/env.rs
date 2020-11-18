@@ -1,39 +1,38 @@
 // mu/env.rs
 use std::collections::HashMap;
-// use std::io::{self, BufRead};
 
-use crate::mu::heap::{Heap, _heap};
+use crate::mu::heap::{FnHeap, _heap};
 
-use crate::mu::r#type::{SysClass, Tag, Type};
+use crate::mu::r#type::{Tag, Type};
 use crate::mu::r#type::{NIL, T};
 
 use crate::mu::print::_print;
 use crate::mu::read::read_from_stdin;
 
 use crate::mu::fixnum::fixnum_add;
-use crate::mu::function::Function;
-use crate::mu::string::String;
+use crate::mu::function::FnFunction;
+use crate::mu::string::FnString;
 
-pub struct Env<'e> {
-    pub heap: Heap,
+pub struct FnEnv<'e> {
+    pub heap: FnHeap,
     pub symtab: HashMap<&'e str, Type>,
 }
 
-pub fn env<'e>() -> Env<'e> {
+pub fn env<'e>() -> FnEnv<'e> {
     let mut init: HashMap<&'e str, Type> = HashMap::new();
 
     init.insert(
         "fixnum-add",
-        Function::make_type(String::make_type("fixnum-add"), fixnum_add, 2),
+        FnFunction::make_type(FnString::make_type("fixnum-add"), fixnum_add, 2),
     );
 
-    Env {
+    FnEnv {
         heap: _heap(1024 * 1024),
         symtab: init,
     }
 }
 
-impl Env<'_> {
+impl FnEnv<'_> {
     pub fn read(&self) -> Type {
         read_from_stdin(T)
     }

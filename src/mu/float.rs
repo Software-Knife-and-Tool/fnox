@@ -1,10 +1,10 @@
-/* mu/float.rs */
+// mu/float.rs
 use crate::mu::r#type::{immediate, ImmediateClass};
 use crate::mu::r#type::{Tag, Type};
 use crate::mu::r#type::{NIL, T};
 
 #[derive(Debug)]
-pub struct Float {
+pub struct FnFloat {
     float: f32,
 }
 
@@ -13,7 +13,7 @@ pub fn float(src: f32) -> Type {
 }
 
 pub fn float_add(args: Vec<Type>) -> Type {
-    match Float::from_type(&args[0]) {
+    match FnFloat::from_type(&args[0]) {
         Some(fl) => match fl.add(&args[1]) {
             Some(s) => s,
             None => NIL,
@@ -22,18 +22,20 @@ pub fn float_add(args: Vec<Type>) -> Type {
     }
 }
 
-impl Float {
-    pub fn print(&self) {
+impl FnFloat {
+    // think: print self-contained?
+    pub fn _print(&self) {
         println!("{}", self.float);
     }
 
-    pub fn from_f32(float: f32) -> Float {
-        Float { float: float }
+    // think: do we need this?
+    pub fn _from_f32(float: f32) -> FnFloat {
+        FnFloat { float: float }
     }
 
-    pub fn from_type(fl: &Type) -> Option<Float> {
+    pub fn from_type(fl: &Type) -> Option<FnFloat> {
         if Type::typep_float(fl) {
-            Some(Float {
+            Some(FnFloat {
                 float: (fl.as_u64() >> 32) as f32,
             })
         } else {
@@ -128,7 +130,7 @@ mod tests {
 
     #[test]
     fn test_minusp() {
-        assert!(match Float::from_type(&float(-1.0)) {
+        assert!(match FnFloat::from_type(&float(-1.0)) {
             Some(fl) => fl.minusp().eq(T),
             None => false,
         });
@@ -136,7 +138,7 @@ mod tests {
 
     #[test]
     fn test_add() {
-        assert!(match Float::from_type(&float(1.0)) {
+        assert!(match FnFloat::from_type(&float(1.0)) {
             Some(fl) => match fl.add(&float(2.0)) {
                 Some(sum) => match sum.f32_from_float() {
                     Some(v) => v == 3.0,
@@ -150,7 +152,7 @@ mod tests {
 
     #[test]
     fn test_mul() {
-        assert!(match Float::from_type(&float(2.0)) {
+        assert!(match FnFloat::from_type(&float(2.0)) {
             Some(fl) => match fl.mul(&float(3.0)) {
                 Some(sum) => match sum.f32_from_float() {
                     Some(v) => v == 6.0,
@@ -164,7 +166,7 @@ mod tests {
 
     #[test]
     fn test_div() {
-        assert!(match Float::from_type(&float(4.0)) {
+        assert!(match FnFloat::from_type(&float(4.0)) {
             Some(fl) => match fl.div(&float(2.0)) {
                 Some(sum) => match sum.f32_from_float() {
                     Some(v) => v == 2.0,

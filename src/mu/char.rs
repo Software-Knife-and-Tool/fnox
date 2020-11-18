@@ -5,11 +5,11 @@ use crate::mu::r#type::{immediate, ImmediateClass};
 use crate::mu::r#type::{Tag, Type};
 
 #[derive(Debug)]
-pub struct Char {
+pub struct FnChar {
     char_: char,
 }
 
-impl Char {
+impl FnChar {
     pub fn make_type(src: char) -> Type {
         immediate(src as u64, 0, ImmediateClass::Char)
     }
@@ -18,13 +18,13 @@ impl Char {
         println!("{}", self.char_);
     }
 
-    pub fn _from_char(char_: char) -> Char {
-        Char { char_: char_ }
+    pub fn _from_char(char_: char) -> FnChar {
+        FnChar { char_: char_ }
     }
 
-    pub fn _from_type(ch: &Type) -> Option<Char> {
+    pub fn _from_type(ch: &Type) -> Option<FnChar> {
         if Type::typep_char(ch) {
-            Some(Char {
+            Some(FnChar {
                 char_: char::from_u32(ch.immediate_data() as u32).unwrap(),
             })
         } else {
@@ -52,6 +52,6 @@ mod tests {
 
     #[test]
     fn test_type() {
-        assert!(Char::make_type('a').typep_char());
+        assert!(FnChar::make_type('a').typep_char());
     }
 }

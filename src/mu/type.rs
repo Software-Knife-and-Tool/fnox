@@ -1,15 +1,6 @@
 // mu/r#type.rs
 use crate::num::FromPrimitive;
 
-use crate::mu::char::Char;
-use crate::mu::cons::Cons;
-use crate::mu::exception::Exception;
-use crate::mu::fixnum::Fixnum;
-use crate::mu::function::Function;
-use crate::mu::stream::Stream;
-use crate::mu::symbol::Symbol;
-use crate::mu::vector::Vector;
-
 #[derive(Debug, Copy, Clone)]
 pub struct Type(u64);
 
