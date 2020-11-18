@@ -9,7 +9,7 @@ use crate::mu::r#type::{NIL, T};
 use crate::mu::print::_print;
 use crate::mu::read::read_from_stdin;
 
-use crate::mu::fixnum::fixnum_add;
+use crate::mu::fixnum::*;
 use crate::mu::function::FnFunction;
 use crate::mu::string::FnString;
 
@@ -23,7 +23,37 @@ pub fn env<'e>() -> FnEnv<'e> {
 
     init.insert(
         "fixnum-add",
-        FnFunction::make_type(FnString::make_type("fixnum-add"), fixnum_add, 2),
+        FnFunction::make_type(FnString::make_type("fixnum-add"), fx_add, 2),
+    );
+
+    init.insert(
+        "fixnum-sub",
+        FnFunction::make_type(FnString::make_type("fixnum-sub"), fx_sub, 2),
+    );
+
+    init.insert(
+        "fixnum-mul",
+        FnFunction::make_type(FnString::make_type("fixnum-mul"), fx_mul, 2),
+    );
+
+    init.insert(
+        "fixnum-trunc",
+        FnFunction::make_type(FnString::make_type("fixnum-trunc"), fx_trunc, 2),
+    );
+
+    init.insert(
+        "mod",
+        FnFunction::make_type(FnString::make_type("mod"), fx_mod, 2),
+    );
+
+    init.insert(
+        "logand",
+        FnFunction::make_type(FnString::make_type("logand"), fx_logand, 2),
+    );
+
+    init.insert(
+        "minusp",
+        FnFunction::make_type(FnString::make_type("minusp"), fx_minusp, 1),
     );
 
     FnEnv {

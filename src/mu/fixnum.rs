@@ -7,9 +7,66 @@ pub struct FnFixnum {
     integer: i64,
 }
 
-pub fn fixnum_add(args: Vec<Type>) -> Type {
+pub fn fx_add(args: Vec<Type>) -> Type {
     match FnFixnum::from_type(&args[0]) {
         Some(fx) => match fx.add(&args[1]) {
+            Some(s) => s,
+            None => NIL,
+        },
+        None => NIL,
+    }
+}
+
+pub fn fx_sub(args: Vec<Type>) -> Type {
+    match FnFixnum::from_type(&args[0]) {
+        Some(fx) => match fx.sub(&args[1]) {
+            Some(s) => s,
+            None => NIL,
+        },
+        None => NIL,
+    }
+}
+
+pub fn fx_mul(args: Vec<Type>) -> Type {
+    match FnFixnum::from_type(&args[0]) {
+        Some(fx) => match fx.mul(&args[1]) {
+            Some(s) => s,
+            None => NIL,
+        },
+        None => NIL,
+    }
+}
+
+pub fn fx_trunc(args: Vec<Type>) -> Type {
+    match FnFixnum::from_type(&args[0]) {
+        Some(fx) => match fx.trunc(&args[1]) {
+            Some(s) => s,
+            None => NIL,
+        },
+        None => NIL,
+    }
+}
+
+pub fn fx_minusp(args: Vec<Type>) -> Type {
+    match FnFixnum::from_type(&args[0]) {
+        Some(fx) => fx.minusp(),
+        None => NIL,
+    }
+}
+
+pub fn fx_mod(args: Vec<Type>) -> Type {
+    match FnFixnum::from_type(&args[0]) {
+        Some(fx) => match fx.mod_(&args[1]) {
+            Some(s) => s,
+            None => NIL,
+        },
+        None => NIL,
+    }
+}
+
+pub fn fx_logand(args: Vec<Type>) -> Type {
+    match FnFixnum::from_type(&args[0]) {
+        Some(fx) => match fx.logand(&args[1]) {
             Some(s) => s,
             None => NIL,
         },
@@ -44,6 +101,17 @@ impl FnFixnum {
         if Type::typep_fixnum(fx) {
             Some(FnFixnum::make_type(
                 self.integer + (fx.as_u64() >> 3) as i64,
+            ))
+        } else {
+            assert!(false);
+            None
+        }
+    }
+
+    pub fn sub(&self, fx: &Type) -> Option<Type> {
+        if Type::typep_fixnum(fx) {
+            Some(FnFixnum::make_type(
+                self.integer - (fx.as_u64() >> 3) as i64,
             ))
         } else {
             assert!(false);
