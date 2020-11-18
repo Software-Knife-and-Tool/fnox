@@ -1,18 +1,18 @@
-/* mu/cons.rs */
+// mu/cons.rs
 use std::mem;
 
 use crate::mu::r#type::NIL;
 use crate::mu::r#type::{detag, entag, Tag, Type};
 
-use crate::mu::env::Env;
+use crate::mu::env::FnEnv;
 
 #[derive(Debug)]
-pub struct Cons {
+pub struct FnCons {
     car: Type,
     cdr: Type,
 }
 
-impl Cons {
+impl FnCons {
     pub fn car(&self) -> Type {
         self.car
     }
@@ -25,12 +25,12 @@ impl Cons {
         NIL
     }
 
-    pub fn evict(&self, env: &mut Env<'_>) -> Type {
-        let cons = env.heap.alloc(mem::size_of::<Cons>(), Tag::Cons);
+    pub fn evict(&self, env: &mut FnEnv<'_>) -> Type {
+        let cons = env.heap.alloc(mem::size_of::<FnCons>(), Tag::Cons);
         unsafe {
             let _dest: *mut u8 = std::mem::transmute(cons);
             let _src: *const u8 = std::mem::transmute(&self);
-            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<Cons>());
+            std::ptr::copy_nonoverlapping::<u8>(_src, _dest, mem::size_of::<FnCons>());
         }
         assert!((cons & 0x7) == 0);
         entag(cons, Tag::Cons)
@@ -49,7 +49,7 @@ impl Type {
         self.eq(NIL) || self.typep_cons()
     }
 
-    pub fn from_cons(_cons: &Cons) -> Type {
+    pub fn from_cons(_cons: &FnCons) -> Type {
         unsafe {
             let cons_addr: u64 = std::mem::transmute(_cons);
             entag(cons_addr << 3, Tag::Cons)
@@ -57,14 +57,14 @@ impl Type {
     }
 
     pub fn cons(&self, cdr: Type) -> Type {
-        Type::from_cons(&Cons {
+        Type::from_cons(&FnCons {
             car: *self,
             cdr: cdr,
         })
     }
 
-    pub fn cons_from_type(&self) -> &'static Cons {
-        let cons: &Cons = unsafe { std::mem::transmute(detag(self)) };
+    pub fn cons_from_type(&self) -> &'static FnCons {
+        let cons: &FnCons = unsafe { std::mem::transmute(detag(self)) };
         cons
     }
 }

@@ -4,16 +4,15 @@ use std::io::{self, BufRead};
 use crate::mu::r#type::Type;
 use crate::mu::r#type::NIL;
 
-use crate::mu::char::Char;
-use crate::mu::fixnum::Fixnum;
-use crate::mu::string::String;
-use crate::mu::symbol::Symbol;
+use crate::mu::char::FnChar;
+use crate::mu::fixnum::FnFixnum;
+use crate::mu::string::FnString;
+use crate::mu::symbol::FnSymbol;
 
 use nom::{
     branch::alt,
     bytes::complete::{tag, take, take_until, take_while, take_while1},
-    character::{is_alphanumeric, is_space},
-    combinator::{map_res, opt},
+    combinator::map_res,
     multi::many0,
     sequence::tuple,
     IResult,
@@ -66,7 +65,7 @@ fn read_hexadecimal(input: &str) -> IResult<&str, Type> {
         })(input)
     }()?;
 
-    Ok((input, Fixnum::make_type(hex)))
+    Ok((input, FnFixnum::make_type(hex)))
 }
 
 fn read_decimal(input: &str) -> IResult<&str, Type> {
@@ -76,7 +75,7 @@ fn read_decimal(input: &str) -> IResult<&str, Type> {
         })(input)
     }()?;
 
-    Ok((input, Fixnum::make_type(dec)))
+    Ok((input, FnFixnum::make_type(dec)))
 }
 
 // string/char
@@ -84,20 +83,20 @@ fn read_string(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("\"")(input)?;
     let (input, str) = take_until("\"")(input)?;
 
-    Ok((input, String::make_type(str)))
+    Ok((input, FnString::make_type(str)))
 }
 
 fn read_char(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("#\\")(input)?;
     let (input, ch) = take(1 as usize)(input)?;
 
-    Ok((input, Char::make_type(ch.chars().nth(0).unwrap())))
+    Ok((input, FnChar::make_type(ch.chars().nth(0).unwrap())))
 }
 
 // special forms
 fn read_quote(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("'")(input)?;
-    
+
     let (input, form) = alt((
         read_char,
         read_hexadecimal,
@@ -110,7 +109,10 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
         read_symbol,
     ))(input)?;
 
-    Ok((input, Symbol::make_keyword(String::make_type("quote")).cons(form)))
+    Ok((
+        input,
+        FnSymbol::make_keyword(FnString::make_type("quote")).cons(form),
+    ))
 }
 
 // lists/vectors/dotted pair
@@ -134,7 +136,7 @@ fn read_list(input: &str) -> IResult<&str, Type> {
 }
 
 fn read_vector(input: &str) -> IResult<&str, Type> {
-    let (input, (_, n, _, v, _)) =
+    let (input, (_, _n, _, v, _)) =
         tuple((tag("#"), read_decimal, tag("("), many0(read_form), tag(")")))(input)?;
 
     print!("got a vector {}", v.len());
@@ -160,11 +162,11 @@ fn read_cons(input: &str) -> IResult<&str, Type> {
 fn read_symbol(input: &str) -> IResult<&str, Type> {
     let (input, str) = take_while1(|ch: char| is_constituent(ch))(input)?;
     let ch = str.chars().nth(0).unwrap();
-    
+
     if ch == ':' {
-        Ok((input, Symbol::make_keyword(String::make_type(str))))        
+        Ok((input, FnSymbol::make_keyword(FnString::make_type(str))))
     } else {
-        Ok((input, Symbol::make_type(String::make_type(str), NIL)))
+        Ok((input, FnSymbol::make_type(FnString::make_type(str), NIL)))
     }
 }
 

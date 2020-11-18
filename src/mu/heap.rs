@@ -1,7 +1,7 @@
-/* mu/heap.rs */
+// mu/heap.rs
 use crate::mu::r#type::{Tag, _tag_from_u8};
 
-pub struct Heap {
+pub struct FnHeap {
     nwords: usize,       // number of u64 words
     fname: &'static str, // mapped file name
     mmap: Vec<u64>,      // on heap
@@ -36,8 +36,8 @@ fn mmap(size: u64, fname: &str) -> memmap::MmapMut {
 }
 */
 
-pub fn _heap(nwords: usize) -> Heap {
-    Heap {
+pub fn _heap(nwords: usize) -> FnHeap {
+    FnHeap {
         nwords,
         fname: "/var/tmp/fnox",
         mmap: Vec::with_capacity(nwords * 8),
@@ -65,7 +65,7 @@ pub fn _hinfo_tag(hinfo: u64) -> Tag {
     _tag_from_u8((hinfo & 0x7) as u8)
 }
 
-impl Heap {
+impl FnHeap {
     pub fn alloc(&mut self, _nbytes: usize, _tag: Tag) -> u64 {
         let addr: u64 = unsafe { std::mem::transmute(&self.mmap[self.fence]) };
         let nwords: usize = (_nbytes + 15) / 8;

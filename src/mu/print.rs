@@ -1,4 +1,4 @@
-/* mu/print.rs */
+// mu/print.rs
 use std::char::from_u32;
 
 use crate::mu::r#type::{SysClass, Type, NIL};

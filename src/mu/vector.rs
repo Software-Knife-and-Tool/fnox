@@ -1,30 +1,30 @@
-/* mu/vector.rs */
+// mu/vector.rs
 use std::mem;
 
-use crate::mu::env::Env;
+use crate::mu::env::FnEnv;
 use crate::mu::r#type::entag;
 use crate::mu::r#type::{SysClass, Tag, Type};
 
 #[derive(Debug)]
 enum VecData {
-    Char(&'static str),
-    Byte(Vec<u8>),
-    Fixnum(Vec<u64>),
-    Float(Vec<f32>),
-    T(&'static Vec<Type>),
+    _Char(&'static str),
+    _Byte(Vec<u8>),
+    _Fixnum(Vec<u64>),
+    _Float(Vec<f32>),
+    _T(&'static Vec<Type>),
 }
 
 #[derive(Debug)]
-pub struct Vector {
+pub struct FnVector {
     type_: SysClass,
     data_: VecData,
 }
 
-impl Vector {
-    pub fn make_type(vec_: &'static Vec<Type>) -> Type {
-        let v = Vector {
+impl FnVector {
+    pub fn _make_type(vec_: &'static Vec<Type>) -> Type {
+        let v = FnVector {
             type_: SysClass::T,
-            data_: VecData::T(vec_),
+            data_: VecData::_T(vec_),
         };
         unsafe {
             let addr: u64 = std::mem::transmute(&v);
@@ -32,16 +32,16 @@ impl Vector {
         }
     }
 
-    pub fn vector_type(&self) -> &SysClass {
+    pub fn _vector_type(&self) -> &SysClass {
         &self.type_
     }
 
-    pub fn evict(&self, env: &mut Env<'_>) -> Type {
-        let vector = env.heap.alloc(mem::size_of::<Vector>(), Tag::Vector);
+    pub fn _evict(&self, env: &mut FnEnv<'_>) -> Type {
+        let vector = env.heap.alloc(mem::size_of::<FnVector>(), Tag::Vector);
         unsafe {
             let dest: *mut u8 = std::mem::transmute(vector);
             let src: *const u8 = std::mem::transmute(&self);
-            std::ptr::copy_nonoverlapping::<u8>(src, dest, mem::size_of::<Vector>());
+            std::ptr::copy_nonoverlapping::<u8>(src, dest, mem::size_of::<FnVector>());
         }
         assert!((vector & 0x7) == 0);
         entag(vector, Tag::Vector)
