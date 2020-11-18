@@ -109,7 +109,7 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
         read_symbol,
     ))(input)?;
 
-    Ok((input, form))
+    Ok((input, Symbol::make_keyword(String::make_type("quote")).cons(form)))
 }
 
 // lists/vectors/dotted pair
@@ -158,8 +158,13 @@ fn read_cons(input: &str) -> IResult<&str, Type> {
 // symbols
 fn read_symbol(input: &str) -> IResult<&str, Type> {
     let (input, str) = take_while1(|ch: char| is_constituent(ch))(input)?;
-
-    Ok((input, Symbol::make_type(String::make_type(str), NIL)))
+    let ch = str.chars().nth(0).unwrap();
+    
+    if ch == ':' {
+        Ok((input, Symbol::make_keyword(String::make_type(str))))        
+    } else {
+        Ok((input, Symbol::make_type(String::make_type(str), NIL)))
+    }
 }
 
 // reader
@@ -176,7 +181,6 @@ fn read_form(input: &str) -> IResult<&str, Type> {
         read_vector,
         read_decimal,
         read_symbol,
-        // not_parsed,
     ))(input)
 }
 
