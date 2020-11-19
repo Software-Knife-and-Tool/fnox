@@ -1,8 +1,8 @@
 // mu/print.rs
-use std::fmt;
 use std::char::from_u32;
+use std::fmt;
 
-use crate::mu::r#type::{ImmediateClass};
+use crate::mu::r#type::ImmediateClass;
 use crate::mu::r#type::{SysClass, Tag, Type};
 
 pub fn to_string(src: Type) -> String {

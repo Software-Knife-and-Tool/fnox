@@ -21,66 +21,28 @@ pub struct FnEnv<'e> {
 
 pub fn env<'e>() -> FnEnv<'e> {
     let mut init: HashMap<&'e str, Type> = HashMap::new();
+    let _inits = vec![
+        ("fixnum+", fx_add as fn(Vec<Type>) -> Type, 2),
+        ("fixnum*", fx_mul, 2),
+        ("fixnum-", fx_sub, 2),
+        ("fixnum-trunc", fx_trunc, 2),
+        ("float*", fl_mul, 2),
+        ("float+", fl_add, 2),
+        ("float-", fl_sub, 2),
+        ("float-minusp", fl_minusp, 1),
+        ("float/", fl_div, 2),
+        ("logand", fx_logand, 2),
+        ("minusp", fx_minusp, 1),
+        ("mod", fx_mod, 2),
+        ("fixnum+", fx_add, 2),
+    ];
 
-    init.insert(
-        "fixnum-add",
-        FnFunction::make_type(FnString::make_type("fixnum-add"), fx_add, 2),
-    );
-
-    init.insert(
-        "fixnum-sub",
-        FnFunction::make_type(FnString::make_type("fixnum-sub"), fx_sub, 2),
-    );
-
-    init.insert(
-        "fixnum-mul",
-        FnFunction::make_type(FnString::make_type("fixnum-mul"), fx_mul, 2),
-    );
-
-    init.insert(
-        "fixnum-trunc",
-        FnFunction::make_type(FnString::make_type("fixnum-trunc"), fx_trunc, 2),
-    );
-
-    init.insert(
-        "mod",
-        FnFunction::make_type(FnString::make_type("mod"), fx_mod, 2),
-    );
-
-    init.insert(
-        "logand",
-        FnFunction::make_type(FnString::make_type("logand"), fx_logand, 2),
-    );
-
-    init.insert(
-        "minusp",
-        FnFunction::make_type(FnString::make_type("minusp"), fx_minusp, 1),
-    );
-
-    init.insert(
-        "float+",
-        FnFunction::make_type(FnString::make_type("float+"), fl_add, 2),
-    );
-
-    init.insert(
-        "float-",
-        FnFunction::make_type(FnString::make_type("float-"), fl_sub, 2),
-    );
-
-    init.insert(
-        "float*",
-        FnFunction::make_type(FnString::make_type("float*"), fl_mul, 2),
-    );
-
-    init.insert(
-        "float/",
-        FnFunction::make_type(FnString::make_type("float/"), fl_div, 2),
-    );
-
-    init.insert(
-        "float-minusp",
-        FnFunction::make_type(FnString::make_type("float-minusp"), fl_minusp, 1),
-    );
+    for fn_ in _inits {
+        init.insert(
+            fn_.0,
+            FnFunction::make_type(FnString::make_type(fn_.0), fn_.1, fn_.2),
+        );
+    }
 
     FnEnv {
         heap: _heap(1024 * 1024),
