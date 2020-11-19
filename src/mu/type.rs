@@ -63,7 +63,7 @@ pub const T: Type = Type {
 };
 
 pub const NIL: Type = Type {
-    0: (((('l' as u64) << 16) | (('i' as u64) << 8) | ('n' as u64)) << 8)
+    0: (((('n' as u64) << 16) | (('i' as u64) << 8) | ('l' as u64)) << 8)
         | (3 << 5)
         | ((ImmediateClass::Keyword as u64) << 3)
         | (Tag::Immediate as u64),
@@ -93,8 +93,6 @@ impl Type {
     }
 
     pub fn type_of(&self) -> SysClass {
-        // println!("type-of: {:x?}", self.0);
-
         match self.tag() {
             Tag::Cons => SysClass::Cons,
             Tag::Fixnum => SysClass::Fixnum,

@@ -83,6 +83,7 @@ fn read_string(input: &str) -> IResult<&str, Type> {
     let (input, _) = tag("\"")(input)?;
     let (input, str) = take_until("\"")(input)?;
 
+    println!("read_string: {}", str);
     Ok((input, FnString::make_type(str)))
 }
 
@@ -164,7 +165,10 @@ fn read_symbol(input: &str) -> IResult<&str, Type> {
     let ch = str.chars().nth(0).unwrap();
 
     if ch == ':' {
-        Ok((input, FnSymbol::make_keyword(FnString::make_type(str))))
+        Ok((
+            input,
+            FnSymbol::make_keyword(FnString::make_type(&str[1..])),
+        ))
     } else {
         Ok((input, FnSymbol::make_type(FnString::make_type(str), NIL)))
     }

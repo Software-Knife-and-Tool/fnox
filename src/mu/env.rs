@@ -6,7 +6,7 @@ use crate::mu::heap::{FnHeap, _heap};
 use crate::mu::r#type::{Tag, Type};
 use crate::mu::r#type::{NIL, T};
 
-use crate::mu::print::_print;
+use crate::mu::print::{_print, debug_println};
 use crate::mu::read::read_from_stdin;
 
 use crate::mu::fixnum::*;
@@ -73,12 +73,13 @@ impl FnEnv<'_> {
 
     pub fn eval(&self, ptr: Type) -> Type {
         print!("eval: ");
+        debug_println(ptr);
         match ptr.tag() {
             Tag::Cons => {
                 let cons = ptr.cons_from_type();
                 let fsym = cons.car();
 
-                println!("looks like a cons");
+                debug_println(fsym);
                 if !fsym.typep_symbol() {
                     println!("unquoted list form");
                     NIL

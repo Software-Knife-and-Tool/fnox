@@ -5,6 +5,7 @@ use crate::mu::r#type::NIL;
 use crate::mu::r#type::{detag, entag, Tag, Type};
 
 use crate::mu::env::FnEnv;
+use crate::mu::print::debug_println;
 
 #[derive(Debug)]
 pub struct FnCons {
@@ -57,6 +58,10 @@ impl Type {
     }
 
     pub fn cons(&self, cdr: Type) -> Type {
+        println!("(cons> ");
+        debug_println(*self);
+        debug_println(cdr);
+        println!("cons<)");
         Type::from_cons(&FnCons {
             car: *self,
             cdr: cdr,
