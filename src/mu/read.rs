@@ -9,6 +9,8 @@ use crate::mu::fixnum::FnFixnum;
 use crate::mu::string::FnString;
 use crate::mu::symbol::FnSymbol;
 
+use crate::mu::print::debug_println;
+
 use nom::{
     branch::alt,
     bytes::complete::{tag, take, take_until, take_while, take_while1},
@@ -166,7 +168,10 @@ fn read_symbol(input: &str) -> IResult<&str, Type> {
             FnSymbol::make_keyword(FnString::make_type(&str[1..])),
         ))
     } else {
-        Ok((input, FnSymbol::make_type(FnString::make_type(str), NIL)))
+        let sym = FnSymbol::make_type(FnString::make_type(str), NIL);
+        debug_println(sym);
+
+        Ok((input, sym))
     }
 }
 

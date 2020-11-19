@@ -49,12 +49,34 @@ pub fn debug_println(obj: Type) {
         },
     };
 
-    println!(
-        "debug: tag {:x} type {} {}",
-        obj.as_u64(),
-        typestr(obj),
-        to_string(obj)
-    );
+    print!("debug: tag {:x} type {} {}", obj.as_u64(), typestr(obj));
+
+    /*
+    match src.type_of() {
+        SysClass::String => {
+            let _str = &Type::str_from_type(&src);
+        }
+        SysClass::Symbol => {
+            if src.typep_keyword() {
+                format!(":{}", src.str_from_type())
+            } else {
+                let sym = Type::symbol_from_type(&src);
+                let name = to_string(*sym.name());
+
+                format!("{:?}", name)
+            }
+        }
+        SysClass::Char => format!("#\\{}", from_u32(src.immediate_data() as u32).unwrap()),
+        SysClass::Cons => format!("[#<cons>]"),
+        SysClass::Exception => format!("#<exception>"),
+        SysClass::Fixnum => format!("{:?}", src.i64_from_fixnum().unwrap()),
+        SysClass::Float => format!("[float]"),
+        SysClass::Function => format!("#<function>"),
+        SysClass::Stream => format!("#<stream>"),
+        SysClass::T => format!("#<T>"),
+        SysClass::Vector => format!("[vector]"),
+    }
+     */
 }
 
 pub fn _print(src: Type) {
