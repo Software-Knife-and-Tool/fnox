@@ -80,16 +80,13 @@ fn read_decimal(input: &str) -> IResult<&str, Type> {
 
 // string/char
 fn read_string(input: &str) -> IResult<&str, Type> {
-    let (input, _) = tag("\"")(input)?;
-    let (input, str) = take_until("\"")(input)?;
+    let (input, (_, str, _)) = tuple((tag("\""), take_until("\""), take(1 as usize)))(input)?;
 
-    println!("read_string: {}", str);
     Ok((input, FnString::make_type(str)))
 }
 
 fn read_char(input: &str) -> IResult<&str, Type> {
-    let (input, _) = tag("#\\")(input)?;
-    let (input, ch) = take(1 as usize)(input)?;
+    let (input, (_, ch)) = tuple((tag("#\\"), take(1 as usize)))(input)?;
 
     Ok((input, FnChar::make_type(ch.chars().nth(0).unwrap())))
 }
@@ -140,7 +137,6 @@ fn read_vector(input: &str) -> IResult<&str, Type> {
     let (input, (_, _n, _, v, _)) =
         tuple((tag("#"), read_decimal, tag("("), many0(read_form), tag(")")))(input)?;
 
-    print!("got a vector {}", v.len());
     Ok((input, vec_to_list(NIL, 0, &v)))
 }
 

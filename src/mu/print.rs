@@ -4,7 +4,7 @@ use std::char::from_u32;
 use crate::mu::r#type::{immediate, ImmediateClass};
 use crate::mu::r#type::{SysClass, Tag, Type, NIL};
 
-fn to_string(src: Type) -> String {
+pub fn to_string(src: Type) -> String {
     match src.type_of() {
         SysClass::String => {
             let _str = &Type::str_from_type(&src);

@@ -1,4 +1,5 @@
 // mu/string.rs
+use crate::mu::exception::error;
 use crate::mu::r#type::{entag, Tag, Type};
 use crate::mu::r#type::{immediate, ImmediateClass, IMMEDIATE_STR_MAX};
 
@@ -38,15 +39,30 @@ impl Type {
 
     pub fn str_from_type(&self) -> String {
         match self.tag() {
-            Tag::Immediate => {
-                // clean this the hell up
-                let l = self.immediate_size();
-                let v = &self.immediate_data().to_be_bytes();
-                let s = std::str::from_utf8(v).unwrap().to_string();
-                let c = &s[(8 - l)..];
+            Tag::Immediate => match Type::immediate_class(self) {
+                ImmediateClass::String => {
+                    // clean this the hell up
+                    let l = self.immediate_size();
+                    let v = &self.immediate_data().to_be_bytes();
+                    let s = std::str::from_utf8(v).unwrap().to_string();
+                    let c = &s[(8 - l)..];
 
-                c.to_string()
-            }
+                    c.to_string()
+                }
+                ImmediateClass::Keyword => {
+                    // clean this the hell up
+                    let l = self.immediate_size();
+                    let v = &self.immediate_data().to_be_bytes();
+                    let s = std::str::from_utf8(v).unwrap().to_string();
+                    let c = &s[(8 - l)..];
+
+                    c.to_string()
+                }
+                _ => {
+                    error(*self, "nope");
+                    "".to_string()
+                }
+            },
             Tag::Vector => std::str::from_utf8(b"char-vector").unwrap().to_string(),
             _ => std::str::from_utf8(b"whoa").unwrap().to_string(),
         }
@@ -55,17 +71,10 @@ impl Type {
 
 #[cfg(test)]
 mod tests {
-    /*
     use super::*;
 
     #[test]
     fn test_string() {
-        assert!(_string(b"yep").typep_string());
-        assert!(
-            match Type::str_from_type(_string(b"astring")) {
-                Some(_) => true,
-                None => false
-        });
+        assert!(FnString::make_type("yep").typep_string());
     }
-    */
 }
