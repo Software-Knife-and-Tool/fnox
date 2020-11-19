@@ -10,6 +10,7 @@ use crate::mu::print::{_print, debug_println};
 use crate::mu::read::read_from_stdin;
 
 use crate::mu::fixnum::*;
+use crate::mu::float::*;
 use crate::mu::function::FnFunction;
 use crate::mu::string::FnString;
 
@@ -54,6 +55,31 @@ pub fn env<'e>() -> FnEnv<'e> {
     init.insert(
         "minusp",
         FnFunction::make_type(FnString::make_type("minusp"), fx_minusp, 1),
+    );
+
+    init.insert(
+        "float+",
+        FnFunction::make_type(FnString::make_type("float+"), fl_add, 2),
+    );
+
+    init.insert(
+        "float-",
+        FnFunction::make_type(FnString::make_type("float-"), fl_sub, 2),
+    );
+
+    init.insert(
+        "float*",
+        FnFunction::make_type(FnString::make_type("float*"), fl_mul, 2),
+    );
+
+    init.insert(
+        "float/",
+        FnFunction::make_type(FnString::make_type("float/"), fl_div, 2),
+    );
+
+    init.insert(
+        "float-minusp",
+        FnFunction::make_type(FnString::make_type("float-minusp"), fl_minusp, 1),
     );
 
     FnEnv {

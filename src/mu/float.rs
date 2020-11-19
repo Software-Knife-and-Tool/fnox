@@ -8,16 +8,54 @@ pub struct FnFloat {
     float: f32,
 }
 
+// think: why is this here?
 pub fn float(src: f32) -> Type {
     immediate((src as u64) << 24, 0, ImmediateClass::Float)
 }
 
-pub fn float_add(args: Vec<Type>) -> Type {
+pub fn fl_add(args: Vec<Type>) -> Type {
     match FnFloat::from_type(&args[0]) {
         Some(fl) => match fl.add(&args[1]) {
             Some(s) => s,
             None => NIL,
         },
+        None => NIL,
+    }
+}
+
+pub fn fl_sub(args: Vec<Type>) -> Type {
+    match FnFloat::from_type(&args[0]) {
+        Some(fl) => match fl.sub(&args[1]) {
+            Some(s) => s,
+            None => NIL,
+        },
+        None => NIL,
+    }
+}
+
+pub fn fl_mul(args: Vec<Type>) -> Type {
+    match FnFloat::from_type(&args[0]) {
+        Some(fl) => match fl.mul(&args[1]) {
+            Some(s) => s,
+            None => NIL,
+        },
+        None => NIL,
+    }
+}
+
+pub fn fl_div(args: Vec<Type>) -> Type {
+    match FnFloat::from_type(&args[0]) {
+        Some(fl) => match fl.div(&args[1]) {
+            Some(s) => s,
+            None => NIL,
+        },
+        None => NIL,
+    }
+}
+
+pub fn fl_minusp(args: Vec<Type>) -> Type {
+    match FnFloat::from_type(&args[0]) {
+        Some(fl) => fl.minusp(),
         None => NIL,
     }
 }
@@ -46,6 +84,14 @@ impl FnFloat {
     pub fn add(&self, fl: &Type) -> Option<Type> {
         if Type::typep_float(fl) {
             Some(float(self.float + (fl.as_u64() >> 32) as f32))
+        } else {
+            None
+        }
+    }
+
+    pub fn sub(&self, fl: &Type) -> Option<Type> {
+        if Type::typep_float(fl) {
+            Some(float(self.float - (fl.as_u64() >> 32) as f32))
         } else {
             None
         }

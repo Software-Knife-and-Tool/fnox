@@ -1,8 +1,9 @@
 // mu/print.rs
+use std::fmt;
 use std::char::from_u32;
 
-use crate::mu::r#type::{immediate, ImmediateClass};
-use crate::mu::r#type::{SysClass, Tag, Type, NIL};
+use crate::mu::r#type::{ImmediateClass};
+use crate::mu::r#type::{SysClass, Tag, Type};
 
 pub fn to_string(src: Type) -> String {
     match src.type_of() {
@@ -49,7 +50,7 @@ pub fn debug_println(obj: Type) {
         },
     };
 
-    print!("debug: tag {:x} type {} {}", obj.as_u64(), typestr(obj));
+    print!("debug: tag {:x} type {}", obj.as_u64(), typestr(obj));
 
     /*
     match src.type_of() {
@@ -81,6 +82,17 @@ pub fn debug_println(obj: Type) {
 
 pub fn _print(src: Type) {
     println!("{}", to_string(src))
+}
+
+impl fmt::Display for Type {
+    // This trait requires `fmt` with this exact signature.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Write strictly the first element into the supplied output
+        // stream: `f`. Returns `fmt::Result` which indicates whether the
+        // operation succeeded or failed. Note that `write!` uses syntax which
+        // is very similar to `println!`.
+        write!(f, "{}", self.as_u64())
+    }
 }
 
 #[cfg(test)]
