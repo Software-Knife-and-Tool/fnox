@@ -55,17 +55,10 @@ impl Type {
 
 #[cfg(test)]
 mod tests {
-    /*
     use super::*;
 
     #[test]
     fn test_string() {
-        assert!(_string(b"yep").typep_string());
-        assert!(
-            match Type::str_from_type(_string(b"astring")) {
-                Some(_) => true,
-                None => false
-        });
+        assert!(FnString::make_type("yep").typep_string());
     }
-    */
 }

@@ -1,11 +1,19 @@
 // mu/exception.rs
 use crate::mu::r#type::{detag, entag, Tag, Type};
+use crate::mu::print::{debug_println, to_string};
 
 #[derive(Debug)]
 pub struct FnException {
     name: Type,
     func: fn(Vec<Type>) -> Type,
     nargs: i16,
+}
+
+pub fn error(src: Type, reason: &str) {
+    println!("error: {} {}", to_string(src), reason);
+    debug_println(src);
+
+    assert!(false);
 }
 
 pub fn _exception(name: Type, func: fn(Vec<Type>) -> Type, nargs: i16) -> Type {
