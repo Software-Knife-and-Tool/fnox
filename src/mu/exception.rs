@@ -1,6 +1,6 @@
 // mu/exception.rs
-use crate::mu::r#type::{detag, entag, Tag, Type};
 use crate::mu::print::{debug_println, to_string};
+use crate::mu::r#type::{detag, entag, Tag, Type};
 
 #[derive(Debug)]
 pub struct FnException {

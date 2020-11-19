@@ -80,14 +80,13 @@ fn read_decimal(input: &str) -> IResult<&str, Type> {
 
 // string/char
 fn read_string(input: &str) -> IResult<&str, Type> {
-    let (input, (_, str, _)) =
-        tuple((tag("\""), take_until("\""), take(1 as usize)))(input)?;
+    let (input, (_, str, _)) = tuple((tag("\""), take_until("\""), take(1 as usize)))(input)?;
 
     Ok((input, FnString::make_type(str)))
 }
 
 fn read_char(input: &str) -> IResult<&str, Type> {
-    let (input,(_, ch)) = tuple((tag("#\\"), take(1 as usize)))(input)?;
+    let (input, (_, ch)) = tuple((tag("#\\"), take(1 as usize)))(input)?;
 
     Ok((input, FnChar::make_type(ch.chars().nth(0).unwrap())))
 }
