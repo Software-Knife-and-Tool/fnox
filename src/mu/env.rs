@@ -20,8 +20,8 @@ pub struct FnEnv<'e> {
 }
 
 pub fn env<'e>() -> FnEnv<'e> {
-    let mut init: HashMap<&'e str, Type> = HashMap::new();
-    let _inits = vec![
+    let mut stab: HashMap<&'e str, Type> = HashMap::new();
+    let inits = vec![
         ("fixnum+", fx_add as fn(Vec<Type>) -> Type, 2),
         ("fixnum*", fx_mul, 2),
         ("fixnum-", fx_sub, 2),
@@ -46,7 +46,7 @@ pub fn env<'e>() -> FnEnv<'e> {
 
     FnEnv {
         heap: _heap(1024 * 1024),
-        symtab: init,
+        symtab: stab,
     }
 }
 
