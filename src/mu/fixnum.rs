@@ -64,6 +64,7 @@ pub fn fx_mod(args: Vec<Type>) -> Type {
     }
 }
 
+// think: check for negative values?
 pub fn fx_logand(args: Vec<Type>) -> Type {
     match FnFixnum::from_type(&args[0]) {
         Some(fx) => match fx.logand(&args[1]) {
@@ -79,12 +80,14 @@ impl FnFixnum {
         entag((src << 3) as u64, Tag::Fixnum)
     }
 
+    /*
     // think: do we need this?
     pub fn _from_i64(_integer: i64) -> FnFixnum {
         FnFixnum {
             integer: _integer as i64,
         }
     }
+     */
 
     pub fn from_type(fx: &Type) -> Option<FnFixnum> {
         if Type::typep_fixnum(fx) {
@@ -100,7 +103,7 @@ impl FnFixnum {
     pub fn add(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(FnFixnum::make_type(
-                self.integer + (fx.as_u64() >> 3) as i64,
+                self.integer + ((fx.as_u64() as i64) >> 3),
             ))
         } else {
             assert!(false);
@@ -111,7 +114,7 @@ impl FnFixnum {
     pub fn sub(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(FnFixnum::make_type(
-                self.integer - (fx.as_u64() >> 3) as i64,
+                self.integer - ((fx.as_u64() as i64) >> 3),
             ))
         } else {
             assert!(false);
@@ -122,7 +125,7 @@ impl FnFixnum {
     pub fn mul(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(FnFixnum::make_type(
-                self.integer * (fx.as_u64() >> 3) as i64,
+                self.integer * ((fx.as_u64() as i64) >> 3),
             ))
         } else {
             assert!(false);
@@ -133,7 +136,7 @@ impl FnFixnum {
     pub fn trunc(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(FnFixnum::make_type(
-                self.integer / (fx.as_u64() >> 3) as i64,
+                self.integer / ((fx.as_u64() as i64) >> 3),
             ))
         } else {
             assert!(false);
@@ -149,10 +152,11 @@ impl FnFixnum {
         }
     }
 
+    // think: check here for negative numbers
     pub fn mod_(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(FnFixnum::make_type(
-                self.integer % (fx.as_u64() >> 3) as i64,
+                self.integer % ((fx.as_u64() as i64) >> 3),
             ))
         } else {
             assert!(false);
@@ -160,10 +164,11 @@ impl FnFixnum {
         }
     }
 
+    // think: check here for negative numbers
     pub fn logand(&self, fx: &Type) -> Option<Type> {
         if Type::typep_fixnum(fx) {
             Some(FnFixnum::make_type(
-                self.integer & (fx.as_u64() >> 3) as i64,
+                self.integer & ((fx.as_u64() as i64) >> 3),
             ))
         } else {
             assert!(false);
@@ -182,7 +187,7 @@ impl Type {
 
     pub fn i64_from_fixnum(&self) -> Option<i64> {
         if Type::typep_fixnum(self) {
-            Some((self.as_u64() >> 3) as i64)
+            Some((self.as_u64() as i64) >> 3)
         } else {
             assert!(false);
             None
