@@ -37,8 +37,8 @@ pub fn env<'e>() -> FnEnv<'e> {
         ("fixnum+", fx_add, 2),
     ];
 
-    for fn_ in _inits {
-        init.insert(
+    for fn_ in inits {
+        stab.insert(
             fn_.0,
             FnFunction::make_type(FnString::make_type(fn_.0), fn_.1, fn_.2),
         );

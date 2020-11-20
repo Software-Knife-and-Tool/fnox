@@ -76,7 +76,7 @@ pub fn fx_logand(args: Vec<Type>) -> Type {
 
 impl FnFixnum {
     pub fn make_type(src: i64) -> Type {
-        entag((src as u64) << 3, Tag::Fixnum)
+        entag((src << 3) as u64, Tag::Fixnum)
     }
 
     // think: do we need this?
@@ -89,7 +89,7 @@ impl FnFixnum {
     pub fn from_type(fx: &Type) -> Option<FnFixnum> {
         if Type::typep_fixnum(fx) {
             Some(FnFixnum {
-                integer: (fx.as_u64() >> 3) as i64,
+                integer: (fx.as_u64() as i64) >> 3,
             })
         } else {
             assert!(false);
@@ -231,6 +231,36 @@ mod tests {
             Some(fx) => match fx.add(&FnFixnum::make_type(2)) {
                 Some(sum) => match sum.i64_from_fixnum() {
                     Some(v) => v == 3,
+                    None => false,
+                },
+                None => false,
+            },
+            None => false,
+        });
+        assert!(match FnFixnum::from_type(&FnFixnum::make_type(-1)) {
+            Some(fx) => match fx.add(&FnFixnum::make_type(2)) {
+                Some(sum) => match sum.i64_from_fixnum() {
+                    Some(v) => v == 1,
+                    None => false,
+                },
+                None => false,
+            },
+            None => false,
+        });
+        assert!(match FnFixnum::from_type(&FnFixnum::make_type(-1)) {
+            Some(fx) => match fx.add(&FnFixnum::make_type(-1)) {
+                Some(sum) => match sum.i64_from_fixnum() {
+                    Some(v) => v == -2,
+                    None => false,
+                },
+                None => false,
+            },
+            None => false,
+        });
+        assert!(match FnFixnum::from_type(&FnFixnum::make_type(-3)) {
+            Some(fx) => match fx.add(&FnFixnum::make_type(2)) {
+                Some(sum) => match sum.i64_from_fixnum() {
+                    Some(v) => v == -1,
                     None => false,
                 },
                 None => false,
