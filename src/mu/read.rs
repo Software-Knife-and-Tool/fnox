@@ -77,7 +77,31 @@ fn read_decimal(input: &str) -> IResult<&str, Type> {
         })(input)
     }()?;
 
+    // println!("dec: {}", neg);
     Ok((input, FnFixnum::make_type(dec)))
+}
+
+fn read_neg_decimal(input: &str) -> IResult<&str, Type> {
+    let (input, (_, dec)) = tuple((tag("-"), read_decimal))(input)?;
+
+    let d = -dec.i64_from_fixnum().unwrap();
+    
+    Ok((input, FnFixnum::make_type(d)))
+}
+
+fn read_pos_decimal(input: &str) -> IResult<&str, Type> {
+    let (input, (_, dec)) = tuple((tag("+"), read_decimal))(input)?;
+
+    Ok((input, dec))
+}
+
+fn read_number(input: &str) -> IResult<&str, Type> {
+    alt((
+        read_hexadecimal,
+        read_decimal,
+        read_neg_decimal,
+        read_pos_decimal,
+    ))(input)
 }
 
 // string/char
@@ -99,14 +123,13 @@ fn read_quote(input: &str) -> IResult<&str, Type> {
 
     let (input, form) = alt((
         read_char,
-        read_hexadecimal,
         read_cons,
         read_list,
+        read_number,
         read_quote,
         read_string,
-        read_vector,
-        read_decimal,
         read_symbol,
+        read_vector,
     ))(input)?;
 
     Ok((
@@ -181,13 +204,12 @@ fn read_form(input: &str) -> IResult<&str, Type> {
 
     alt((
         read_char,
-        read_hexadecimal,
+        read_number,
         read_cons,
         read_list,
         read_quote,
         read_string,
         read_vector,
-        read_decimal,
         read_symbol,
     ))(input)
 }
