@@ -85,7 +85,7 @@ fn read_neg_decimal(input: &str) -> IResult<&str, Type> {
     let (input, (_, dec)) = tuple((tag("-"), read_decimal))(input)?;
 
     let d = -dec.i64_from_fixnum().unwrap();
-    
+
     Ok((input, FnFixnum::make_type(d)))
 }
 
