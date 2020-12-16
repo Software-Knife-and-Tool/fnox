@@ -1,3 +1,3 @@
-# logicox
+# gyre-ox
 
-logica runtime in rust
+gyre runtime in rust
